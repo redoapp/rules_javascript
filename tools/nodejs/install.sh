@@ -2,7 +2,7 @@
 export RUNFILES_DIR="$0.runfiles"
 
 "$RUNFILES_DIR/better_rules_javascript/tools/nodejs/install0"
-
+exit
 cd "$BUILD_WORKSPACE_DIRECTORY"
 
 # fix Angular language service

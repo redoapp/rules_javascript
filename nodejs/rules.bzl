@@ -4,6 +4,7 @@ load("@rules_file//file:rules.bzl", "untar")
 load("@rules_pkg//pkg:providers.bzl", "PackageFilegroupInfo", "PackageFilesInfo", "PackageSymlinkInfo")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "gen_manifest", "package_path")
+load("//pkg:rules.bzl", "pkg_runfiles_manifest")
 load("//javascript:providers.bzl", "JsInfo")
 load("//util:path.bzl", "nearest", "relativize", "runfile_path")
 load(":providers.bzl", "NodejsInfo", "NodejsRuntimeInfo")
@@ -472,27 +473,32 @@ nodejs_modules_package = rule(
     implementation = _nodejs_modules_package_impl,
 )
 
-def nodejs_install(name, src, path = None, **kwargs):
-    _nodejs_install_tar(
+def nodejs_install(name, src, path = None, visibility = None, **kwargs):
+    _nodejs_install(
         name = name,
-        archive = ":%s.archive" % name,
+        manifest = ":%s.manifest" % name,
         path = path,
-        **kwargs
-    )
-
-    pkg_tar(
-        name = "%s.archive" % name,
         srcs = [src],
+        visibility = visibility,
         **kwargs
     )
 
-def _nodejs_install_tar_impl(ctx):
+    pkg_runfiles_manifest(
+        name = "%s.manifest" % name,
+        pkg = src,
+        visibility = ["//visibility:private"],
+        **kwargs
+    )
+
+def _nodejs_install_impl(ctx):
     actions = ctx.actions
-    archive = ctx.file.archive
-    bash_runfiles = ctx.attr._bash_runfiles[DefaultInfo]
+    manifest = ctx.file.manifest
     name = ctx.attr.name
     path = ctx.attr.path
+    pkg_sync = ctx.executable._pkg_sync
+    pkg_sync_default = ctx.attr._pkg_sync[DefaultInfo]
     runner = ctx.file._runner
+    srcs = ctx.files.srcs
     workspace_name = ctx.workspace_name
 
     bin = actions.declare_file(name)
@@ -501,14 +507,16 @@ def _nodejs_install_tar_impl(ctx):
         template = runner,
         output = bin,
         substitutions = {
-            "%{archive}": shell.quote(runfile_path(workspace_name, archive)),
+            "%{manifest}": shell.quote(runfile_path(workspace_name, manifest)),
             "%{path}": shell.quote(node_modules),
+            "%{pkg_sync}": shell.quote(runfile_path(workspace_name, pkg_sync)),
         },
         is_executable = True,
     )
 
-    runfiles = ctx.runfiles(files = [archive])
-    runfiles = runfiles.merge(bash_runfiles.default_runfiles)
+    runfiles = ctx.runfiles(files = [manifest] + srcs)
+    runfiles = runfiles.merge(pkg_sync_default.default_runfiles)
+
     default_info = DefaultInfo(
         executable = bin,
         runfiles = runfiles,
@@ -516,25 +524,28 @@ def _nodejs_install_tar_impl(ctx):
 
     return [default_info]
 
-_nodejs_install_tar = rule(
+_nodejs_install = rule(
     attrs = {
-        "_bash_runfiles": attr.label(
-            default = "@bazel_tools//tools/bash/runfiles",
+        "_pkg_sync": attr.label(
+            cfg = "target",
+            default = "//pkg/sync:bin",
+            executable = True,
         ),
         "_runner": attr.label(
             allow_single_file = True,
             default = "install-runner.sh.tpl",
         ),
-        "archive": attr.label(
-            allow_single_file = [".tar"],
+        "manifest": attr.label(
+            allow_single_file = [".json"],
             mandatory = True,
         ),
         "path": attr.label(
             doc = "Path from root of workspace",
         ),
+        "srcs": attr.label_list(allow_files = True),
     },
     executable = True,
-    implementation = _nodejs_install_tar_impl,
+    implementation = _nodejs_install_impl,
 )
 
 def _nodejs_binary_package_impl(ctx):
