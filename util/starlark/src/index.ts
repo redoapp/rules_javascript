@@ -1,11 +1,16 @@
 export type StarlarkValue =
   | StarlarkArray
+  | StarlarkBoolean
   | StarlarkDict
   | StarlarkNone
   | StarlarkString;
 
 export class StarlarkArray {
   constructor(readonly elements: StarlarkValue[]) {}
+}
+
+export class StarlarkBoolean {
+  constructor(readonly value: boolean) {}
 }
 
 export class StarlarkDict {
@@ -46,7 +51,7 @@ function printArray(value: StarlarkArray, indent: string | undefined): string {
       output += indent + "    ";
     }
     output += printValue(v, indent === undefined ? indent : indent + "    ");
-    output += ",";
+    output += ", ";
     output += indent === undefined ? " " : "\n";
   }
   if (indent !== undefined) {
@@ -54,6 +59,10 @@ function printArray(value: StarlarkArray, indent: string | undefined): string {
   }
   output += "]";
   return output;
+}
+
+function printBoolean(value: StarlarkBoolean): string {
+  return value.value ? "True" : "False";
 }
 
 function printDict(value: StarlarkDict, indent: string | undefined): string {
@@ -88,6 +97,9 @@ function printString(value: StarlarkString): string {
 function printValue(value: StarlarkValue, indent?: string | undefined): string {
   if (value instanceof StarlarkArray) {
     return printArray(value, indent);
+  }
+  if (value instanceof StarlarkBoolean) {
+    return printBoolean(value);
   }
   if (value instanceof StarlarkDict) {
     return printDict(value, indent);

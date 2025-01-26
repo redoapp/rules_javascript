@@ -1,5 +1,6 @@
 import {
   StarlarkArray,
+  StarlarkBoolean,
   StarlarkDict,
   StarlarkEqualStatement,
   StarlarkFile,
@@ -9,10 +10,13 @@ import {
 } from "@better-rules-javascript/util-starlark";
 
 export interface BzlPackage {
+  arch: string[] | undefined;
   deps: BzlDeps;
   extraDeps: Map<string, BzlDeps>;
   integrity: string;
+  libc: string[] | undefined;
   name: string;
+  os: string[] | undefined;
   url: string;
 }
 
@@ -27,6 +31,21 @@ export namespace BzlPackage {
     }
 
     const entries: [StarlarkValue, StarlarkValue][] = [];
+    if (value.arch !== undefined) {
+      entries.push([
+        new StarlarkString("arch"),
+        new StarlarkString(value.arch),
+      ]);
+    }
+    if (value.libc !== undefined) {
+      entries.push([
+        new StarlarkString("libc"),
+        new StarlarkString(value.libc),
+      ]);
+    }
+    if (value.os !== undefined) {
+      entries.push([new StarlarkString("os"), new StarlarkString(value.os)]);
+    }
     if (value.deps.length > 0) {
       entries.push([
         new StarlarkString("deps"),
@@ -66,7 +85,7 @@ export namespace BzlPackages {
 
 export interface BzlDep {
   name: string | null;
-  id: string;
+  optional: boolean;
 }
 
 export type BzlDeps = BzlDep[];
@@ -82,6 +101,12 @@ export namespace BzlDeps {
           entries.push([
             new StarlarkString("name"),
             new StarlarkString(dep.name),
+          ]);
+        }
+        if (dep.optional) {
+          entries.push([
+            new StarlarkString("optional"),
+            new StarlarkBoolean(dep.optional),
           ]);
         }
         return new StarlarkDict(entries);
