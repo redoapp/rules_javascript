@@ -265,7 +265,7 @@ class SymbolJsonFormat {
 var PackageDeps;
 (function (PackageDeps) {
     function json() {
-        return JsonFormat.map(JsonFormat.string(), JsonFormat.string());
+        return JsonFormat.stringMap(JsonFormat.string());
     }
     PackageDeps.json = json;
 })(PackageDeps || (PackageDeps = {}));
@@ -284,7 +284,7 @@ var PackageTree;
     function json() {
         return JsonFormat.object({
             globals: PackageDeps.json(),
-            packages: JsonFormat.map(JsonFormat.string(), Package.json()),
+            packages: JsonFormat.stringMap(Package.json()),
         });
     }
     PackageTree.json = json;

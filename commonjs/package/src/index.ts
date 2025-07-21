@@ -4,7 +4,7 @@ export type PackageDeps = Map<string, string>;
 
 export namespace PackageDeps {
   export function json(): JsonFormat<PackageDeps> {
-    return JsonFormat.map(JsonFormat.string(), JsonFormat.string());
+    return JsonFormat.stringMap(JsonFormat.string());
   }
 }
 
@@ -41,7 +41,7 @@ export namespace PackageTree {
   export function json(): JsonFormat<PackageTree> {
     return JsonFormat.object({
       globals: PackageDeps.json(),
-      packages: JsonFormat.map(JsonFormat.string(), Package.json()),
+      packages: JsonFormat.stringMap(Package.json()),
     });
   }
 }
