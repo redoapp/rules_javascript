@@ -1,9 +1,9 @@
 import {
-  StarlarkArray,
   StarlarkBoolean,
   StarlarkDict,
   StarlarkEqualStatement,
   StarlarkFile,
+  StarlarkList,
   StarlarkString,
   StarlarkValue,
   StarlarkVariable,
@@ -34,19 +34,19 @@ export namespace BzlPackage {
     if (value.arch) {
       entries.push([
         new StarlarkString("arch"),
-        new StarlarkArray(value.arch.map((arch) => new StarlarkString(arch))),
+        new StarlarkList(value.arch.map((arch) => new StarlarkString(arch))),
       ]);
     }
     if (value.libc) {
       entries.push([
         new StarlarkString("libc"),
-        new StarlarkArray(value.libc.map((libc) => new StarlarkString(libc))),
+        new StarlarkList(value.libc.map((libc) => new StarlarkString(libc))),
       ]);
     }
     if (value.os) {
       entries.push([
         new StarlarkString("os"),
-        new StarlarkArray(value.os.map((os) => new StarlarkString(os))),
+        new StarlarkList(value.os.map((os) => new StarlarkString(os))),
       ]);
     }
     if (value.deps.length > 0) {
@@ -96,7 +96,7 @@ export type BzlDeps = BzlDep[];
 export namespace BzlDeps {
   export function toStarlark(value: BzlDeps): StarlarkValue {
     const entries = [...value].sort((a, b) => +(b.id < a.id) - +(a.id < b.id));
-    return new StarlarkArray(
+    return new StarlarkList(
       entries.map((dep) => {
         const entries: [StarlarkValue, StarlarkValue][] = [];
         entries.push([new StarlarkString("id"), new StarlarkString(dep.id)]);

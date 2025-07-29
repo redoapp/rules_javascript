@@ -1,13 +1,10 @@
 export type StarlarkValue =
-  | StarlarkArray
   | StarlarkBoolean
   | StarlarkDict
+  | StarlarkList
   | StarlarkNone
-  | StarlarkString;
-
-export class StarlarkArray {
-  constructor(readonly elements: StarlarkValue[]) {}
-}
+  | StarlarkString
+  | StarlarkStruct;
 
 export class StarlarkBoolean {
   constructor(readonly value: boolean) {}
@@ -17,10 +14,18 @@ export class StarlarkDict {
   constructor(readonly elements: [StarlarkValue, StarlarkValue][]) {}
 }
 
+export class StarlarkList {
+  constructor(readonly elements: StarlarkValue[]) {}
+}
+
 export class StarlarkNone {}
 
 export class StarlarkString {
   constructor(readonly value: string) {}
+}
+
+export class StarlarkStruct {
+  constructor(readonly elements: [string, StarlarkValue][]) {}
 }
 
 export type StarlarkExpression = StarlarkVariable;
@@ -42,47 +47,77 @@ export class StarlarkFile {
   constructor(readonly statements: StarlarkStatement[]) {}
 }
 
-function printArray(value: StarlarkArray, indent: string | undefined): string {
-  let output = "";
-  output += "[";
-  output += indent === undefined ? " " : "\n";
-  for (const v of value.elements) {
-    if (indent !== undefined) {
-      output += indent + "    ";
-    }
-    output += printValue(v, indent === undefined ? indent : indent + "    ");
-    output += ",";
-    output += indent === undefined ? " " : "\n";
+function isPrintMultiline(value: StarlarkValue): boolean {
+  if (value instanceof StarlarkList) {
+    return (
+      !!value.elements.length &&
+      (value.elements.length !== 1 || isPrintMultiline(value.elements[0]))
+    );
   }
-  if (indent !== undefined) {
-    output += indent;
+  if (value instanceof StarlarkDict) {
+    return (
+      !!value.elements.length &&
+      (value.elements.length !== 1 || value.elements[0].some(isPrintMultiline))
+    );
   }
-  output += "]";
-  return output;
+  if (value instanceof StarlarkStruct) {
+    return (
+      !!value.elements.length &&
+      (value.elements.length !== 1 || isPrintMultiline(value.elements[0][1]))
+    );
+  }
+  return false;
 }
 
 function printBoolean(value: StarlarkBoolean): string {
   return value.value ? "True" : "False";
 }
 
-function printDict(value: StarlarkDict, indent: string | undefined): string {
+function printDict(value: StarlarkDict, indent: string): string {
+  const isMultiline = isPrintMultiline(value);
   let output = "";
   output += "{";
-  output += indent === undefined ? " " : "\n";
+  if (isMultiline) {
+    output += "\n";
+  }
   for (const [k, v] of value.elements) {
-    if (indent !== undefined) {
+    if (isMultiline) {
       output += indent + "    ";
     }
-    output += printValue(k);
+    output += printValue(k, indent + "    ");
     output += ": ";
-    output += printValue(v, indent === undefined ? indent : indent + "    ");
-    output += ",";
-    output += indent === undefined ? " " : "\n";
+    output += printValue(v, indent + "    ");
+    if (isMultiline) {
+      output += ",\n";
+    }
   }
-  if (indent !== undefined) {
+  if (isMultiline) {
     output += indent;
   }
   output += "}";
+  return output;
+}
+
+function printList(value: StarlarkList, indent: string): string {
+  const isMultiline = isPrintMultiline(value);
+  let output = "";
+  output += "[";
+  if (isMultiline) {
+    output += "\n";
+  }
+  for (const v of value.elements) {
+    if (isMultiline) {
+      output += indent + "    ";
+    }
+    output += printValue(v, indent + "    ");
+    if (isMultiline) {
+      output += ",\n";
+    }
+  }
+  if (isMultiline) {
+    output += indent;
+  }
+  output += "]";
   return output;
 }
 
@@ -94,9 +129,34 @@ function printString(value: StarlarkString): string {
   return JSON.stringify(value.value);
 }
 
-function printValue(value: StarlarkValue, indent?: string | undefined): string {
-  if (value instanceof StarlarkArray) {
-    return printArray(value, indent);
+function printStruct(value: StarlarkStruct, indent: string): string {
+  const isMultiline = isPrintMultiline(value);
+  let output = "";
+  output += "struct(";
+  if (isMultiline) {
+    output += "\n";
+  }
+  for (const [k, v] of value.elements) {
+    if (isMultiline) {
+      output += indent + "    ";
+    }
+    output += k;
+    output += " = ";
+    output += printValue(v, indent + "    ");
+    if (isMultiline) {
+      output += ",\n";
+    }
+  }
+  if (isMultiline) {
+    output += indent;
+  }
+  output += ")";
+  return output;
+}
+
+function printValue(value: StarlarkValue, indent: string): string {
+  if (value instanceof StarlarkList) {
+    return printList(value, indent);
   }
   if (value instanceof StarlarkBoolean) {
     return printBoolean(value);
@@ -110,7 +170,10 @@ function printValue(value: StarlarkValue, indent?: string | undefined): string {
   if (value instanceof StarlarkString) {
     return printString(value);
   }
-  throw new Error("Unrecognized value");
+  if (value instanceof StarlarkStruct) {
+    return printStruct(value, indent);
+  }
+  throw new Error(`Unrecognized value: ${value}`);
 }
 
 function printVariable(value: StarlarkVariable): string {
@@ -130,7 +193,7 @@ function printStatement(value: StarlarkStatement): string {
   if (value instanceof StarlarkEqualStatement) {
     return printEqualStatement(value);
   }
-  throw new Error("Unrecognized value");
+  throw new Error(`Unrecognized value: ${value}`);
 }
 
 export function printStarlark(file: StarlarkFile): string {
