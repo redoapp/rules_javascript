@@ -29,6 +29,7 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//javascript:bzl",
+        "//pkg:bzl",
         "//third-party:repo_bzl",
         "//util:bzl",
         "@bazel_skylib//lib:shell",

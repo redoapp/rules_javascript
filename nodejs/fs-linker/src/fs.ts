@@ -134,6 +134,10 @@ class VfsDir implements fs.Dir {
 
   readonly path: string;
 
+  async [Symbol.asyncDispose](): Promise<void> {
+    await this.delegate?.[Symbol.asyncDispose]();
+  }
+
   [Symbol.asyncIterator](): AsyncIterableIterator<fs.Dirent> {
     return {
       next: async () => {
@@ -144,6 +148,10 @@ class VfsDir implements fs.Dir {
         return this;
       },
     };
+  }
+
+  async [Symbol.dispose](): Promise<void> {
+    await this.delegate?.[Symbol.dispose]();
   }
 
   close(): Promise<void>;

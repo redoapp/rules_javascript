@@ -30,14 +30,12 @@ ts_library(
         "//util/util:lib",
         "@better_rules_javascript_npm//@types/argparse:lib",
         "@better_rules_javascript_npm//@types/node:lib",
-        "@better_rules_javascript_npm//@types/node-fetch:lib",
         "@better_rules_javascript_npm//@yarnpkg/cli:lib",
         "@better_rules_javascript_npm//@yarnpkg/core:lib",
         "@better_rules_javascript_npm//@yarnpkg/fslib:lib",
         "@better_rules_javascript_npm//@yarnpkg/plugin-npm:lib",
         "@better_rules_javascript_npm//@yarnpkg/plugin-patch:lib",
         "@better_rules_javascript_npm//argparse:lib",
-        "@better_rules_javascript_npm//node-fetch:lib",
     ],
 )
 

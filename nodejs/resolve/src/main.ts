@@ -8,7 +8,6 @@ import {
   StarlarkVariable,
 } from "@better-rules-javascript/util-starlark";
 import { ArgumentParser } from "argparse";
-import fetch from "node-fetch";
 import { Version } from "./version";
 
 const PLATFORMS: { [key: string]: string } = {
@@ -21,10 +20,10 @@ const PLATFORMS: { [key: string]: string } = {
 
 async function getNodeJsVersions(): Promise<Version[]> {
   const response = await fetch("https://nodejs.org/dist/index.json");
-  const json = await response.json();
+  const json = (await response.json()) as any[];
 
   return json
-    .map(({ version }: any) => Version.parse(version.slice(1)))
+    .map(({ version }) => Version.parse(version.slice(1)))
     .sort(Version.compare);
 }
 

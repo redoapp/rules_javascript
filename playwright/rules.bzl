@@ -1,5 +1,5 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "gen_manifest", "create_globals")
+load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "gen_manifest")
 load("//javascript:providers.bzl", "JsInfo")
 load("//nodejs:providers.bzl", "NodejsInfo")
 load("//util:path.bzl", "output", "runfile_path")
@@ -28,7 +28,7 @@ def _playwright_test_impl(ctx):
     label = ctx.label
     module_linker_cjs = ctx.attr._module_linker[CjsInfo]
     module_linker_js = ctx.attr._module_linker[JsInfo]
-    name = ctx.attr.name    
+    name = ctx.attr.name
     node = ctx.attr.node[NodejsInfo]
     node_options = node.options + ctx.attr.node_options
     runtime = ctx.file._runtime

@@ -71,10 +71,10 @@ PACKAGES = {
         "name": "@colors/colors",
         "url": "https://registry.npmjs.org/@colors/colors/-/colors-1.5.0.tgz",
     },
-    "@discoveryjs/json-ext@0.5.7": {
-        "integrity": "sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==",
+    "@discoveryjs/json-ext@0.6.3": {
+        "integrity": "sha512-4B4OijXeVNOPZlYA2oEwWOTkzyltLao+xbotHQeqN++Rv27Y6s818+n2Qkp8q+Fxhn0t/5lA5X1Mxktud8eayQ==",
         "name": "@discoveryjs/json-ext",
-        "url": "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz",
+        "url": "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.6.3.tgz",
     },
     "@eslint/eslintrc@1.3.3": {
         "deps": [
@@ -1162,19 +1162,6 @@ PACKAGES = {
         "name": "@types/mime",
         "url": "https://registry.npmjs.org/@types/mime/-/mime-3.0.1.tgz",
     },
-    "@types/node-fetch@2.5.12": {
-        "deps": [
-            {
-                "id": "@types/node@17.0.17",
-            },
-            {
-                "id": "form-data@3.0.1",
-            },
-        ],
-        "integrity": "sha512-MKgC4dlq4kKNa/mYrwpKfzQMB5X3ee5U6fSprkKpToBqBmX4nFZL9cW5jl6sWn+xpRJ7ypWh2yyqqr8UUCstSw==",
-        "name": "@types/node-fetch",
-        "url": "https://registry.npmjs.org/@types/node-fetch/-/node-fetch-2.5.12.tgz",
-    },
     "@types/node@13.13.52": {
         "integrity": "sha512-s3nugnZumCC//n4moGGe6tkNMyYEdaDBitVjwPxXmR5lnMG5dHePinH2EdxkG3Rh1ghFHHixAG4NJhpJW1rthQ==",
         "name": "@types/node",
@@ -1185,15 +1172,15 @@ PACKAGES = {
         "name": "@types/node",
         "url": "https://registry.npmjs.org/@types/node/-/node-17.0.17.tgz",
     },
-    "@types/node@20.17.30": {
+    "@types/node@24.1.0": {
         "deps": [
             {
-                "id": "undici-types@6.19.8",
+                "id": "undici-types@7.8.0",
             },
         ],
-        "integrity": "sha512-7zf4YyHA+jvBNfVrk2Gtvs6x7E8V+YDW05bNfG2XkWDJfYRXrTiP/DsB2zSYTaHX0bGIujTBQdMVAhb+j7mwpg==",
+        "integrity": "sha512-ut5FthK5moxFKH2T1CUOC6ctR67rQRvvHdFLCD2Ql6KXmMuCrjsSsRI9UsLCm9M18BMwClv4pn327UvB7eeO1w==",
         "name": "@types/node",
-        "url": "https://registry.npmjs.org/@types/node/-/node-20.17.30.tgz",
+        "url": "https://registry.npmjs.org/@types/node/-/node-24.1.0.tgz",
     },
     "@types/qs@6.9.7": {
         "integrity": "sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==",
@@ -1519,27 +1506,27 @@ PACKAGES = {
         "name": "@webassemblyjs/wast-printer",
         "url": "https://registry.npmjs.org/@webassemblyjs/wast-printer/-/wast-printer-1.11.5.tgz",
     },
-    "@webpack-cli/configtest@2.0.1-c3f3761f": {
+    "@webpack-cli/configtest@3.0.1-a51dfb68": {
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -1553,15 +1540,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -1577,7 +1564,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -1591,35 +1578,35 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
-        "integrity": "sha512-njsdJXJSiS2iNbQVS0eT8A/KPnmyH4pv1APj2K0d1wrZcBLw+yppxOy4CGqa0OxDJkzfL/XELDhD8rocnIwB5A==",
+        "integrity": "sha512-u8d0pJ5YFgneF/GuvEiDA61Tf1VDomHHYMjv/wc9XzYj7nopltpG96nXN5dJRstxZhcNpV1g+nT6CydO7pHbjA==",
         "name": "@webpack-cli/configtest",
-        "url": "https://registry.npmjs.org/@webpack-cli/configtest/-/configtest-2.0.1.tgz",
+        "url": "https://registry.npmjs.org/@webpack-cli/configtest/-/configtest-3.0.1.tgz",
     },
-    "@webpack-cli/info@2.0.1-c3f3761f": {
+    "@webpack-cli/info@3.0.1-a51dfb68": {
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -1633,15 +1620,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -1657,7 +1644,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -1671,35 +1658,35 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
-        "integrity": "sha512-fE1UEWTwsAxRhrJNikE7v4EotYflkEhBL7EbajfkPlf6E37/2QshOy/D48Mw8G5XMFlQtS6YV42vtbG9zBpIQA==",
+        "integrity": "sha512-coEmDzc2u/ffMvuW9aCjoRzNSPDl/XLuhPdlFRpT9tZHmJ/039az33CE7uH+8s0uL1j5ZNtfdv0HkfaKRBGJsQ==",
         "name": "@webpack-cli/info",
-        "url": "https://registry.npmjs.org/@webpack-cli/info/-/info-2.0.1.tgz",
+        "url": "https://registry.npmjs.org/@webpack-cli/info/-/info-3.0.1.tgz",
     },
-    "@webpack-cli/serve@2.0.2-c3f3761f": {
+    "@webpack-cli/serve@3.0.1-a51dfb68": {
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -1713,15 +1700,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -1737,7 +1724,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -1751,13 +1738,13 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
-        "integrity": "sha512-S9h3GmOmzUseyeFW3tYNnWS7gNUuwxZ3mmMq0JyW78Vx1SGKPSkt5bT4pB0rUnVfHjP0EL9gW2bOzmtiTfQt0A==",
+        "integrity": "sha512-sbgw03xQaCLiT6gcY/6u3qBDn01CWw/nbaXl3gTdTFuJJ75Gffv3E3DBpgvY2fkkrdS1fpjaXNOmJlnbtKauKg==",
         "name": "@webpack-cli/serve",
-        "url": "https://registry.npmjs.org/@webpack-cli/serve/-/serve-2.0.2.tgz",
+        "url": "https://registry.npmjs.org/@webpack-cli/serve/-/serve-3.0.1.tgz",
     },
     "@xtuc/ieee754@1.2.0": {
         "integrity": "sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==",
@@ -4996,11 +4983,6 @@ PACKAGES = {
         "name": "asap",
         "url": "https://registry.npmjs.org/asap/-/asap-2.0.6.tgz",
     },
-    "asynckit@0.4.0": {
-        "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==",
-        "name": "asynckit",
-        "url": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",
-    },
     "balanced-match@1.0.2": {
         "integrity": "sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==",
         "name": "balanced-match",
@@ -5673,20 +5655,10 @@ PACKAGES = {
         "name": "columnify",
         "url": "https://registry.npmjs.org/columnify/-/columnify-1.6.0.tgz",
     },
-    "combined-stream@1.0.8": {
-        "deps": [
-            {
-                "id": "delayed-stream@1.0.0",
-            },
-        ],
-        "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
-        "name": "combined-stream",
-        "url": "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.8.tgz",
-    },
-    "commander@10.0.1": {
-        "integrity": "sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==",
+    "commander@12.1.0": {
+        "integrity": "sha512-Vw8qHK3bZM9y/P10u3Vib8o/DdkvA2OtPtZvD871QKjy74Wj1WSKFILMPRPSdUSx5RFK1arlJzEtA4PkFgnbuA==",
         "name": "commander",
-        "url": "https://registry.npmjs.org/commander/-/commander-10.0.1.tgz",
+        "url": "https://registry.npmjs.org/commander/-/commander-12.1.0.tgz",
     },
     "commander@2.20.3": {
         "integrity": "sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==",
@@ -5900,11 +5872,6 @@ PACKAGES = {
         "name": "define-properties",
         "url": "https://registry.npmjs.org/define-properties/-/define-properties-1.1.4.tgz",
     },
-    "delayed-stream@1.0.0": {
-        "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
-        "name": "delayed-stream",
-        "url": "https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz",
-    },
     "delegates@1.0.0": {
         "integrity": "sha512-bd2L678uiWATM6m5Z1VzNCErI3jiGzt6HGY8OVICs40JQq/HALfbyNJmp0UDakEY4pMMaN0Ly5om/B1VI/+xfQ==",
         "name": "delegates",
@@ -6071,10 +6038,10 @@ PACKAGES = {
         "name": "env-paths",
         "url": "https://registry.npmjs.org/env-paths/-/env-paths-2.2.1.tgz",
     },
-    "envinfo@7.8.1": {
-        "integrity": "sha512-/o+BXHmB7ocbHEAs6F2EnG0ogybVVUdkRunTT2glZU9XAaGmhqskrvKwqXuDfNjEO0LZKWdejEEpnq8aM0tOaw==",
+    "envinfo@7.14.0": {
+        "integrity": "sha512-CO40UI41xDQzhLB1hWyqUKgFhs250pNcGbyGKe1l/e4FSaI/+YE4IMG76GDt0In67WLPACIITC+sOi08x4wIvg==",
         "name": "envinfo",
-        "url": "https://registry.npmjs.org/envinfo/-/envinfo-7.8.1.tgz",
+        "url": "https://registry.npmjs.org/envinfo/-/envinfo-7.14.0.tgz",
     },
     "err-code@2.0.3": {
         "integrity": "sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==",
@@ -6693,6 +6660,11 @@ PACKAGES = {
         "name": "flat-cache",
         "url": "https://registry.npmjs.org/flat-cache/-/flat-cache-3.0.4.tgz",
     },
+    "flat@5.0.2": {
+        "integrity": "sha512-b6suED+5/3rTpUBdG1gupIl8MPFCAMA0QXwmljLhvCUKcUvdE4gWky9zpuGCcXHOsz4J9wPGNWq6OKpmIzz3hQ==",
+        "name": "flat",
+        "url": "https://registry.npmjs.org/flat/-/flat-5.0.2.tgz",
+    },
     "flatted@3.2.7": {
         "integrity": "sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==",
         "name": "flatted",
@@ -6715,22 +6687,6 @@ PACKAGES = {
         "integrity": "sha512-TMKDUnIte6bfb5nWv7V/caI169OHgvwjb7V4WkeUvbQQdjr5rWKqHFiKWb/fcOwB+CzBT+qbWjvj+DVwRskpIg==",
         "name": "foreground-child",
         "url": "https://registry.npmjs.org/foreground-child/-/foreground-child-3.1.1.tgz",
-    },
-    "form-data@3.0.1": {
-        "deps": [
-            {
-                "id": "asynckit@0.4.0",
-            },
-            {
-                "id": "combined-stream@1.0.8",
-            },
-            {
-                "id": "mime-types@2.1.34",
-            },
-        ],
-        "integrity": "sha512-RHkBKtLWUVwd7SqRIvCZMEvAMoGUp0XU+seQiZejj0COz3RI3hWP4sCv3gZWWLjJTd7rGwcsF5eKZGii0r/hbg==",
-        "name": "form-data",
-        "url": "https://registry.npmjs.org/form-data/-/form-data-3.0.1.tgz",
     },
     "forwarded@0.2.0": {
         "integrity": "sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==",
@@ -8681,16 +8637,6 @@ PACKAGES = {
         "integrity": "sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==",
         "name": "neo-async",
         "url": "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz",
-    },
-    "node-fetch@2.6.7-dc3fc578": {
-        "deps": [
-            {
-                "id": "whatwg-url@5.0.0",
-            },
-        ],
-        "integrity": "sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==",
-        "name": "node-fetch",
-        "url": "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.7.tgz",
     },
     "node-fetch@2.7.0-85c52311": {
         "deps": [
@@ -11001,25 +10947,25 @@ PACKAGES = {
             },
         ],
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11033,15 +10979,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11057,7 +11003,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -11071,7 +11017,7 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
@@ -11237,10 +11183,15 @@ PACKAGES = {
         "name": "typescript",
         "url": "https://registry.npmjs.org/typescript/-/typescript-5.5.4.tgz",
     },
-    "undici-types@6.19.8": {
-        "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==",
+    "undici-types@7.8.0": {
+        "integrity": "sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==",
         "name": "undici-types",
-        "url": "https://registry.npmjs.org/undici-types/-/undici-types-6.19.8.tgz",
+        "url": "https://registry.npmjs.org/undici-types/-/undici-types-7.8.0.tgz",
+    },
+    "undici@7.12.0": {
+        "integrity": "sha512-GrKEsc3ughskmGA9jevVlIOPMiiAHJ4OFUtaAH+NhfTUSiZ1wMPIQqQvAJUrJspFXJt3EBWgpAeoHEDVT1IBug==",
+        "name": "undici",
+        "url": "https://registry.npmjs.org/undici/-/undici-7.12.0.tgz",
     },
     "unique-filename@1.1.1": {
         "deps": [
@@ -11383,22 +11334,22 @@ PACKAGES = {
         "name": "webidl-conversions",
         "url": "https://registry.npmjs.org/webidl-conversions/-/webidl-conversions-3.0.1.tgz",
     },
-    "webpack-cli@5.0.2-dc3fc578": {
+    "webpack-cli@6.0.1-dc3fc578": {
         "deps": [
             {
-                "id": "@discoveryjs/json-ext@0.5.7",
+                "id": "@discoveryjs/json-ext@0.6.3",
             },
             {
                 "id": "colorette@2.0.20",
             },
             {
-                "id": "commander@10.0.1",
+                "id": "commander@12.1.0",
             },
             {
                 "id": "cross-spawn@7.0.3",
             },
             {
-                "id": "envinfo@7.8.1",
+                "id": "envinfo@7.14.0",
             },
             {
                 "id": "fastest-levenshtein@1.0.16",
@@ -11413,29 +11364,29 @@ PACKAGES = {
                 "id": "rechoir@0.8.0",
             },
             {
-                "id": "webpack-merge@5.8.0",
+                "id": "webpack-merge@6.0.1",
             },
         ],
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11449,15 +11400,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11473,7 +11424,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -11487,13 +11438,13 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
-        "integrity": "sha512-4y3W5Dawri5+8dXm3+diW6Mn1Ya+Dei6eEVAdIduAmYNLzv1koKVAqsfgrrc9P2mhrYHQphx5htnGkcNwtubyQ==",
+        "integrity": "sha512-MfwFQ6SfwinsUVi0rNJm7rHZ31GyTcpVE5pgVA3hwFRb7COD4TzjUUwhGWKfO50+xdc2MQPuEBBJoqIMGt3JDw==",
         "name": "webpack-cli",
-        "url": "https://registry.npmjs.org/webpack-cli/-/webpack-cli-5.0.2.tgz",
+        "url": "https://registry.npmjs.org/webpack-cli/-/webpack-cli-6.0.1.tgz",
     },
     "webpack-dev-middleware@5.3.1-9b645cec": {
         "deps": [
@@ -11514,25 +11465,25 @@ PACKAGES = {
             },
         ],
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11546,15 +11497,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11570,7 +11521,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -11584,7 +11535,7 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
@@ -11683,25 +11634,25 @@ PACKAGES = {
             },
         ],
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11715,15 +11666,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11739,7 +11690,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -11753,7 +11704,7 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
@@ -11761,18 +11712,21 @@ PACKAGES = {
         "name": "webpack-dev-server",
         "url": "https://registry.npmjs.org/webpack-dev-server/-/webpack-dev-server-4.13.3.tgz",
     },
-    "webpack-merge@5.8.0": {
+    "webpack-merge@6.0.1": {
         "deps": [
             {
                 "id": "clone-deep@4.0.1",
             },
             {
+                "id": "flat@5.0.2",
+            },
+            {
                 "id": "wildcard@2.0.1",
             },
         ],
-        "integrity": "sha512-/SaI7xY0831XwP6kzuwhKWVKDP9t1QY1h65lAFLbZqMPIuYcD9QAW4u9STIbU9kaJbPBB/geU/gLr1wDjOhQ+Q==",
+        "integrity": "sha512-hXXvrjtx2PLYx4qruKl+kyRSLc52V+cCvMxRjmKwoA+CBbbF5GfIBtR6kCvl0fYGqTUPKB+1ktVmTHqMOzgCBg==",
         "name": "webpack-merge",
-        "url": "https://registry.npmjs.org/webpack-merge/-/webpack-merge-5.8.0.tgz",
+        "url": "https://registry.npmjs.org/webpack-merge/-/webpack-merge-6.0.1.tgz",
     },
     "webpack-sources@3.2.3": {
         "integrity": "sha512-/DyMEOrDgLKKIG0fmvtz+4dUX/3Ghozwgm6iPp8KRhvn+eQf9+Q7GWxVNMk3+uCPWfdXYC4ExGBckIXdFEfH1w==",
@@ -11852,25 +11806,25 @@ PACKAGES = {
             },
         ],
         "extra_deps": {
-            "@webpack-cli/configtest@2.0.1-c3f3761f": [
+            "@webpack-cli/configtest@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/info@2.0.1-c3f3761f": [
+            "@webpack-cli/info@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "@webpack-cli/serve@2.0.2-c3f3761f": [
+            "@webpack-cli/serve@3.0.1-a51dfb68": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11884,15 +11838,15 @@ PACKAGES = {
                     "id": "webpack@5.82.0-dc3fc578",
                 },
             ],
-            "webpack-cli@5.0.2-dc3fc578": [
+            "webpack-cli@6.0.1-dc3fc578": [
                 {
-                    "id": "@webpack-cli/configtest@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/configtest@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/info@2.0.1-c3f3761f",
+                    "id": "@webpack-cli/info@3.0.1-a51dfb68",
                 },
                 {
-                    "id": "@webpack-cli/serve@2.0.2-c3f3761f",
+                    "id": "@webpack-cli/serve@3.0.1-a51dfb68",
                 },
                 {
                     "id": "webpack-dev-server@4.13.3-dc3fc578",
@@ -11908,7 +11862,7 @@ PACKAGES = {
             ],
             "webpack-dev-server@4.13.3-dc3fc578": [
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
                 {
                     "id": "webpack-dev-middleware@5.3.1-9b645cec",
@@ -11922,7 +11876,7 @@ PACKAGES = {
                     "id": "terser-webpack-plugin@5.3.7-72950c15",
                 },
                 {
-                    "id": "webpack-cli@5.0.2-dc3fc578",
+                    "id": "webpack-cli@6.0.1-dc3fc578",
                 },
             ],
         },
@@ -12140,11 +12094,7 @@ ROOTS = [
         "name": "@types/long",
     },
     {
-        "id": "@types/node-fetch@2.5.12",
-        "name": "@types/node-fetch",
-    },
-    {
-        "id": "@types/node@20.17.30",
+        "id": "@types/node@24.1.0",
         "name": "@types/node",
     },
     {
@@ -12196,10 +12146,6 @@ ROOTS = [
         "name": "long",
     },
     {
-        "id": "node-fetch@2.6.7-dc3fc578",
-        "name": "node-fetch",
-    },
-    {
         "id": "npm@9.9.0",
         "name": "npm",
     },
@@ -12236,7 +12182,11 @@ ROOTS = [
         "name": "typescript",
     },
     {
-        "id": "webpack-cli@5.0.2-dc3fc578",
+        "id": "undici@7.12.0",
+        "name": "undici",
+    },
+    {
+        "id": "webpack-cli@6.0.1-dc3fc578",
         "name": "webpack-cli",
     },
     {

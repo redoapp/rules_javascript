@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "importHelpers": true,
+    "lib": ["es2022"],
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
-    "target": "es2020"
+    "target": "es2022"
   }
 }

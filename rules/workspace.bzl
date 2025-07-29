@@ -5,15 +5,15 @@ load("//npm:workspace.bzl", "npm")
 load("//typescript:workspace.bzl", "ts_directory_npm_plugin")
 load(":npm_data.bzl", "PACKAGES", "ROOTS")
 
-def repositories(version = "22.4.1"):
+def repositories(nodejs_version = "24.4.1"):
     nodejs_repositories(
         name = "better_rules_javascript_nodejs",
-        repositories = NODEJS_REPOSITORIES[version],
+        repositories = NODEJS_REPOSITORIES[nodejs_version],
     )
 
     nodejs_toolchains(
         toolchain = "@better_rules_javascript//nodejs/default:nodejs_runtime",
-        repositories = NODEJS_REPOSITORIES[version],
+        repositories = NODEJS_REPOSITORIES[nodejs_version],
     )
 
     npm(

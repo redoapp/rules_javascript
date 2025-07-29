@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
-    "lib": ["es2019"]
+    "esModuleInterop": true
   },
   "extends": "@better-rules-javascript/tools-typescript/tsconfig.common.json"
 }
