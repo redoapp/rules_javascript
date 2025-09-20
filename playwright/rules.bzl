@@ -40,7 +40,7 @@ def _playwright_browsers_resolve_impl(ctx):
 
     return [default_info]
 
-playwrigh_browsers_resolve = rule(
+playwright_browsers_resolve = rule(
     doc = "Resolve playwright browsers.",
     implementation = _playwright_browsers_resolve_impl,
     attrs = {
@@ -293,9 +293,10 @@ def playwright_tool_rule(toolchain):
     )
 
 playwright_android = playwright_tool_rule(":android.toolchain_type")
+playwright_chromium = playwright_tool_rule(":chromium.toolchain_type")
+playwright_chromium_headless_shell = playwright_tool_rule(":chromium-headless-shell.toolchain_type")
 playwright_chromium_tip_of_tree_headless_shell = playwright_tool_rule(":chromium-tip-of-tree-headless-shell.toolchain_type")
 playwright_chromium_tip_of_tree = playwright_tool_rule(":chromium-tip-of-tree.toolchain_type")
-playwright_chromium = playwright_tool_rule(":chromium.toolchain_type")
 playwright_ffmpeg = playwright_tool_rule(":ffmpeg.toolchain_type")
 playwright_firefox_beta = playwright_tool_rule(":firefox-beta.toolchain_type")
 playwright_firefox = playwright_tool_rule(":firefox.toolchain_type")

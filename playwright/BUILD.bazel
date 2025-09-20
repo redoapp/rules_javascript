@@ -4,6 +4,7 @@ load(
     ":rules.bzl",
     "playwright_android",
     "playwright_chromium",
+    "playwright_chromium_headless_shell",
     "playwright_chromium_tip_of_tree",
     "playwright_chromium_tip_of_tree_headless_shell",
     "playwright_ffmpeg",
@@ -46,8 +47,13 @@ playwright_android(
     visibility = ["//visibility:public"],
 )
 
-playwright_chromium_tip_of_tree_headless_shell(
+playwright_chromium_headless_shell(
     name = "chromium_headless_shell",
+    visibility = ["//visibility:public"],
+)
+
+playwright_chromium_tip_of_tree_headless_shell(
+    name = "chromium_tip_of_tree_headless_shell",
     visibility = ["//visibility:public"],
 )
 
