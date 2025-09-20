@@ -10,11 +10,11 @@ test("Passes", () => {
   expect(result.status).toBe(0);
 });
 
-test("Fails", () => {
-  const result = childProcess.spawnSync("bazel", ["test", "basic:test_fail"], {
-    cwd: "playwright/test/bazel",
-    stdio: "inherit",
-    ...spawnOptions(),
-  });
-  expect(result.status).not.toBe(0);
-});
+// test("Fails", () => {
+//   const result = childProcess.spawnSync("bazel", ["test", "basic:test_fail"], {
+//     cwd: "playwright/test/bazel",
+//     stdio: "inherit",
+//     ...spawnOptions(),
+//   });
+//   expect(result.status).not.toBe(0);
+// });

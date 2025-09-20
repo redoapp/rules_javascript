@@ -4,6 +4,7 @@ load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_pr
 load("@rules_python//python:repositories.bzl", "py_repositories", "python_register_toolchains")
 load("//commonjs:workspace.bzl", "cjs_directory_npm_plugin")
 load("//npm:workspace.bzl", "npm")
+load("//playwright:workspace.bzl", "playwright_repositories", "playwright_toolchains")
 load("//rules:workspace.bzl", javascript_repositories = "repositories")
 load("//tools/npm:npm.bzl", "PACKAGES", "ROOTS")
 load("//typescript:workspace.bzl", "ts_directory_npm_plugin")
@@ -38,3 +39,6 @@ def test_repositories1():
         ts_directory_npm_plugin(),
     ]
     npm("npm", PACKAGES, ROOTS, plugins)
+
+    playwright_repositories()
+    playwright_toolchains()

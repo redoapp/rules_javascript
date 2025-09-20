@@ -3,6 +3,62 @@ load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "gen_ma
 load("//javascript:providers.bzl", "JsInfo")
 load("//nodejs:providers.bzl", "NodejsInfo")
 load("//util:path.bzl", "output", "runfile_path")
+load(":playwright.bzl", "TOOLS")
+load(":providers.bzl", "PlaywrightToolInfo")
+
+def _playwright_browsers_resolve_impl(ctx):
+    actions = ctx.actions
+    bash_runfiles_default = ctx.attr._bash_runfiles[DefaultInfo]
+    lib = ctx.file.lib
+    name = ctx.attr.name
+    path = ctx.attr.path
+    if path.startswith("/"):
+        path = path[len("/"):]
+    else:
+        path = "/".join([part for part in [ctx.label.package, path] if part])
+    resolve = ctx.executable._resolve
+    resolve_default = ctx.attr._resolve[DefaultInfo]
+    runner = ctx.file._runner
+    workspace = ctx.workspace_name
+
+    bin = actions.declare_file(name)
+    actions.expand_template(
+        is_executable = True,
+        output = bin,
+        substitutions = {
+            "%{lib}": shell.quote(runfile_path(workspace, lib)),
+            "%{output}": shell.quote(path),
+            "%{resolve}": shell.quote(runfile_path(workspace, resolve)),
+        },
+        template = runner,
+    )
+
+    runfiles = ctx.runfiles(files = [lib])
+    runfiles = runfiles.merge(bash_runfiles_default.default_runfiles)
+    runfiles = runfiles.merge(resolve_default.default_runfiles)
+    default_info = DefaultInfo(executable = bin, runfiles = runfiles)
+
+    return [default_info]
+
+playwrigh_browsers_resolve = rule(
+    doc = "Resolve playwright browsers.",
+    implementation = _playwright_browsers_resolve_impl,
+    attrs = {
+        "lib": attr.label(allow_single_file = True, mandatory = True),
+        "path": attr.string(mandatory = True),
+        "_bash_runfiles": attr.label(default = "@bazel_tools//tools/bash/runfiles"),
+        "_resolve": attr.label(
+            cfg = "target",
+            default = "//playwright/resolve:bin",
+            executable = True,
+        ),
+        "_runner": attr.label(
+            allow_single_file = True,
+            default = "resolve.sh.tpl",
+        ),
+    },
+    executable = True,
+)
 
 def _playwright_transition_impl(settings, attrs):
     return {"//javascript:module": "node"}
@@ -42,6 +98,7 @@ def _playwright_test_impl(ctx):
     cjs_deps = [config_cjs, playwright_cjs, esm_linker_cjs, module_linker_cjs] + [ctx.attr.dep[0][CjsInfo]] + preload_cjs + extra_deps_cjs
     js_deps = [config_js, playwright_js, esm_linker_js, module_linker_js] + [ctx.attr.dep[0][JsInfo]] + preload_js + extra_deps_js
     output_ = output(label = ctx.label, actions = actions)
+    playwright_tools = [target[PlaywrightToolInfo] for target in ctx.attr.tools]
     workspace = ctx.workspace_name
 
     preload_modules = [
@@ -74,6 +131,7 @@ def _playwright_test_impl(ctx):
         output = bin,
         is_executable = True,
         substitutions = {
+            "%{bin}": shell.quote(runfile_path(workspace, bin)),
             "%{config}": shell.quote("%s/%s" % (runfile_path(workspace, config_cjs.package), config)),
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
             "%{esm_loader}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace, esm_linker_cjs.package)),
@@ -98,6 +156,10 @@ def _playwright_test_impl(ctx):
         transitive_files = depset(
             transitive = [js_info.transitive_files for js_info in js_deps],
         ),
+        root_symlinks = {
+            "%s.browsers/%s" % (runfile_path(workspace, bin), playwright_tool.name): playwright_tool.file
+            for playwright_tool in playwright_tools
+        },
     )
     runfiles = runfiles.merge_all([default_info.default_runfiles for default_info in data_default if default_info.default_runfiles != None])
 
@@ -155,13 +217,12 @@ playwright_test = rule(
             doc = "Preloaded modules",
             providers = [CjsInfo, CjsPath, JsInfo],
         ),
+        "tools": attr.label_list(
+            doc = "Tools",
+            providers = [PlaywrightToolInfo],
+        ),
         "_allowlist_function_transition": attr.label(
             default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
-        ),
-        "_config": attr.label(
-            cfg = _playwright_transition,
-            default = "//playwright/config:lib",
-            providers = [CjsInfo, JsInfo],
         ),
         "_esm_linker": attr.label(
             default = "//nodejs/esm-linker:dist_lib",
@@ -188,3 +249,55 @@ playwright_test = rule(
     implementation = _playwright_test_impl,
     test = True,
 )
+
+def _playwright_toolchain_impl(ctx):
+    file = ctx.file.file
+    path = ctx.attr.path
+
+    toolchain_info = platform_common.ToolchainInfo(
+        file = file,
+        path = path,
+    )
+
+    return [toolchain_info]
+
+playwright_toolchain = rule(
+    implementation = _playwright_toolchain_impl,
+    attrs = {
+        "file": attr.label(allow_single_file = True, mandatory = True),
+        "path": attr.string(mandatory = True),
+    },
+)
+
+def playwright_tool_types(tools, **kwargs):
+    for tool_name in tools:
+        native.toolchain_type(
+            name = "%s.toolchain_type" % (tool_name),
+            **kwargs
+        )
+
+def playwright_tool_rule(toolchain):
+    def _impl(ctx):
+        toolchain_ = ctx.toolchains[toolchain]
+
+        playwright_tool_info = PlaywrightToolInfo(
+            name = toolchain_.path,
+            file = toolchain_.file,
+        )
+
+        return [playwright_tool_info]
+
+    return rule(
+        implementation = _impl,
+        toolchains = [toolchain],
+    )
+
+playwright_android = playwright_tool_rule(":android.toolchain_type")
+playwright_chromium_tip_of_tree_headless_shell = playwright_tool_rule(":chromium-tip-of-tree-headless-shell.toolchain_type")
+playwright_chromium_tip_of_tree = playwright_tool_rule(":chromium-tip-of-tree.toolchain_type")
+playwright_chromium = playwright_tool_rule(":chromium.toolchain_type")
+playwright_ffmpeg = playwright_tool_rule(":ffmpeg.toolchain_type")
+playwright_firefox_beta = playwright_tool_rule(":firefox-beta.toolchain_type")
+playwright_firefox = playwright_tool_rule(":firefox.toolchain_type")
+playwright_webkit = playwright_tool_rule(":webkit.toolchain_type")
+playwright_winldd = playwright_tool_rule(":winldd.toolchain_type")

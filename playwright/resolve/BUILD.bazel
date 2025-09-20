@@ -1,5 +1,6 @@
 load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:rules.bzl", "js_library")
+load("//nodejs:rules.bzl", "nodejs_binary")
 load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
@@ -22,8 +23,19 @@ ts_library(
     config = "tsconfig.json",
     config_dep = ":tsconfig",
     root = ":root",
-    visibility = ["//visibility:public"],
     deps = [
+        "//util/json:lib",
+        "//util/starlark:lib",
+        "//util/util:lib",
+        "@better_rules_javascript_npm//@types/argparse:lib",
         "@better_rules_javascript_npm//@types/node:lib",
+        "@better_rules_javascript_npm//argparse:lib",
     ],
+)
+
+nodejs_binary(
+    name = "bin",
+    dep = ":lib",
+    main = "src/main.js",
+    visibility = ["//visibility:public"],
 )

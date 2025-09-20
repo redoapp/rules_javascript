@@ -2297,11 +2297,11 @@ PACKAGES = {
         "name": "@npmcli/move-file",
         "url": "https://registry.npmjs.org/@npmcli/move-file/-/move-file-1.1.2.tgz",
     },
-    "@playwright/test@1.54.1": {
-        "deps": [{"id": "playwright@1.54.1"}],
-        "integrity": "sha512-FS8hQ12acieG2dYSksmLOF7BNxnVf2afRJdCuM1eMSxj6QTSE6G4InGF7oApGgDb65MX7AwMVlIkpru0yZA4Xw==",
+    "@playwright/test@1.55.0": {
+        "deps": [{"id": "playwright@1.55.0"}],
+        "integrity": "sha512-04IXzPwHrW69XusN/SIdDdKZBzMfOT9UNT/YiJit/xpy2VuAoB8NHc8Aplb96zsWDddLnbkPL3TsmrS04ZU2xQ==",
         "name": "@playwright/test",
-        "url": "https://registry.npmjs.org/@playwright/test/-/test-1.54.1.tgz",
+        "url": "https://registry.npmjs.org/@playwright/test/-/test-1.55.0.tgz",
     },
     "@prettier/plugin-xml@3.2.2-dc3fc578": {
         "deps": [
@@ -7338,19 +7338,19 @@ PACKAGES = {
         "name": "pkg-dir",
         "url": "https://registry.npmjs.org/pkg-dir/-/pkg-dir-4.2.0.tgz",
     },
-    "playwright-core@1.54.1": {
-        "integrity": "sha512-Nbjs2zjj0htNhzgiy5wu+3w09YetDx5pkrpI/kZotDlDUaYk0HVA5xrBVPdow4SAUIlhgKcJeJg4GRKW6xHusA==",
+    "playwright-core@1.55.0": {
+        "integrity": "sha512-GvZs4vU3U5ro2nZpeiwyb0zuFaqb9sUiAJuyrWpcGouD8y9/HLgGbNRjIph7zU9D3hnPaisMl9zG9CgFi/biIg==",
         "name": "playwright-core",
-        "url": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.54.1.tgz",
+        "url": "https://registry.npmjs.org/playwright-core/-/playwright-core-1.55.0.tgz",
     },
-    "playwright@1.54.1": {
+    "playwright@1.55.0": {
         "deps": [
             {"id": "fsevents@2.3.2-2882183f"},
-            {"id": "playwright-core@1.54.1"},
+            {"id": "playwright-core@1.55.0"},
         ],
-        "integrity": "sha512-peWpSwIBmSLi6aW2auvrUtf2DqY16YYcCMO8rTVx486jKmDTJg7UAhyrraP98GB8BoPURZP8+nxO7TSd4cPr5g==",
+        "integrity": "sha512-sdCWStblvV1YU909Xqx0DhOjPZE4/5lJsIS84IfN9dAZfcl/CIZ5O8l3o0j7hPMjDvqoTF8ZUcc+i/GL5erstA==",
         "name": "playwright",
-        "url": "https://registry.npmjs.org/playwright/-/playwright-1.54.1.tgz",
+        "url": "https://registry.npmjs.org/playwright/-/playwright-1.55.0.tgz",
     },
     "pluralize@7.0.0": {
         "integrity": "sha512-ARhBOdzS3e41FbkW/XWrTEtukqqLoK5+Z/4UeDaLuSW+39JPeFgs4gCGqsrJHVZX0fUrx//4OF0K1CUGwlIFow==",
@@ -8693,7 +8693,7 @@ ROOTS = [
         "name": "@jest/types",
     },
     {
-        "id": "@playwright/test@1.54.1",
+        "id": "@playwright/test@1.55.0",
         "name": "@playwright/test",
     },
     {
@@ -8809,7 +8809,7 @@ ROOTS = [
         "name": "npm-registry-fetch",
     },
     {
-        "id": "playwright@1.54.1",
+        "id": "playwright@1.55.0",
         "name": "playwright",
     },
     {
