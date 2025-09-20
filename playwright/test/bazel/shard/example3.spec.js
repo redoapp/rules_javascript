@@ -1,3 +1,4 @@
+const { expect, test } = require("@playwright/test");
 const { add } = require("./example");
 
 test("adds numbers", () => {

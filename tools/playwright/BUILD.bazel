@@ -1,0 +1,7 @@
+load("//playwright:rules.bzl", "playwright_browsers_resolve")
+
+playwright_browsers_resolve(
+    name = "browsers_resolve",
+    lib = "@npm_playwright-core_1.55.0//:root",
+    path = "/playwright/default/browsers.bzl",
+)

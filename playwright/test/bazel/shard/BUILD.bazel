@@ -24,6 +24,7 @@ js_library(
     name = "playwright_config",
     srcs = ["playwright.config.js"],
     root = ":root",
+    deps = ["@npm//@playwright/test:lib"],
 )
 
 playwright_test(

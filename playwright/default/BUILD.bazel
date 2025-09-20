@@ -1,0 +1,8 @@
+load("//playwright:browser.bzl", "playwright_tool_toolchains")
+load(":browsers.bzl", "TOOLS")
+
+playwright_tool_toolchains(
+    tools = TOOLS,
+    types = "@better_rules_javascript//playwright:",
+    visibility = ["//visibility:public"],
+)
