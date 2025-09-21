@@ -199,6 +199,7 @@ playwright_test = rule(
         "extra_deps": attr.label_list(
             doc = "Additional runtime dependencies.",
             providers = [CjsInfo, JsInfo],
+            cfg = _playwright_transition,
         ),
         "playwright": attr.label(
             cfg = _playwright_transition,
@@ -216,6 +217,7 @@ playwright_test = rule(
         "preload": attr.label_list(
             doc = "Preloaded modules",
             providers = [CjsInfo, CjsPath, JsInfo],
+            cfg = _playwright_transition,
         ),
         "tools": attr.label_list(
             doc = "Tools",

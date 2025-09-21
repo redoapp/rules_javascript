@@ -148,6 +148,7 @@ jest_test = rule(
         "preload": attr.label_list(
             doc = "Preloaded modules",
             providers = [CjsInfo, CjsPath, JsInfo],
+            cfg = _jest_transition,
         ),
         "_allowlist_function_transition": attr.label(
             default = "@bazel_tools//tools/allowlists/function_transition_allowlist",

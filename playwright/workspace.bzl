@@ -1,9 +1,8 @@
 load("@bazel_skylib//lib:collections.bzl", "collections")
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("//playwright/default:browsers.bzl", "TOOLS", "TOOL_VERSIONS")
 load(":browser.bzl", "tool_platform")
 
-def playwright_repositories(tool_versions = TOOL_VERSIONS):
+def playwright_repositories(tool_versions):
     for name, tool_version in tool_versions.items():
         http_archive(
             add_prefix = "files",
@@ -26,16 +25,16 @@ playwright_toolchain(
             ],
         )
 
-def playwright_toolchains(tools = TOOLS):
+def playwright_toolchains(tools, toolchain_prefix):
     for tool_name, tool_platforms in tools.items():
         for platform in sorted(collections.uniq([tool_platform(tool) for tool in tool_platforms]), key = _tool_platform_key):
-            native.register_toolchains(
-                "@better_rules_javascript//playwright/default:%s.%s_%s" % (
-                    tool_name,
-                    str(platform.os).replace("@platforms//os:", ""),
-                    str(platform.arch).replace("@platforms//cpu:", ""),
-                ) if platform else "@better_rules_javascript//playwright/default:%s" % tool_name,
-            )
+            toolchain = "%s%s.%s_%s" % (
+                toolchain_prefix,
+                tool_name,
+                str(platform.os).replace("@platforms//os:", ""),
+                str(platform.arch).replace("@platforms//cpu:", ""),
+            ) if platform else "%s%s" % (toolchain_prefix, tool_name)
+            native.register_toolchains(toolchain)
 
 def _tool_platform_key(tool_platform):
     return not tool_platform
