@@ -6,7 +6,7 @@ def playwright_repositories():
         tool_versions = TOOL_VERSIONS,
     )
 
-def playwright_toolchains(tools, toolchain_prefix):
+def playwright_toolchains():
     playwright_toolchains_(
         tools = TOOLS,
         toolchain_prefix = "@better_rules_javascript//playwright/default:",
