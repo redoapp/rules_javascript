@@ -7,7 +7,7 @@ test("References tslib", async () => {
   const bin = await bazelBin("typescript/test/bazel");
   const result = childProcess.spawnSync("bazel", ["build", "tslib:lib"], {
     cwd: "typescript/test/bazel",
-    stdio: "pipe",
+    stdio: "inherit",
     ...spawnOptions(),
   });
   expect(result.status).toBe(0);
@@ -23,7 +23,7 @@ test("Does not reference tslib", async () => {
   const bin = await bazelBin("typescript/test/bazel");
   const result = childProcess.spawnSync("bazel", ["build", "tslib:nolib"], {
     cwd: "typescript/test/bazel",
-    stdio: "pipe",
+    stdio: "inherit",
     ...spawnOptions(),
   });
   expect(result.status).toBe(0);
