@@ -106,7 +106,7 @@ def _ts_eslint_format_impl(ctx):
     }
 
     args = actions.args()
-    args.add("--confi", ts_eslint.config_path)
+    args.add("--config", ts_eslint.config_path)
     args.add("--manifest", ts_compile.manifest)
     for file_def in file_defs.values():
         args.add("%s=%s" % (file_def.src.path, file_def.generated.path))
