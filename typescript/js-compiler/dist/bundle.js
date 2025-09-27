@@ -694,6 +694,9 @@ class VfsDir {
         this.delegate = delegate;
         this.extraIterator = undefined;
     }
+    async [Symbol.asyncDispose]() {
+        await this.delegate?.[Symbol.asyncDispose]();
+    }
     [Symbol.asyncIterator]() {
         return {
             next: async () => {
@@ -704,6 +707,9 @@ class VfsDir {
                 return this;
             },
         };
+    }
+    async [Symbol.dispose]() {
+        await this.delegate?.[Symbol.dispose]();
     }
     close(cb) {
         if (this.delegate !== undefined) {
@@ -1589,7 +1595,9 @@ class JsWorker {
         this.parser = new JsArgumentParser();
         this.parser.add_argument("--config", { required: true });
         this.parser.add_argument("--manifest", { required: true });
-        this.parser.add_argument("src", { nargs: "*" });
+        this.parser.add_argument("--src-dir", { dest: "srcDir" });
+        this.parser.add_argument("output");
+        this.parser.add_argument("srcs", { nargs: "*" });
     }
     parseConfig(config) {
         const parsed = ts.getParsedCommandLineOfConfigFile(config, {}, {
@@ -1614,18 +1622,25 @@ class JsWorker {
         await this.setupVfs(args.manifest);
         const parsed = this.parseConfig(args.config);
         await promises.mkdir(parsed.options.outDir, { recursive: true });
-        for (const src of args.src) {
-            await transpileFile(src, parsed);
+        for (const src of args.srcs) {
+            let outputPath;
+            if (args.srcDir === undefined) {
+                outputPath = args.output;
+            }
+            else {
+                const fileName = path.resolve(src);
+                [outputPath] = ts.getOutputFileNames({ ...parsed, fileNames: [fileName] }, fileName, false);
+                outputPath = path.resolve(args.output, path.relative(args.srcDir, outputPath));
+            }
+            await transpileFile(src, outputPath, parsed);
         }
     }
 }
-async function transpileFile(src, parsed) {
-    src = path.resolve(src);
-    const [outputPath] = ts.getOutputFileNames({ ...parsed, fileNames: [src] }, src, false);
+async function transpileFile(src, outputPath, parsed) {
     const input = await promises.readFile(src, "utf8");
     const result = ts.transpileModule(input, {
-        fileName: src,
-        compilerOptions: parsed.options,
+        fileName: path.basename(src),
+        compilerOptions: { ...parsed.options },
     });
     if (result.diagnostics.length > 0) {
         throw new JsWorkerError(formatDiagnostics(result.diagnostics));

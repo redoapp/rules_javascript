@@ -4,11 +4,11 @@ import { WrapperVfs } from "@better-rules-javascript/nodejs-fs-linker/vfs";
 import { JsonFormat } from "@better-rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { basename, dirname, relative, resolve } from "node:path";
 import {
-  ParsedCommandLine,
   getOutputFileNames,
   getParsedCommandLineOfConfigFile,
+  ParsedCommandLine,
   sys,
   transpileModule,
 } from "typescript";
@@ -17,7 +17,9 @@ import { formatDiagnostics } from "./diagnostic";
 interface JsArgs {
   config: string;
   manifest: string;
-  src: string[];
+  output: string;
+  srcDir: string;
+  srcs: string[];
 }
 
 export class JsWorkerError extends Error {}
@@ -32,7 +34,9 @@ export class JsWorker {
   constructor(private readonly vfs: WrapperVfs) {
     this.parser.add_argument("--config", { required: true });
     this.parser.add_argument("--manifest", { required: true });
-    this.parser.add_argument("src", { nargs: "*" });
+    this.parser.add_argument("--src-dir", { dest: "srcDir" });
+    this.parser.add_argument("output");
+    this.parser.add_argument("srcs", { nargs: "*" });
   }
 
   private readonly parser = new JsArgumentParser();
@@ -74,25 +78,33 @@ export class JsWorker {
     const parsed = this.parseConfig(args.config);
     await mkdir(parsed.options.outDir!, { recursive: true });
 
-    for (const src of args.src) {
-      await transpileFile(src, parsed);
+    for (const src of args.srcs) {
+      let outputPath: string;
+      if (args.srcDir === undefined) {
+        outputPath = args.output;
+      } else {
+        const fileName = resolve(src);
+        [outputPath] = getOutputFileNames(
+          { ...parsed, fileNames: [fileName] },
+          fileName,
+          false,
+        );
+        outputPath = resolve(args.output, relative(args.srcDir, outputPath));
+      }
+      await transpileFile(src, outputPath, parsed);
     }
   }
 }
 
-async function transpileFile(src: string, parsed: ParsedCommandLine) {
-  src = resolve(src);
-
-  const [outputPath] = getOutputFileNames(
-    { ...parsed, fileNames: [src] },
-    src,
-    false,
-  );
-
+async function transpileFile(
+  src: string,
+  outputPath: string,
+  parsed: ParsedCommandLine,
+) {
   const input = await readFile(src, "utf8");
   const result = transpileModule(input, {
-    fileName: src,
-    compilerOptions: parsed.options,
+    fileName: basename(src),
+    compilerOptions: { ...parsed.options },
   });
   if (result.diagnostics!.length > 0) {
     throw new JsWorkerError(formatDiagnostics(result.diagnostics!));
