@@ -62,6 +62,7 @@ ts_library(
     deps = [
         "//bazel/worker:lib",
         "//commonjs/package:lib",
+        "//util/argparse:lib",
         "//util/json:lib",
         "@better_rules_javascript_npm//@types/argparse:lib",
         "@better_rules_javascript_npm//@types/node:lib",

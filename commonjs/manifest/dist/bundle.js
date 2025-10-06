@@ -4659,6 +4659,25 @@ Object.defineProperty(module.exports, 'Const', {
 // end
 });
 
+/**
+ * Faster version of "append" action.
+ * @see {@link https://github.com/nodeca/argparse/issues/184 | nodeca/argparse#184}
+ */
+class AppendAction extends argparse.Action {
+    constructor(options) {
+        super(options);
+        this.default = options.default;
+    }
+    call(_, namespace, values) {
+        let items = namespace[this.dest];
+        if (items === this.default) {
+            items = this.default ? [...this.default] : [];
+            namespace[this.dest] = items;
+        }
+        items.push(values);
+    }
+}
+
 function getPackages(packageArgs) {
     const packages = new Map();
     const packageIdByPath = new Map();
@@ -4750,14 +4769,16 @@ class ManifestWorker {
             prog: "package-manifest",
         });
         this.parser.add_argument("--package", {
-            action: "append",
+            // https://github.com/nodeca/argparse/issues/184
+            action: AppendAction,
             default: [],
             dest: "packages",
             help: "Package",
             type: packageArg,
         });
         this.parser.add_argument("--dep", {
-            action: "append",
+            // https://github.com/nodeca/argparse/issues/184
+            action: AppendAction,
             default: [],
             dest: "deps",
             help: "Dependency",

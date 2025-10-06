@@ -694,6 +694,9 @@ class VfsDir {
         this.delegate = delegate;
         this.extraIterator = undefined;
     }
+    async [Symbol.asyncDispose]() {
+        await this.delegate?.[Symbol.asyncDispose]();
+    }
     [Symbol.asyncIterator]() {
         return {
             next: async () => {
@@ -704,6 +707,9 @@ class VfsDir {
                 return this;
             },
         };
+    }
+    async [Symbol.dispose]() {
+        await this.delegate?.[Symbol.dispose]();
     }
     close(cb) {
         if (this.delegate !== undefined) {

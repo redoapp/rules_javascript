@@ -13,6 +13,7 @@ ts_library(
     root = ":root",
     deps = [
         "//pkg/install-manifest:lib",
+        "//util/argparse:lib",
         "//util/json:lib",
         "@better_rules_javascript//bazel/worker:lib",
         "@better_rules_javascript_npm//@types/argparse:lib",

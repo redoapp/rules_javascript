@@ -1,14 +1,15 @@
 import { PackageTree } from "@better-rules-javascript/commonjs-package";
+import { AppendAction } from "@better-rules-javascript/util-argparse/actions";
 import { JsonFormat } from "@better-rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import * as fs from "node:fs";
 import {
-  addDeps,
   DepArg,
   DetailedDeps,
-  getPackages,
-  getPackageTree,
   PackageArg,
+  addDeps,
+  getPackageTree,
+  getPackages,
 } from "./manifest";
 
 interface Args {
@@ -36,14 +37,16 @@ class WorkerArgumentParser extends ArgumentParser {
 export class ManifestWorker {
   constructor() {
     this.parser.add_argument("--package", {
-      action: "append",
+      // https://github.com/nodeca/argparse/issues/184
+      action: AppendAction,
       default: [],
       dest: "packages",
       help: "Package",
       type: packageArg,
     });
     this.parser.add_argument("--dep", {
-      action: "append",
+      // https://github.com/nodeca/argparse/issues/184
+      action: AppendAction,
       default: [],
       dest: "deps",
       help: "Dependency",

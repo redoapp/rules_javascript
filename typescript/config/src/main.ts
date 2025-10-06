@@ -1,3 +1,4 @@
+import { AppendAction } from "@better-rules-javascript/util-argparse/actions";
 import { ArgumentParser } from "argparse";
 import { writeFile } from "node:fs/promises";
 import { dirname, relative } from "node:path";
@@ -9,15 +10,22 @@ const parser = new ArgumentParser(<any>{
 });
 parser.add_argument("--config");
 parser.add_argument("--declaration-dir", { dest: "declarationDir" });
-parser.add_argument("--file", { dest: "files", action: "append", default: [] });
+parser.add_argument("--file", {
+  dest: "files", // https://github.com/nodeca/argparse/issues/184
+  action: AppendAction,
+  default: [],
+});
 parser.add_argument("--module");
 parser.add_argument("--root-dir", { dest: "rootDir", required: true });
-parser.add_argument("--root-dirs", { dest: "rootDirs", action: "append" });
+parser.add_argument("--root-dirs", {
+  dest: "rootDirs", // https://github.com/nodeca/argparse/issues/184
+  action: AppendAction,
+});
 parser.add_argument("--source-map", { default: "false", dest: "sourceMap" });
 parser.add_argument("--out-dir", { dest: "outDir" });
 parser.add_argument("--target");
 parser.add_argument("--type-root", {
-  action: "append",
+  action: AppendAction,
   dest: "typeRoots",
   default: [],
 });

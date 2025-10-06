@@ -25,6 +25,7 @@ nodejs_modules_package(
         "//nodejs/fs-linker:root",
         "//test:root",
         "//tools/typescript:root",
+        "//util/argparse:root",
         "//util/cache:root",
         "//util/json:root",
         "//util/starlark:root",

@@ -3,6 +3,7 @@ import {
   InstallManifest,
   installManifestFormat,
 } from "@better-rules-javascript/pkg-install-manifest";
+import { AppendAction } from "@better-rules-javascript/util-argparse/actions";
 import { JsonFormat } from "@better-rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import { createHash } from "node:crypto";
@@ -20,19 +21,19 @@ export class InstallManifestGenWorker {
   constructor() {
     const parser = new ArgumentParser();
     parser.add_argument("--dir", {
-      action: "append",
+      action: AppendAction,
       default: [],
       metavar: ["NAME", "ORIGIN"],
       nargs: 2,
     });
     parser.add_argument("--file", {
-      action: "append",
+      action: AppendAction,
       default: [],
       metavar: ["NAME", "SRC", "RUNFILE", "EXECUTABLE", "ORIGIN"],
       nargs: 5,
     });
     parser.add_argument("--manifest", {
-      action: "append",
+      action: AppendAction,
       default: [],
       metavar: "PATH",
     });
@@ -41,7 +42,7 @@ export class InstallManifestGenWorker {
       default: false,
     });
     parser.add_argument("--symlink", {
-      action: "append",
+      action: AppendAction,
       default: [],
       metavar: ["NAME", "TARGET", "ORIGIN"],
       nargs: 3,

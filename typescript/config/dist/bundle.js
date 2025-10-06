@@ -4,6 +4,25 @@ var argparse = require('argparse');
 var promises = require('node:fs/promises');
 var node_path = require('node:path');
 
+/**
+ * Faster version of "append" action.
+ * @see {@link https://github.com/nodeca/argparse/issues/184 | nodeca/argparse#184}
+ */
+class AppendAction extends argparse.Action {
+    constructor(options) {
+        super(options);
+        this.default = options.default;
+    }
+    call(_, namespace, values) {
+        let items = namespace[this.dest];
+        if (items === this.default) {
+            items = this.default ? [...this.default] : [];
+            namespace[this.dest] = items;
+        }
+        items.push(values);
+    }
+}
+
 const parser = new argparse.ArgumentParser({
     prog: "typescript-config",
     description: "Generate tsconfig.",
@@ -11,15 +30,22 @@ const parser = new argparse.ArgumentParser({
 });
 parser.add_argument("--config");
 parser.add_argument("--declaration-dir", { dest: "declarationDir" });
-parser.add_argument("--file", { dest: "files", action: "append", default: [] });
+parser.add_argument("--file", {
+    dest: "files", // https://github.com/nodeca/argparse/issues/184
+    action: AppendAction,
+    default: [],
+});
 parser.add_argument("--module");
 parser.add_argument("--root-dir", { dest: "rootDir", required: true });
-parser.add_argument("--root-dirs", { dest: "rootDirs", action: "append" });
+parser.add_argument("--root-dirs", {
+    dest: "rootDirs", // https://github.com/nodeca/argparse/issues/184
+    action: AppendAction,
+});
 parser.add_argument("--source-map", { default: "false", dest: "sourceMap" });
 parser.add_argument("--out-dir", { dest: "outDir" });
 parser.add_argument("--target");
 parser.add_argument("--type-root", {
-    action: "append",
+    action: AppendAction,
     dest: "typeRoots",
     default: [],
 });
