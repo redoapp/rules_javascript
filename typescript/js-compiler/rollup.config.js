@@ -3,14 +3,12 @@ const { nodeResolve } = require("@rollup/plugin-node-resolve");
 
 module.exports = {
   input: "src/main.js",
-  external: [
-    "argparse",
-    "protobufjs",
-    "protobufjs/minimal",
-    "long",
-    "tslib",
-    "typescript",
-  ],
+  external: (moduleId, parentId) =>
+    !!parentId &&
+    !moduleId.startsWith("/") &&
+    !moduleId.startsWith("./") &&
+    !moduleId.startsWith("../") &&
+    !moduleId.startsWith("@better-rules-javascript/"),
   inlineDynamicImports: true,
   output: { file: "bundle.js" },
   plugins: [commonjs(), nodeResolve()],
