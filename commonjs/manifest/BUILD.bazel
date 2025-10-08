@@ -14,7 +14,7 @@ rollup_bundle(
 
 generate(
     name = "gen",
-    srcs = ["dist"],
+    srcs = glob(["dist/**/*.js"]),
     data = [":gen_bundle"],
     data_prefix = "dist",
     data_strip_prefix = "bundle",

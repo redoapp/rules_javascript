@@ -264,7 +264,11 @@ def _ts_library_impl(ctx):
             args = actions.args()
             args.add("--config", transpile_tsconfig)
             args.add("--manifest", transpile_package_manifest)
-            args.add_all([ts_])
+            if srcs and srcs[0].is_source:
+                args.add("--src-transform")
+                args.add("/".join([part for part in [label.workspace_root, label.package] if part]))
+                args.add(output_.path)
+            args.add_all([file])
             args.set_param_file_format("multiline")
             args.use_param_file("@%s", use_always = True)
             actions.run(
@@ -275,7 +279,7 @@ def _ts_library_impl(ctx):
                     "supports-workers": "1",
                 },
                 inputs = depset(
-                    [ts_, transpile_package_manifest, transpile_tsconfig],
+                    [file, transpile_package_manifest, transpile_tsconfig],
                     transitive = [js_info.transitive_files for js_info in compiler.runtime_js] + [tsconfig_js.transitive_files] if tsconfig_js else [],
                 ),
                 progress_message = "Transpiling %s to JavaScript" % file.path,
@@ -374,7 +378,7 @@ def _ts_library_impl(ctx):
     ts_compile_info = TsCompileInfo(
         compiler = compiler.bin,
         config_path = tsconfig.path,
-        configs = depset([tsconfig], transitive = [tsconfig_js.transitive_files]),
+        configs = depset([tsconfig], transitive = tsconfig_js and [tsconfig_js.transitive_files]),
         declarations = depset(transitive = [dep.transitive_files for dep in ts_deps]),
         manifest = package_manifest,
         runtime_js = depset(transitive = [js_info.transitive_files for js_info in compiler.runtime_js]),

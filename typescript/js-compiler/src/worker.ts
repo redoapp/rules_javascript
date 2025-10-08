@@ -18,6 +18,7 @@ interface JsArgs {
   config: string;
   manifest: string;
   src: string[];
+  srcTransform?: [string, string];
 }
 
 export class JsWorkerError extends Error {}
@@ -32,6 +33,10 @@ export class JsWorker {
   constructor(private readonly vfs: WrapperVfs) {
     this.parser.add_argument("--config", { required: true });
     this.parser.add_argument("--manifest", { required: true });
+    this.parser.add_argument("--src-transform", {
+      dest: "srcTransform",
+      nargs: 2,
+    });
     this.parser.add_argument("src", { nargs: "*" });
   }
 
@@ -75,23 +80,40 @@ export class JsWorker {
     await mkdir(parsed.options.outDir!, { recursive: true });
 
     for (const src of args.src) {
-      await transpileFile(src, parsed);
+      await transpileFile(
+        src,
+        args.srcTransform
+          ? src.replace(
+              args.srcTransform[0],
+              args.srcTransform[0]
+                ? args.srcTransform[1]
+                : `${args.srcTransform[1]}/`,
+            )
+          : src,
+        parsed,
+      );
     }
   }
 }
 
-async function transpileFile(src: string, parsed: ParsedCommandLine) {
-  src = resolve(src);
+async function transpileFile(
+  src: string,
+  // pretend name
+  srcName: string,
+  parsed: ParsedCommandLine,
+) {
+  // TypeScript requires all absolute paths or all relative
+  srcName = resolve(srcName);
 
   const [outputPath] = getOutputFileNames(
-    { ...parsed, fileNames: [src] },
-    src,
+    { ...parsed, fileNames: [srcName] },
+    srcName,
     false,
   );
 
   const input = await readFile(src, "utf8");
   const result = transpileModule(input, {
-    fileName: src,
+    fileName: srcName,
     compilerOptions: parsed.options,
   });
   if (result.diagnostics!.length > 0) {

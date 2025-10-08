@@ -1595,6 +1595,10 @@ class JsWorker {
         this.parser = new JsArgumentParser();
         this.parser.add_argument("--config", { required: true });
         this.parser.add_argument("--manifest", { required: true });
+        this.parser.add_argument("--src-transform", {
+            dest: "srcTransform",
+            nargs: 2,
+        });
         this.parser.add_argument("src", { nargs: "*" });
     }
     parseConfig(config) {
@@ -1621,16 +1625,23 @@ class JsWorker {
         const parsed = this.parseConfig(args.config);
         await promises.mkdir(parsed.options.outDir, { recursive: true });
         for (const src of args.src) {
-            await transpileFile(src, parsed);
+            await transpileFile(src, args.srcTransform
+                ? src.replace(args.srcTransform[0], args.srcTransform[0]
+                    ? args.srcTransform[1]
+                    : `${args.srcTransform[1]}/`)
+                : src, parsed);
         }
     }
 }
-async function transpileFile(src, parsed) {
-    src = path.resolve(src);
-    const [outputPath] = ts.getOutputFileNames({ ...parsed, fileNames: [src] }, src, false);
+async function transpileFile(src, 
+// pretend name
+srcName, parsed) {
+    // TypeScript requires all absolute paths or all relative
+    srcName = path.resolve(srcName);
+    const [outputPath] = ts.getOutputFileNames({ ...parsed, fileNames: [srcName] }, srcName, false);
     const input = await promises.readFile(src, "utf8");
     const result = ts.transpileModule(input, {
-        fileName: src,
+        fileName: srcName,
         compilerOptions: parsed.options,
     });
     if (result.diagnostics.length > 0) {
