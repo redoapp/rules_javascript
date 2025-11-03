@@ -23,7 +23,7 @@ function abspath () {
 export NODE_PACKAGE_MANIFEST="$RUNFILES_DIR"/%{package_manifest}
 
 %{env} \
-  exec -a "$0" "$RUNFILES_DIR"/%{node} \
+  exec -a "$0" %{node} \
   -r "$(abspath "$RUNFILES_DIR"/%{runtime})" \
   -r "$(abspath "$RUNFILES_DIR"/%{module_linker})" \
   --experimental-import-meta-resolve \

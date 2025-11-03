@@ -230,7 +230,7 @@ def _nodejs_binary_impl(ctx):
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
             "%{esm_loader}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, esm_linker_cjs.package)),
             "%{main_module}": shell.quote(main_module),
-            "%{node}": shell.quote(runfile_path(workspace_name, node.bin)),
+            "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(runfile_path(workspace_name, node.bin)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
@@ -243,7 +243,7 @@ def _nodejs_binary_impl(ctx):
     )
 
     runfiles = ctx.runfiles(
-        files = [node.bin, package_manifest] + ctx.files.data,
+        files = [package_manifest] + ([] if type(node.bin) == "string" else [node.bin]) + ctx.files.data,
         transitive_files = depset(
             transitive = [js_dep.transitive_files] +
                          [esm_linker_js.transitive_files, module_linker_js.transitive_files, runtime_js.transitive_files] +
@@ -540,7 +540,7 @@ def _nodejs_repl_impl(ctx):
         substitutions = {
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
             "%{esm_loader}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, esm_linker_cjs.package)),
-            "%{node}": shell.quote(runfile_path(workspace_name, node.bin)),
+            "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(runfile_path(workspace_name, node.bin)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
@@ -553,7 +553,7 @@ def _nodejs_repl_impl(ctx):
     )
 
     runfiles = ctx.runfiles(
-        files = [node.bin, package_manifest] + ctx.files.data,
+        files = [package_manifest] + ([] if type(node.bin) == "string" else [node.bin]) + ctx.files.data,
         transitive_files = depset(
             transitive = [esm_linker_js.transitive_files, module_linker_js.transitive_files, runtime_js.transitive_files] +
                          [js_dep.transitive_files for js_dep in js_deps + preload_js],
