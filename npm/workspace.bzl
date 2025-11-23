@@ -31,6 +31,7 @@ def _npm_import_external_impl(ctx, plugins):
     deps = [struct(id = dep["id"], name = dep["name"]) for dep in [json.decode(d) for d in ctx.attr.deps]]
     extra_deps = {id: [json.decode(d) for d in deps] for id, deps in ctx.attr.extra_deps.items()}
     package_name = ctx.attr.package_name
+    tars = ctx.attr.tars
 
     ctx.extract(
         archive = ctx.attr.package,
@@ -52,7 +53,7 @@ def _npm_import_external_impl(ctx, plugins):
     build = ""
 
     package = struct(
-        archive = ctx.attr.package,
+        archives = [ctx.attr.package] + ctx.attr.tars,
         arch = [arch for arch in ctx.attr.arch if arch in ARCHES],
         deps = deps,
         extra_deps = extra_deps,
@@ -91,6 +92,9 @@ _npm_import_external_attrs = {
     "package_name": attr.string(
         doc = "Package name.",
         mandatory = True,
+    ),
+    "tars": attr.label_list(
+        doc = "Extra tarballs.",
     ),
 }
 
@@ -198,6 +202,7 @@ def npm(name, packages, roots, plugins = DEFAULT_PLUGINS, auth_patterns = None, 
             libc = package.get("libc"),
             os = package.get("os"),
             package = file,
+            tars = package.get("tars"),
             package_name = package["name"],
             deps = [json.encode({"id": package_repo_name(name, dep["id"]), "name": dep.get("name")}) for dep in package.get("deps", [])],
             extra_deps = extra_deps,

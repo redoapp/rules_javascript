@@ -5,7 +5,7 @@ load("@rules_file//file:rules.bzl", "untar")
 
 untar(
     name = "files",
-    src = {package_archive},
+    srcs = {archives},
     strip_components = 1,
 )
 
@@ -17,7 +17,7 @@ cjs_root(
     visibility = ["//visibility:public"],
 )
     """.strip().format(
-        package_archive = json.encode(str(package.archive)),
+        archives = json.encode([str(archive) for archive in package.archives]),
         package_name = json.encode(package.name),
     )
 
