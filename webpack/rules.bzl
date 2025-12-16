@@ -24,7 +24,7 @@ _webpack_tool_transition = transition(
 )
 
 def _webpack_transition_impl(settings, attrs):
-    return {"//javascript:language": "es2020", "//javascript:module": "esnext"}
+    return {"//javascript:language": "es2020", "//javascript:module": "es2020"}
 
 _webpack_transition = transition(
     implementation = _webpack_transition_impl,
@@ -71,7 +71,7 @@ webpack = rule(
             default = "es2020",
         ),
         "module": attr.string(
-            default = "esnext",
+            default = "es2020",
         ),
         "server": attr.label(
             cfg = "exec",
@@ -369,7 +369,7 @@ webpack_server = rule(
             providers = [JsInfo],
         ),
         "language": attr.string(),
-        "module": attr.string(default = "esnext"),
+        "module": attr.string(default = "es2020"),
         "webpack": attr.label(
             cfg = _webpack_tool_transition,
             doc = "Webpack tools",

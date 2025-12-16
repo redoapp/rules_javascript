@@ -76,6 +76,19 @@ interface Args {
 
   if (args.module) {
     tsconfig.compilerOptions.module = args.module;
+    // should allow choices, but it's so complicated
+    switch (args.module.toLowerCase()) {
+      case "es2015":
+      case "es2020":
+      case "es2022":
+        tsconfig.compilerOptions.moduleResolution = "bundler";
+        break;
+      case "node20":
+        tsconfig.compilerOptions.moduleResolution = "nodenext";
+        break;
+      default:
+        tsconfig.compilerOptions.moduleResolution = "node";
+    }
   }
 
   if (args.declarationDir) {

@@ -8,7 +8,7 @@ load("//util:path.bzl", "output_name", "runfile_path")
 load(":providers.bzl", "RollupInfo")
 
 def _rollup_transition_impl(settings, attrs):
-    return {"//javascript:language": "es2020", "//javascript:module": "esnext"}
+    return {"//javascript:language": "es2020", "//javascript:module": "es2020"}
 
 _rollup_transition = transition(
     implementation = _rollup_transition_impl,

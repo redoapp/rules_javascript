@@ -56,8 +56,7 @@ function output(output: OutputOptions) {
         break;
       }
       case "es2015":
-      case "es2020":
-      case "esnext": {
+      case "es2020": {
         output.format = "es";
         break;
       }
