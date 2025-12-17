@@ -11,7 +11,7 @@ fi
 
 if [ %{refresh} = true ]; then
   echo 'Refreshing lockfile' >&2
-  "$RUNFILES_DIR"/%{yarn} install --cwd="$BUILD_WORKSPACE_DIRECTORY"/%{path} --mode update-lockfile
+  "$RUNFILES_DIR"/%{yarn} --cwd="$BUILD_WORKSPACE_DIRECTORY"/%{path} install --mode update-lockfile
 fi
 
 exec "$RUNFILES_DIR"/%{yarn_resolve} --dir="$BUILD_WORKSPACE_DIRECTORY"/%{path} "$BUILD_WORKSPACE_DIRECTORY"/%{output}
