@@ -61,7 +61,7 @@ export class Resolver {
     const packages = new Trie<string, ResolverPackage>();
     for (const [path, package_] of packageTree.packages.entries()) {
       const resolvedPath = pathParts(resolve(path));
-      const deps = new Map<string, string>();
+      const deps = new Map<string, string>([[package_.name, resolve(path)]]);
       for (const [name, dep] of package_.deps.entries()) {
         deps.set(name, resolve(dep));
       }
