@@ -15,7 +15,7 @@ bzl_library(
         "//nodejs:bzl",
         "//typescript:bzl",
         "//util:bzl",
-        "@rules_file//util:bzl",
+        "@bazel_util//util:bzl",
     ],
 )
 

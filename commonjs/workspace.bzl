@@ -1,7 +1,7 @@
 def _cjs_directory_npm_package_build(package):
     return """
 load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@rules_file//file:rules.bzl", "untar")
+load("@bazel_util//file:rules.bzl", "untar")
 
 untar(
     name = "files",

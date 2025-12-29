@@ -21,7 +21,7 @@ jobs:
         run:
           bazel test tools/bazel:bazelrc.diff tools/lint:format_test
           tools/lint:lint_test
-        # needs rules_file to work with generate directories tools/javascript:js_diff
+        # needs bazel_util to work with generate directories tools/javascript:js_diff
   test:
     name: Test
     runs-on: ubuntu-latest

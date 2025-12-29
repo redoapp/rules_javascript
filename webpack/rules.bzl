@@ -1,6 +1,6 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
-load("@rivet_bazel_util//bazel:providers.bzl", "create_digest")
+load("@bazel_util//bazel:providers.bzl", "create_digest")
 load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "package_path")
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//javascript:rules.bzl", "js_export")
@@ -385,7 +385,7 @@ webpack_server = rule(
         ),
         "_hash": attr.label(
             cfg = "exec",
-            default = "@rivet_bazel_util//util/hash:bin",
+            default = "@bazel_util//util/hash:bin",
             executable = True,
         ),
         "_manifest": attr.label(

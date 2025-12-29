@@ -1,5 +1,5 @@
 load("@bazel_skylib//lib:paths.bzl", "paths")
-load("@rules_file//util:path.bzl", output_name_impl = "output_name")
+load("@bazel_util//util:path.bzl", output_name_impl = "output_name")
 
 def link_file(file, actions, label, output, strip_prefix = "", prefix = ""):
     path = output_name(

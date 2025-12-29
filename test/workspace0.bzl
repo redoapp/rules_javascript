@@ -28,10 +28,10 @@ def test_repositories0():
     FILE_VERSION = "503983f533bede6833c7ee9c3220a51882689eb1"
 
     http_archive(
-        name = "rules_file",
+        name = "bazel_util",
         sha256 = "f57c7fce8d2370d7ac27888c625fb87d1d51bc707985d329b4274211d7ae209e",
-        strip_prefix = "rules_file-%s" % FILE_VERSION,
-        url = "https://github.com/rivethealth/rules_file/archive/%s.zip" % FILE_VERSION,
+        strip_prefix = "bazel_util-%s" % FILE_VERSION,
+        url = "https://github.com/rivethealth/bazel_util/archive/%s.zip" % FILE_VERSION,
     )
 
     # Protobuf
@@ -69,11 +69,11 @@ def test_repositories0():
 
     # Rivet Bazel Util
 
-    RIVET_BAZEL_UTIL_VERSION = "48453fd1e220fd16ce229b3812d8b9bb861296ad"
+    bazel_util_VERSION = "48453fd1e220fd16ce229b3812d8b9bb861296ad"
 
     http_archive(
-        name = "rivet_bazel_util",
+        name = "bazel_util",
         sha256 = "6d82bcbe35a8293550642352da9cb2e6b0138c293e1af0eb282b020e9e1a5209",
-        strip_prefix = "rivet-bazel-util-%s" % RIVET_BAZEL_UTIL_VERSION,
-        url = "https://github.com/rivethealth/rivet-bazel-util/archive/%s.tar.gz" % RIVET_BAZEL_UTIL_VERSION,
+        strip_prefix = "rivet-bazel-util-%s" % bazel_util_VERSION,
+        url = "https://github.com/rivethealth/rivet-bazel-util/archive/%s.tar.gz" % bazel_util_VERSION,
     )

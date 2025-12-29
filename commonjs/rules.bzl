@@ -1,4 +1,4 @@
-load("@rules_file//util:path.bzl", "runfile_path")
+load("@bazel_util//util:path.bzl", "runfile_path")
 load("//util:path.bzl", "output", "output_name")
 load(":providers.bzl", "CjsInfo", "create_package")
 

@@ -13,25 +13,6 @@ http_archive(
     urls = ["https://github.com/bazelbuild/bazel-skylib/archive/%s.tar.gz" % SKYLIB_VERSION],
 )
 
-# File
-
-RULES_FILE_VERSION = "91265992ffbdc44748763bb765b88b98d466b3fa"
-
-http_archive(
-    name = "rules_file",
-    sha256 = "12680251fb30918524a9a951d4b62f26009e1d4dc27e83f136512e684dfc1f2c",
-    strip_prefix = "rules_file-%s" % RULES_FILE_VERSION,
-    url = "https://github.com/redoapp/rules_file/archive/%s.zip" % RULES_FILE_VERSION,
-)
-
-load("@rules_file//buildifier:workspace.bzl", "buildifier_repositories", "buildifier_toolchains")
-
-buildifier_repositories()
-
-buildifier_toolchains()
-
-load("@rules_file//file:workspace.bzl", "files")
-
 # Python
 
 RULES_PYTHON_VERSION = "1.3.0"
@@ -130,16 +111,24 @@ http_archive(
     url = "https://github.com/bazelbuild/stardoc/archive/%s.zip" % STARDOC_VERSION,
 )
 
-# Rivet Bazel Util
+# Bazel Util
 
-RIVET_BAZEL_UTIL_VERSION = "88685d737d73dee74e880e589a6be2569f7f59ed"
+BAZEL_UTIL_VERSION = "6176db569992c21938caf01eb96343ce9fbd5e28"
 
 http_archive(
-    name = "rivet_bazel_util",
-    sha256 = "293dc40fe14073432e9f143222e782f0ce25807f5a0f3c1efec05b4daf9f7ca0",
-    strip_prefix = "rivet-bazel-util-%s" % RIVET_BAZEL_UTIL_VERSION,
-    url = "https://github.com/rivethealth/rivet-bazel-util/archive/%s.tar.gz" % RIVET_BAZEL_UTIL_VERSION,
+    name = "bazel_util",
+    sha256 = "c02c6017d16f7fd244a18cda307c882e2282efa7eb75a64d1ecb48bb80903a1d",
+    strip_prefix = "bazel-util-%s" % BAZEL_UTIL_VERSION,
+    url = "https://github.com/redoapp/bazel-util/archive/%s.tar.gz" % BAZEL_UTIL_VERSION,
 )
+
+load("@bazel_util//buildifier:workspace.bzl", "buildifier_repositories", "buildifier_toolchains")
+
+buildifier_repositories()
+
+buildifier_toolchains()
+
+load("@bazel_util//file:workspace.bzl", "files")
 
 # JavaScript
 

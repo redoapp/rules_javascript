@@ -1,6 +1,6 @@
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load("@rules_file//file:rules.bzl", "untar")
+load("@bazel_util//file:rules.bzl", "untar")
 load("@rules_pkg//pkg:providers.bzl", "PackageFilegroupInfo", "PackageFilesInfo", "PackageSymlinkInfo")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "create_links", "create_package", "gen_manifest", "package_path")

@@ -1,4 +1,4 @@
-load("@rules_file//generate:providers.bzl", "FormatterInfo")
+load("@bazel_util//generate:providers.bzl", "FormatterInfo")
 load("//commonjs:providers.bzl", "CjsInfo")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_export")

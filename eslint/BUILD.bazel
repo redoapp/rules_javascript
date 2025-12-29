@@ -19,7 +19,7 @@ bzl_library(
         "//javascript:bzl",
         "//nodejs:bzl",
         "//util:bzl",
-        "@rules_file//generate:bzl",
+        "@bazel_util//generate:bzl",
     ],
 )
 

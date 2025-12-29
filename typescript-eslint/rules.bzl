@@ -1,4 +1,4 @@
-load("@rules_file//generate:runner.bzl", "create_runner")
+load("@bazel_util//generate:runner.bzl", "create_runner")
 load("//commonjs:providers.bzl", "CjsInfo")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_export")
@@ -163,7 +163,7 @@ ts_eslint_format = rule(
         ),
         "_args": attr.label(
             cfg = "exec",
-            default = "@rules_file//generate/args:bin",
+            default = "@bazel_util//generate/args:bin",
             executable = True,
         ),
         "_bash_runfiles": attr.label(
@@ -172,17 +172,17 @@ ts_eslint_format = rule(
         ),
         "_diff": attr.label(
             cfg = "exec",
-            default = "@rules_file//generate/diff:bin",
+            default = "@bazel_util//generate/diff:bin",
             executable = True,
         ),
         "_run": attr.label(
-            default = "@rules_file//generate/run:bin",
+            default = "@bazel_util//generate/run:bin",
             cfg = "target",
             executable = True,
         ),
         "_runner": attr.label(
             allow_single_file = True,
-            default = "@rules_file//generate:runner.sh.tpl",
+            default = "@bazel_util//generate:runner.sh.tpl",
         ),
     },
     doc = "TypeScript ESLint",

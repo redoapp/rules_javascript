@@ -33,7 +33,7 @@ bzl_library(
         "//third-party:repo_bzl",
         "//util:bzl",
         "@bazel_skylib//lib:shell",
-        "@rules_file//file:bzl",
+        "@bazel_util//file:bzl",
         "@rules_pkg//pkg:bzl_srcs",
     ],
 )

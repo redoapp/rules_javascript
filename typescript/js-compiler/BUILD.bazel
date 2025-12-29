@@ -1,5 +1,5 @@
-load("@rules_file//file:rules.bzl", "directory")
-load("@rules_file//generate:rules.bzl", "generate")
+load("@bazel_util//file:rules.bzl", "directory")
+load("@bazel_util//generate:rules.bzl", "generate")
 load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:rules.bzl", "js_library")
 load("//rollup:rules.bzl", "configure_rollup", "rollup_bundle")

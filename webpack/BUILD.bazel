@@ -22,7 +22,7 @@ bzl_library(
         "//javascript:bzl",
         "//nodejs:bzl",
         "//typescript:bzl",
-        "@rivet_bazel_util//bazel:bzl",
+        "@bazel_util//bazel:bzl",
         "@rules_proto//proto:defs",
     ],
 )
