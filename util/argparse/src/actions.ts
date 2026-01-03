@@ -1,5 +1,9 @@
-import { ArgumentParser, Namespace } from "argparse";
-import { Action, ActionConstructorOptions } from "argparse";
+import {
+  Action,
+  ActionConstructorOptions,
+  ArgumentParser,
+  Namespace,
+} from "argparse";
 
 /**
  * Faster version of "append" action.
