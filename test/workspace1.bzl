@@ -1,15 +1,19 @@
+load("@bazel_features//:deps.bzl", "bazel_features_deps")
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
-load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
-load("@rules_proto_grpc//:repositories.bzl", "rules_proto_grpc_repos", "rules_proto_grpc_toolchains")
+load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies")
+load("@rules_proto//proto:toolchains.bzl", "rules_proto_toolchains")
 load("@rules_python//python:repositories.bzl", "py_repositories", "python_register_toolchains")
-load("//commonjs:workspace.bzl", "cjs_directory_npm_plugin")
+load("//commonjs:workspace.bzl", "cjs_npm_plugin")
 load("//npm:workspace.bzl", "npm")
 load("//playwright/default:workspace.bzl", "playwright_repositories", "playwright_toolchains")
 load("//rules:workspace.bzl", javascript_repositories = "repositories")
 load("//tools/npm:npm.bzl", "PACKAGES", "ROOTS")
-load("//typescript:workspace.bzl", "ts_directory_npm_plugin")
+load("//typescript:workspace.bzl", "ts_npm_plugin")
 
 def test_repositories1():
+    # Bazel features
+    bazel_features_deps()
+
     # Python
     py_repositories()
     python_register_toolchains(name = "python_3_11", python_version = "3.11")
@@ -24,19 +28,13 @@ def test_repositories1():
 
     rules_proto_toolchains()
 
-    # Protobuf
-
-    rules_proto_grpc_toolchains()
-
-    rules_proto_grpc_repos()
-
     # JavaScript
 
     javascript_repositories()
 
     plugins = [
-        cjs_directory_npm_plugin(),
-        ts_directory_npm_plugin(),
+        cjs_npm_plugin(),
+        ts_npm_plugin(),
     ]
     npm("npm", PACKAGES, ROOTS, plugins)
 

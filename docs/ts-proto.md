@@ -98,6 +98,8 @@ js_proto_library(
 ## TsProtoInfo
 
 <pre>
+load("@better_rules_javascript//ts-proto:providers.bzl", "TsProtoInfo")
+
 TsProtoInfo(<a href="#TsProtoInfo-transitive_libs">transitive_libs</a>)
 </pre>
 
@@ -114,6 +116,8 @@ TS proto info
 ## TsProtobuf
 
 <pre>
+load("@better_rules_javascript//ts-proto:providers.bzl", "TsProtobuf")
+
 TsProtobuf(<a href="#TsProtobuf-bin">bin</a>, <a href="#TsProtobuf-tsc">tsc</a>, <a href="#TsProtobuf-deps_cjs">deps_cjs</a>, <a href="#TsProtobuf-deps_js">deps_js</a>, <a href="#TsProtobuf-deps_ts">deps_ts</a>, <a href="#TsProtobuf-options">options</a>)
 </pre>
 
@@ -135,6 +139,8 @@ TypeScript Protobuf compiler
 ## TsProtosInfo
 
 <pre>
+load("@better_rules_javascript//ts-proto:providers.bzl", "TsProtosInfo")
+
 TsProtosInfo(<a href="#TsProtosInfo-cjs">cjs</a>, <a href="#TsProtosInfo-js">js</a>, <a href="#TsProtosInfo-ts">ts</a>, <a href="#TsProtosInfo-default">default</a>)
 </pre>
 
@@ -152,10 +158,12 @@ TsProtosInfo(<a href="#TsProtosInfo-cjs">cjs</a>, <a href="#TsProtosInfo-js">js<
 ## create_lib
 
 <pre>
+load("@better_rules_javascript//ts-proto:providers.bzl", "create_lib")
+
 create_lib(<a href="#create_lib-label">label</a>, <a href="#create_lib-path">path</a>, <a href="#create_lib-files">files</a>, <a href="#create_lib-deps">deps</a>)
 </pre>
 
-    Create library struct
+Create library struct
 
 **PARAMETERS**
 
@@ -175,6 +183,8 @@ create_lib(<a href="#create_lib-label">label</a>, <a href="#create_lib-path">pat
 ## ts_proto_export
 
 <pre>
+load("@better_rules_javascript//ts-proto:rules.bzl", "ts_proto_export")
+
 ts_proto_export(<a href="#ts_proto_export-name">name</a>, <a href="#ts_proto_export-dep">dep</a>, <a href="#ts_proto_export-lib">lib</a>)
 </pre>
 
@@ -182,54 +192,60 @@ TypeScript protobuf library
 
 **ATTRIBUTES**
 
-| Name                                  | Description                    | Type                                                                | Mandatory | Default           |
-| :------------------------------------ | :----------------------------- | :------------------------------------------------------------------ | :-------- | :---------------- |
-| <a id="ts_proto_export-name"></a>name | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                   |
-| <a id="ts_proto_export-dep"></a>dep   | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | <code>None</code> |
-| <a id="ts_proto_export-lib"></a>lib   | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | <code>None</code> |
+| Name                                  | Description                    | Type                                                                | Mandatory | Default |
+| :------------------------------------ | :----------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="ts_proto_export-name"></a>name | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="ts_proto_export-dep"></a>dep   | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `None`  |
+| <a id="ts_proto_export-lib"></a>lib   | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `None`  |
 
 <a id="ts_protoc"></a>
 
 ## ts_protoc
 
 <pre>
-ts_protoc(<a href="#ts_protoc-name">name</a>, <a href="#ts_protoc-bin">bin</a>, <a href="#ts_protoc-deps">deps</a>, <a href="#ts_protoc-options">options</a>, <a href="#ts_protoc-tsc">tsc</a>)
+load("@better_rules_javascript//ts-proto:rules.bzl", "ts_protoc")
+
+ts_protoc(<a href="#ts_protoc-name">name</a>, <a href="#ts_protoc-deps">deps</a>, <a href="#ts_protoc-bin">bin</a>, <a href="#ts_protoc-options">options</a>, <a href="#ts_protoc-tsc">tsc</a>)
 </pre>
 
 **ATTRIBUTES**
 
-| Name                                  | Description                    | Type                                                                | Mandatory | Default         |
-| :------------------------------------ | :----------------------------- | :------------------------------------------------------------------ | :-------- | :-------------- |
-| <a id="ts_protoc-name"></a>name       | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                 |
-| <a id="ts_protoc-bin"></a>bin         | Protoc plugin                  | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                 |
-| <a id="ts_protoc-deps"></a>deps       | Dependencies                   | <a href="https://bazel.build/concepts/labels">List of labels</a>    | required  |                 |
-| <a id="ts_protoc-options"></a>options | -                              | List of strings                                                     | optional  | <code>[]</code> |
-| <a id="ts_protoc-tsc"></a>tsc         | TypeScript compiler            | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                 |
+| Name                                  | Description                    | Type                                                                | Mandatory | Default |
+| :------------------------------------ | :----------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="ts_protoc-name"></a>name       | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="ts_protoc-deps"></a>deps       | Dependencies                   | <a href="https://bazel.build/concepts/labels">List of labels</a>    | required  |         |
+| <a id="ts_protoc-bin"></a>bin         | Protoc plugin                  | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| <a id="ts_protoc-options"></a>options | -                              | List of strings                                                     | optional  | `[]`    |
+| <a id="ts_protoc-tsc"></a>tsc         | TypeScript compiler            | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
 
 <a id="configure_ts_protoc"></a>
 
 ## configure_ts_protoc
 
 <pre>
+load("@better_rules_javascript//ts-proto:rules.bzl", "configure_ts_protoc")
+
 configure_ts_protoc(<a href="#configure_ts_protoc-name">name</a>, <a href="#configure_ts_protoc-tsc">tsc</a>, <a href="#configure_ts_protoc-ts_proto">ts_proto</a>, <a href="#configure_ts_protoc-deps">deps</a>, <a href="#configure_ts_protoc-options">options</a>, <a href="#configure_ts_protoc-visibility">visibility</a>)
 </pre>
 
 **PARAMETERS**
 
-| Name                                                  | Description               | Default Value     |
-| :---------------------------------------------------- | :------------------------ | :---------------- |
-| <a id="configure_ts_protoc-name"></a>name             | <p align="center"> - </p> | none              |
-| <a id="configure_ts_protoc-tsc"></a>tsc               | <p align="center"> - </p> | none              |
-| <a id="configure_ts_protoc-ts_proto"></a>ts_proto     | <p align="center"> - </p> | none              |
-| <a id="configure_ts_protoc-deps"></a>deps             | <p align="center"> - </p> | none              |
-| <a id="configure_ts_protoc-options"></a>options       | <p align="center"> - </p> | <code>[]</code>   |
-| <a id="configure_ts_protoc-visibility"></a>visibility | <p align="center"> - </p> | <code>None</code> |
+| Name                                                  | Description               | Default Value |
+| :---------------------------------------------------- | :------------------------ | :------------ |
+| <a id="configure_ts_protoc-name"></a>name             | <p align="center"> - </p> | none          |
+| <a id="configure_ts_protoc-tsc"></a>tsc               | <p align="center"> - </p> | none          |
+| <a id="configure_ts_protoc-ts_proto"></a>ts_proto     | <p align="center"> - </p> | none          |
+| <a id="configure_ts_protoc-deps"></a>deps             | <p align="center"> - </p> | none          |
+| <a id="configure_ts_protoc-options"></a>options       | <p align="center"> - </p> | `[]`          |
+| <a id="configure_ts_protoc-visibility"></a>visibility | <p align="center"> - </p> | `None`        |
 
 <a id="ts_proto_libraries_rule"></a>
 
 ## ts_proto_libraries_rule
 
 <pre>
+load("@better_rules_javascript//ts-proto:rules.bzl", "ts_proto_libraries_rule")
+
 ts_proto_libraries_rule(<a href="#ts_proto_libraries_rule-aspect">aspect</a>, <a href="#ts_proto_libraries_rule-compiler">compiler</a>)
 </pre>
 

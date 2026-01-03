@@ -16,7 +16,7 @@ js_export(
         package_name = json.encode(package_name),
     )
 
-def _js_directory_npm_package_build(package):
+def _js_npm_package_build(package):
     deps = []
     exports = []
     for i, dep in enumerate(package.deps):
@@ -118,45 +118,19 @@ js_export(
 
     return result
 
-def _js_npm_package_build(exclude_suffixes, package):
-    excludes = ["npm/**/*%s" % suffix for suffix in exclude_suffixes]
-
-    return """
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-
-js_library(
-    name = "lib",
-    root = ":root",
-    deps = {deps},
-    # extra_deps = {extra_deps},
-    srcs = glob(["npm/**/*"], ["npm/**/package.json"] + {excludes}),
-)
-    """.strip().format(
-        deps = json.encode([js_npm_label(dep) for dep in package.deps]),
-        excludes = excludes,
-        extra_deps = json.encode(package.extra_deps),
-    )
-
-def js_directory_npm_plugin():
+def js_npm_plugin():
     def alias_build(package_name, repo):
         return _js_npm_alias_build(package_name, repo)
 
     def package_build(package, files):
-        return _js_directory_npm_package_build(package)
+        return _js_npm_package_build(package)
 
     return struct(
         alias_build = alias_build,
         package_build = package_build,
     )
 
-def js_npm_plugin(exclude_suffixes = []):
-    def alias_build(package_name, repo):
-        return _js_npm_alias_build(package_name, repo)
-
-    def package_build(package, files):
-        return _js_npm_package_build(exclude_suffixes, package)
-
-    return struct(
-        alias_build = alias_build,
-        package_build = package_build,
-    )
+"""
+DEPRECATED: Use js_npm_plugin instead.
+"""
+js_directory_npm_package_build = js_npm_plugin

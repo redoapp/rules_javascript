@@ -3,77 +3,64 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 def test_repositories0():
     # Skylib
 
-    SKYLIB_VERSION = "16de038c484145363340eeaf0e97a0c9889a931b"
+    SKYLIB_VERSION = "1.9.0"
 
     http_archive(
         name = "bazel_skylib",
-        sha256 = "96e0cd3f731f0caef9e9919aa119ecc6dace36b149c2f47e40aa50587790402b",
-        strip_prefix = "bazel-skylib-%s" % SKYLIB_VERSION,
-        urls = ["https://github.com/bazelbuild/bazel-skylib/archive/%s.tar.gz" % SKYLIB_VERSION],
+        sha256 = "3b5b49006181f5f8ff626ef8ddceaa95e9bb8ad294f7b5d7b11ea9f7ddaf8c59",
+        url = "https://github.com/bazelbuild/bazel-skylib/releases/download/%s/bazel-skylib-%s.tar.gz" % (SKYLIB_VERSION, SKYLIB_VERSION),
+    )
+
+    # Bazel features
+
+    BAZEL_FEATURES_VERSION = "1.39.0"
+
+    http_archive(
+        name = "bazel_features",
+        sha256 = "5ab1a90d09fd74555e0df22809ad589627ddff263cff82535815aa80ca3e3562",
+        strip_prefix = "bazel_features-%s" % BAZEL_FEATURES_VERSION,
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v%s/bazel_features-v%s.tar.gz" % (BAZEL_FEATURES_VERSION, BAZEL_FEATURES_VERSION),
     )
 
     # Rules Pkg
 
-    PKG_VERSION = "0aa9277cc66fa26b519a1ad8abac0215fc987484"
+    PKG_VERSION = "1.2.0"
 
     http_archive(
         name = "rules_pkg",
-        sha256 = "d808248021ffc77c731ef516f0efa67085aa8521bd8ccf72421ecf9274ab50d5",
-        strip_prefix = "rules_pkg-%s" % PKG_VERSION,
-        url = "https://github.com/bazelbuild/rules_pkg/archive/%s.tar.gz" % PKG_VERSION,
-    )
-
-    # File
-
-    FILE_VERSION = "503983f533bede6833c7ee9c3220a51882689eb1"
-
-    http_archive(
-        name = "bazel_util",
-        sha256 = "f57c7fce8d2370d7ac27888c625fb87d1d51bc707985d329b4274211d7ae209e",
-        strip_prefix = "bazel_util-%s" % FILE_VERSION,
-        url = "https://github.com/rivethealth/bazel_util/archive/%s.zip" % FILE_VERSION,
+        sha256 = "b5c9184a23bb0bcff241981fd9d9e2a97638a1374c9953bb1808836ce711f990",
+        url = "https://github.com/bazelbuild/rules_pkg/releases/download/%s/rules_pkg-%s.tar.gz" % (PKG_VERSION, PKG_VERSION),
     )
 
     # Protobuf
 
-    PROTO_VERSION = "7e4afce6fe62dbff0a4a03450143146f9f2d7488"
+    PROTO_VERSION = "7.1.0"
 
     http_archive(
         name = "rules_proto",
-        sha256 = "8e7d59a5b12b233be5652e3d29f42fba01c7cbab09f6b3a8d0a57ed6d1e9a0da",
+        sha256 = "14a225870ab4e91869652cfd69ef2028277fc1dc4910d65d353b62d6e0ae21f4",
         strip_prefix = "rules_proto-%s" % PROTO_VERSION,
-        urls = ["https://github.com/bazelbuild/rules_proto/archive/%s.tar.gz" % PROTO_VERSION],
-    )
-
-    # Protobuf
-
-    PROTO_GRPC_VERSION = "2.0.0"
-
-    http_archive(
-        name = "rules_proto_grpc",
-        sha256 = "d771584bbff98698e7cb3cb31c132ee206a972569f4dc8b65acbdd934d156b33",
-        strip_prefix = "rules_proto_grpc-%s" % PROTO_GRPC_VERSION,
-        urls = ["https://github.com/rules-proto-grpc/rules_proto_grpc/archive/%s.tar.gz" % PROTO_GRPC_VERSION],
+        url = "https://github.com/bazelbuild/rules_proto/releases/download/%s/rules_proto-%s.tar.gz" % (PROTO_VERSION, PROTO_VERSION),
     )
 
     # Python
 
-    PYTHON_VERSION = "0.32.2"
+    RULES_PYTHON_VERSION = "1.4.1"
 
     http_archive(
         name = "rules_python",
-        sha256 = "4912ced70dc1a2a8e4b86cec233b192ca053e82bc72d877b98e126156e8f228d",
-        strip_prefix = "rules_python-%s" % PYTHON_VERSION,
-        url = "https://github.com/bazelbuild/rules_python/archive/%s.tar.gz" % PYTHON_VERSION,
+        sha256 = "9f9f3b300a9264e4c77999312ce663be5dee9a56e361a1f6fe7ec60e1beef9a3",
+        strip_prefix = "rules_python-%s" % RULES_PYTHON_VERSION,
+        url = "https://github.com/bazelbuild/rules_python/archive/%s.tar.gz" % RULES_PYTHON_VERSION,
     )
 
-    # Rivet Bazel Util
+    # Bazel Util
 
-    bazel_util_VERSION = "48453fd1e220fd16ce229b3812d8b9bb861296ad"
+    BAZEL_UTIL_VERSION = "08d283ec526b11e0b2c646a85b98ea6b573b2043"
 
     http_archive(
         name = "bazel_util",
-        sha256 = "6d82bcbe35a8293550642352da9cb2e6b0138c293e1af0eb282b020e9e1a5209",
-        strip_prefix = "rivet-bazel-util-%s" % bazel_util_VERSION,
-        url = "https://github.com/rivethealth/rivet-bazel-util/archive/%s.tar.gz" % bazel_util_VERSION,
+        sha256 = "0d5b71f88020eee52158b448d3532561f70b9084860f9a243e91d14d8ba9b9e7",
+        strip_prefix = "bazel-util-%s" % BAZEL_UTIL_VERSION,
+        url = "https://github.com/redoapp/bazel-util/archive/%s.tar.gz" % BAZEL_UTIL_VERSION,
     )

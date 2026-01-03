@@ -75,6 +75,8 @@ js_proto_library(
 ## JsProtobuf
 
 <pre>
+load("@better_rules_javascript//protobufjs:providers.bzl", "JsProtobuf")
+
 JsProtobuf(<a href="#JsProtobuf-runtime">runtime</a>, <a href="#JsProtobuf-bin">bin</a>)
 </pre>
 
@@ -94,6 +96,8 @@ JsProtobuf(<a href="#JsProtobuf-runtime">runtime</a>, <a href="#JsProtobuf-bin">
 ## js_proto
 
 <pre>
+load("@better_rules_javascript//protobufjs:rules.bzl", "js_proto")
+
 js_proto(<a href="#js_proto-name">name</a>, <a href="#js_proto-bin">bin</a>, <a href="#js_proto-runtime">runtime</a>)
 </pre>
 
@@ -110,31 +114,35 @@ js_proto(<a href="#js_proto-name">name</a>, <a href="#js_proto-bin">bin</a>, <a 
 ## js_proto_library
 
 <pre>
+load("@better_rules_javascript//protobufjs:rules.bzl", "js_proto_library")
+
 js_proto_library(<a href="#js_proto_library-name">name</a>, <a href="#js_proto_library-deps">deps</a>, <a href="#js_proto_library-js_proto">js_proto</a>, <a href="#js_proto_library-output">output</a>, <a href="#js_proto_library-root">root</a>)
 </pre>
 
 **ATTRIBUTES**
 
-| Name                                           | Description                    | Type                                                                | Mandatory | Default |
-| :--------------------------------------------- | :----------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
-| <a id="js_proto_library-name"></a>name         | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
-| <a id="js_proto_library-deps"></a>deps         | Protobufs                      | <a href="https://bazel.build/concepts/labels">List of labels</a>    | required  |         |
-| <a id="js_proto_library-js_proto"></a>js_proto | Config                         | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
-| <a id="js_proto_library-output"></a>output     | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
-| <a id="js_proto_library-root"></a>root         | CommonJS root                  | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| Name                                           | Description                    | Type                                                                                                                                                               | Mandatory | Default |
+| :--------------------------------------------- | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------- | :------ |
+| <a id="js_proto_library-name"></a>name         | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a>                                                                                                | required  |         |
+| <a id="js_proto_library-deps"></a>deps         | Protobufs                      | <a href="https://bazel.build/concepts/labels">List of labels</a>                                                                                                   | required  |         |
+| <a id="js_proto_library-js_proto"></a>js_proto | Config                         | <a href="https://bazel.build/concepts/labels">Label</a>                                                                                                            | required  |         |
+| <a id="js_proto_library-output"></a>output     | -                              | <a href="https://bazel.build/concepts/labels">Label</a>; <a href="https://bazel.build/reference/be/common-definitions#configurable-attributes">nonconfigurable</a> | required  |         |
+| <a id="js_proto_library-root"></a>root         | CommonJS root                  | <a href="https://bazel.build/concepts/labels">Label</a>                                                                                                            | required  |         |
 
 <a id="configure_js_proto"></a>
 
 ## configure_js_proto
 
 <pre>
+load("@better_rules_javascript//protobufjs:rules.bzl", "configure_js_proto")
+
 configure_js_proto(<a href="#configure_js_proto-name">name</a>, <a href="#configure_js_proto-dep">dep</a>, <a href="#configure_js_proto-visibility">visibility</a>)
 </pre>
 
 **PARAMETERS**
 
-| Name                                                 | Description               | Default Value     |
-| :--------------------------------------------------- | :------------------------ | :---------------- |
-| <a id="configure_js_proto-name"></a>name             | <p align="center"> - </p> | none              |
-| <a id="configure_js_proto-dep"></a>dep               | <p align="center"> - </p> | none              |
-| <a id="configure_js_proto-visibility"></a>visibility | <p align="center"> - </p> | <code>None</code> |
+| Name                                                 | Description               | Default Value |
+| :--------------------------------------------------- | :------------------------ | :------------ |
+| <a id="configure_js_proto-name"></a>name             | <p align="center"> - </p> | none          |
+| <a id="configure_js_proto-dep"></a>dep               | <p align="center"> - </p> | none          |
+| <a id="configure_js_proto-visibility"></a>visibility | <p align="center"> - </p> | `None`        |

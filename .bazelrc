@@ -6,7 +6,6 @@ import %workspace%/tools/bazel/deleted.bazelrc
 
 # Bzlmod
 common --enable_workspace
-common --noenable_bzlmod
 
 # Cache
 build --disk_cache=~/.cache/bazel-disk

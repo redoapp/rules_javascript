@@ -1,7 +1,7 @@
-load("//commonjs:workspace.bzl", "cjs_directory_npm_plugin")
+load("//commonjs:workspace.bzl", "cjs_npm_plugin")
 load("//npm:workspace.bzl", "npm")
 load("//tools/npm:npm.bzl", "PACKAGES", "ROOTS")
-load("//typescript:workspace.bzl", "ts_directory_npm_plugin")
+load("//typescript:workspace.bzl", "ts_npm_plugin")
 
 def npm_deps():
     npm(
@@ -9,7 +9,7 @@ def npm_deps():
         packages = PACKAGES,
         roots = ROOTS,
         plugins = [
-            cjs_directory_npm_plugin(),
-            ts_directory_npm_plugin(),
+            cjs_npm_plugin(),
+            ts_npm_plugin(),
         ],
     )

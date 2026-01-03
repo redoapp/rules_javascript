@@ -139,6 +139,8 @@ rules to replicate the build process.
 ## npm_publish
 
 <pre>
+load("@better_rules_javascript//npm:rules.bzl", "npm_publish")
+
 npm_publish(<a href="#npm_publish-name">name</a>, <a href="#npm_publish-src">src</a>)
 </pre>
 
@@ -154,50 +156,56 @@ npm_publish(<a href="#npm_publish-name">name</a>, <a href="#npm_publish-src">src
 ## yarn_audit_test
 
 <pre>
+load("@better_rules_javascript//npm:rules.bzl", "yarn_audit_test")
+
 yarn_audit_test(<a href="#yarn_audit_test-name">name</a>, <a href="#yarn_audit_test-data">data</a>, <a href="#yarn_audit_test-path">path</a>)
 </pre>
 
 **ATTRIBUTES**
 
-| Name                                  | Description                    | Type                                                                | Mandatory | Default         |
-| :------------------------------------ | :----------------------------- | :------------------------------------------------------------------ | :-------- | :-------------- |
-| <a id="yarn_audit_test-name"></a>name | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                 |
-| <a id="yarn_audit_test-data"></a>data | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | <code>[]</code> |
-| <a id="yarn_audit_test-path"></a>path | Package relative path          | String                                                              | optional  | <code>""</code> |
+| Name                                  | Description                    | Type                                                                | Mandatory | Default |
+| :------------------------------------ | :----------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="yarn_audit_test-name"></a>name | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="yarn_audit_test-data"></a>data | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
+| <a id="yarn_audit_test-path"></a>path | Package relative path          | String                                                              | optional  | `""`    |
 
 <a id="yarn_resolve"></a>
 
 ## yarn_resolve
 
 <pre>
+load("@better_rules_javascript//npm:rules.bzl", "yarn_resolve")
+
 yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-output">output</a>, <a href="#yarn_resolve-path">path</a>, <a href="#yarn_resolve-refresh">refresh</a>)
 </pre>
 
 **ATTRIBUTES**
 
-| Name                                     | Description                                                   | Type                                                                | Mandatory | Default                     |
-| :--------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------ | :-------- | :-------------------------- |
-| <a id="yarn_resolve-name"></a>name       | A unique name for this target.                                | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                             |
-| <a id="yarn_resolve-output"></a>output   | Package-relative output path                                  | String                                                              | optional  | <code>"npm_data.bzl"</code> |
-| <a id="yarn_resolve-path"></a>path       | Package-relative path to package.json and yarn.lock directory | String                                                              | optional  | <code>""</code>             |
-| <a id="yarn_resolve-refresh"></a>refresh | Whether to refresh                                            | Boolean                                                             | optional  | <code>True</code>           |
+| Name                                     | Description                                                   | Type                                                                | Mandatory | Default          |
+| :--------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------ | :-------- | :--------------- |
+| <a id="yarn_resolve-name"></a>name       | A unique name for this target.                                | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                  |
+| <a id="yarn_resolve-output"></a>output   | Package-relative output path                                  | String                                                              | optional  | `"npm_data.bzl"` |
+| <a id="yarn_resolve-path"></a>path       | Package-relative path to package.json and yarn.lock directory | String                                                              | optional  | `""`             |
+| <a id="yarn_resolve-refresh"></a>refresh | Whether to refresh                                            | Boolean                                                             | optional  | `True`           |
 
 <a id="npm_package"></a>
 
 ## npm_package
 
 <pre>
-npm_package(<a href="#npm_package-name">name</a>, <a href="#npm_package-srcs">srcs</a>, <a href="#npm_package-visibility">visibility</a>, <a href="#npm_package-kwargs">kwargs</a>)
+load("@better_rules_javascript//npm:rules.bzl", "npm_package")
+
+npm_package(<a href="#npm_package-name">name</a>, <a href="#npm_package-srcs">srcs</a>, <a href="#npm_package-visibility">visibility</a>, <a href="#npm_package-kwargs">**kwargs</a>)
 </pre>
 
 **PARAMETERS**
 
-| Name                                          | Description               | Default Value     |
-| :-------------------------------------------- | :------------------------ | :---------------- |
-| <a id="npm_package-name"></a>name             | <p align="center"> - </p> | none              |
-| <a id="npm_package-srcs"></a>srcs             | <p align="center"> - </p> | none              |
-| <a id="npm_package-visibility"></a>visibility | <p align="center"> - </p> | <code>None</code> |
-| <a id="npm_package-kwargs"></a>kwargs         | <p align="center"> - </p> | none              |
+| Name                                          | Description               | Default Value |
+| :-------------------------------------------- | :------------------------ | :------------ |
+| <a id="npm_package-name"></a>name             | <p align="center"> - </p> | none          |
+| <a id="npm_package-srcs"></a>srcs             | <p align="center"> - </p> | none          |
+| <a id="npm_package-visibility"></a>visibility | <p align="center"> - </p> | `None`        |
+| <a id="npm_package-kwargs"></a>kwargs         | <p align="center"> - </p> | none          |
 
 # //npm:workspace.bzl
 
@@ -208,6 +216,8 @@ npm_package(<a href="#npm_package-name">name</a>, <a href="#npm_package-srcs">sr
 ## npm
 
 <pre>
+load("@better_rules_javascript//npm:workspace.bzl", "npm")
+
 npm(<a href="#npm-name">name</a>, <a href="#npm-packages">packages</a>, <a href="#npm-roots">roots</a>, <a href="#npm-plugins">plugins</a>, <a href="#npm-auth_patterns">auth_patterns</a>, <a href="#npm-netrc">netrc</a>)
 </pre>
 
@@ -215,20 +225,22 @@ Npm repositories.
 
 **PARAMETERS**
 
-| Name                                        | Description   | Default Value                                                                                                                                                                                                         |
-| :------------------------------------------ | :------------ | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <a id="npm-name"></a>name                   | Namespace     | none                                                                                                                                                                                                                  |
-| <a id="npm-packages"></a>packages           | Packages      | none                                                                                                                                                                                                                  |
-| <a id="npm-roots"></a>roots                 | Roots         | none                                                                                                                                                                                                                  |
-| <a id="npm-plugins"></a>plugins             | Plugins       | <code>[struct(alias_build = &lt;function alias_build&gt;, package_build = &lt;function package_build&gt;), struct(alias_build = &lt;function alias_build&gt;, package_build = &lt;function package_build&gt;)]</code> |
-| <a id="npm-auth_patterns"></a>auth_patterns | Auth patterns | <code>None</code>                                                                                                                                                                                                     |
-| <a id="npm-netrc"></a>netrc                 | Netrc         | <code>None</code>                                                                                                                                                                                                     |
+| Name                                        | Description   | Default Value                                                                                                                                                                                                                                                                                                  |
+| :------------------------------------------ | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <a id="npm-name"></a>name                   | Namespace     | none                                                                                                                                                                                                                                                                                                           |
+| <a id="npm-packages"></a>packages           | Packages      | none                                                                                                                                                                                                                                                                                                           |
+| <a id="npm-roots"></a>roots                 | Roots         | none                                                                                                                                                                                                                                                                                                           |
+| <a id="npm-plugins"></a>plugins             | Plugins       | `[struct(alias_build = <function alias_build from //commonjs:workspace.bzl>, package_build = <function package_build from //commonjs:workspace.bzl>), struct(alias_build = <function alias_build from //javascript:workspace.bzl>, package_build = <function package_build from //javascript:workspace.bzl>)]` |
+| <a id="npm-auth_patterns"></a>auth_patterns | Auth patterns | `None`                                                                                                                                                                                                                                                                                                         |
+| <a id="npm-netrc"></a>netrc                 | Netrc         | `None`                                                                                                                                                                                                                                                                                                         |
 
 <a id="npm_import_external_rule"></a>
 
 ## npm_import_external_rule
 
 <pre>
+load("@better_rules_javascript//npm:workspace.bzl", "npm_import_external_rule")
+
 npm_import_external_rule(<a href="#npm_import_external_rule-plugins">plugins</a>)
 </pre>
 
@@ -245,6 +257,8 @@ Create a npm_import_external rule.
 ## npm_import_rule
 
 <pre>
+load("@better_rules_javascript//npm:workspace.bzl", "npm_import_rule")
+
 npm_import_rule(<a href="#npm_import_rule-plugins">plugins</a>)
 </pre>
 
@@ -261,6 +275,8 @@ Create an npm import rule.
 ## package_repo_name
 
 <pre>
+load("@better_rules_javascript//npm:workspace.bzl", "package_repo_name")
+
 package_repo_name(<a href="#package_repo_name-prefix">prefix</a>, <a href="#package_repo_name-name">name</a>)
 </pre>
 

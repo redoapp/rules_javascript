@@ -1,5 +1,5 @@
 load("@bazel_skylib//lib:paths.bzl", "paths")
-load("@io_bazel_stardoc//stardoc:stardoc.bzl", _stardoc = "stardoc")
+load("@stardoc//stardoc:stardoc.bzl", _stardoc = "stardoc")
 
 def doc(name, lib, files, header = None, visibility = None):
     stardocs = []

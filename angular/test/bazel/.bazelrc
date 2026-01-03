@@ -1,1 +1,1 @@
-import %workspace%/../../../external/files/files/test/test.bazelrc
+import %workspace%/../../../../files/files/test/test.bazelrc

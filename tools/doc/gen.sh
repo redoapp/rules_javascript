@@ -5,6 +5,8 @@ export RUNFILES_DIR="$0.runfiles"
 
 cd "$BUILD_WORKSPACE_DIRECTORY"
 
-tar x -m -f "$RUNFILES_DIR/better_rules_javascript/tools/doc/docs.tar" -C docs
+ls "$RUNFILES_DIR"
 
-find docs -name '*.md' -not -name index.md -not -name default.md | xargs "$RUNFILES_DIR/better_rules_javascript/tools/doc/doctoc" --maxlevel 2 --notitle README.md
+tar x -m -f "$RUNFILES_DIR/_main/tools/doc/docs.tar" -C docs
+
+find docs -name '*.md' -not -name index.md -not -name default.md | xargs "$RUNFILES_DIR/_main/tools/doc/doctoc" --maxlevel 2 --notitle README.md

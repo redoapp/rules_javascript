@@ -17,11 +17,13 @@
 ## repositories
 
 <pre>
-repositories(<a href="#repositories-version">version</a>)
+load("@better_rules_javascript//rules:workspace.bzl", "repositories")
+
+repositories(<a href="#repositories-nodejs_version">nodejs_version</a>)
 </pre>
 
 **PARAMETERS**
 
-| Name                                     | Description               | Default Value         |
-| :--------------------------------------- | :------------------------ | :-------------------- |
-| <a id="repositories-version"></a>version | <p align="center"> - </p> | <code>"18.8.0"</code> |
+| Name                                                   | Description               | Default Value |
+| :----------------------------------------------------- | :------------------------ | :------------ |
+| <a id="repositories-nodejs_version"></a>nodejs_version | <p align="center"> - </p> | `"24.4.1"`    |

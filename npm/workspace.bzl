@@ -30,25 +30,16 @@ PLATFORMS = [
 def _npm_import_external_impl(ctx, plugins):
     deps = [struct(id = dep["id"], name = dep["name"]) for dep in [json.decode(d) for d in ctx.attr.deps]]
     extra_deps = {id: [json.decode(d) for d in deps] for id, deps in ctx.attr.extra_deps.items()}
+    package = ctx.attr.package
     package_name = ctx.attr.package_name
     tars = ctx.attr.tars
 
-    ctx.extract(
-        archive = ctx.attr.package,
-        output = "tmp",
-    )
-
-    # packages can have different prefixes
-    mv_result = ctx.execute(["sh", "-c", "mv tmp/* npm && rm -fr npm/node_modules"])
-    if mv_result.return_code:
-        fail("Could not extract package")
-
-    ctx.execute(["rm", "-r", "tmp"])
-
-    files_result = ctx.execute(["find", "npm", "-type", "f"])
+    files = set()
+    files_result = ctx.execute(["tar", "tf", package])
     if files_result.return_code:
-        fail("Could not list files")
-    files = [file[len("npm/"):] for file in files_result.stdout.split("\n")]
+        fail("Could not list files in %s (exit code %s)" % (package, files_result.return_code))
+    for file in files_result.stdout.split("\n"):
+        files.add("/".join(file.split("/")[1:]))
 
     build = ""
 
@@ -63,7 +54,7 @@ def _npm_import_external_impl(ctx, plugins):
     )
 
     for plugin in plugins:
-        content = plugin.package_build(package, files)
+        content = plugin.package_build(package, list(files))
         if content:
             build += content
             build += "\n"
