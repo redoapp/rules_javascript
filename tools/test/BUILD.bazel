@@ -1,0 +1,14 @@
+load("@bazel_util//file:rules.bzl", "bazelrc_deleted_packages")
+load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
+
+bazelrc_deleted_packages(
+    name = "bazelrc",
+    output = "tests.bazelrc",
+    packages = [":packages"],
+    visibility = ["//:__subpackages__"],
+)
+
+sh_binary(
+    name = "packages",
+    main = "packages.sh",
+)

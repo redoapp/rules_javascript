@@ -12,7 +12,7 @@ def repositories(nodejs_version = "24.4.1"):
     )
 
     nodejs_toolchains(
-        toolchain = "@better_rules_javascript//nodejs/default:nodejs_runtime",
+        toolchain = Label("//nodejs/default:nodejs_runtime"),
         repositories = NODEJS_REPOSITORIES[nodejs_version],
     )
 

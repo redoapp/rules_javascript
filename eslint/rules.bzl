@@ -8,7 +8,7 @@ load("//util:path.bzl", "runfile_path")
 def configure_eslint(name, config, config_dep, dep = "@better_rules_javascript//eslint:eslint_lib", plugins = [], visibility = None):
     js_export(
         name = "%s.main" % name,
-        dep = "@better_rules_javascript//eslint/linter:lib",
+        dep = Label("//eslint/linter:lib"),
         deps = [dep],
         extra_deps = [config_dep],
         global_deps = plugins,
@@ -19,7 +19,7 @@ def configure_eslint(name, config, config_dep, dep = "@better_rules_javascript//
         name = "%s.bin" % name,
         dep = ":%s.main" % name,
         main = "src/main.js",
-        node = "@better_rules_javascript//nodejs",
+        node = Label("//nodejs"),
         node_options = ["--title=eslint"],
         visibility = ["//visibility:private"],
     )

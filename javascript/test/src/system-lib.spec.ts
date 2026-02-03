@@ -12,7 +12,7 @@ test("Works with system_lib", () => {
     "bazel",
     [
       "run",
-      "--@better_rules_javascript//javascript:system_lib=@//system-lib:b",
+      "--@better_rules_javascript//javascript:system_lib=@@//system-lib:b",
       "system-lib:bin",
     ],
     {

@@ -26,7 +26,7 @@ def configure_ts_compiler(name, ts, tslib = None, visibility = None):
     nodejs_binary(
         main = "lib/tsc.js",
         name = "%s.bin" % name,
-        node = "@better_rules_javascript//nodejs",
+        node = Label("//nodejs"),
         node_options = ["--title=tsc"],
         dep = ts,
         visibility = ["//visibility:private"],
