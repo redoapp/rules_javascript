@@ -93,9 +93,9 @@ def configure_webpack(
         name,
         config,
         config_dep,
-        cli = "@better_rules_javascript//webpack:webpack_cli",
-        webpack = "@better_rules_javascript//webpack",
-        dev_server = "@better_rules_javascript//webpack:webpack_dev_server",
+        cli = Label("//webpack:webpack_cli"),
+        webpack = Label("//webpack"),
+        dev_server = Label("//webpack:webpack_dev_server"),
         node_options = [],
         visibility = None):
     """Set up webpack tools.
@@ -113,7 +113,7 @@ def configure_webpack(
 
     nodejs_binary(
         main = "bin/cli.js",
-        node = "@better_rules_javascript//nodejs",
+        node = Label("//nodejs"),
         name = "%s.bin" % name,
         dep = ":%s.main" % name,
         node_options = node_options,
@@ -123,14 +123,14 @@ def configure_webpack(
     js_export(
         name = "%s.main" % name,
         dep = cli,
-        deps = [config_dep, "@better_rules_javascript//webpack/load-config:lib"],
+        deps = [config_dep, Label("//webpack/load-config:lib")],
     )
 
     nodejs_binary(
         name = "%s.server_bin" % name,
         node_options = node_options,
         main = "bin/webpack-dev-server.js",
-        node = "@better_rules_javascript//nodejs",
+        node = Label("//nodejs"),
         dep = ":%s.server_main" % name,
         visibility = ["//visibility:private"],
     )
@@ -138,7 +138,7 @@ def configure_webpack(
     js_export(
         name = "%s.server_main" % name,
         dep = dev_server,
-        deps = [config_dep, "@better_rules_javascript//webpack/load-config:lib"],
+        deps = [config_dep, Label("//webpack/load-config:lib")],
     )
 
     _webpack(

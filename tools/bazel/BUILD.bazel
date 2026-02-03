@@ -1,16 +1,11 @@
-load("@bazel_util//file:rules.bzl", "bazelrc_deleted_packages")
-
-bazelrc_deleted_packages(
-    name = "bazelrc",
-    output = "deleted.bazelrc",
-    packages = [
-        ":test_packages",
-        "@files//:packages",
-    ],
-    visibility = ["//:__subpackages__"],
-)
+load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
 
 sh_binary(
-    name = "test_packages",
-    srcs = ["test-packages.sh"],
+    name = "bazelrc",
+    data = [
+        "//tools/test:bazelrc",
+        "@files//packages:bazelrc",
+    ],
+    main = "bazelrc.sh",
+    visibility = ["//:__subpackages__"],
 )

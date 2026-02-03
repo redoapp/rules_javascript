@@ -7,10 +7,10 @@ load("//typescript:providers.bzl", "TsCompileInfo")
 load("//util:path.bzl", "runfile_path")
 load(":providers.bzl", "TsEslintInfo")
 
-def configure_ts_eslint(name, config, config_dep, dep = "@better_rules_javascript//eslint:eslint_lib", plugins = [], node_options = [], visibility = None):
+def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_lib"), plugins = [], node_options = [], visibility = None):
     js_export(
         name = "%s.main" % name,
-        dep = "@better_rules_javascript//typescript-eslint/linter:lib",
+        dep = Label("//typescript-eslint/linter:lib"),
         deps = [dep],
         extra_deps = [config_dep],
         global_deps = plugins,
@@ -21,7 +21,7 @@ def configure_ts_eslint(name, config, config_dep, dep = "@better_rules_javascrip
         name = "%s.bin" % name,
         dep = ":%s.main" % name,
         main = "src/main.js",
-        node = "@better_rules_javascript//nodejs",
+        node = Label("//nodejs"),
         node_options = ["--title=eslint"] + node_options,
         visibility = ["//visibility:private"],
     )

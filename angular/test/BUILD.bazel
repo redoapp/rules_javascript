@@ -23,7 +23,7 @@ jest_test(
     data = glob(["bazel/**/*"]) + ["@files//:common"],
     dep = ":test_lib",
     jest = "@npm//jest:lib",
-    node = "@better_rules_javascript//tools/nodejs",
+    node = "//tools/nodejs",
     tags = ["local"],
     visibility = ["//visibility:public"],
 )

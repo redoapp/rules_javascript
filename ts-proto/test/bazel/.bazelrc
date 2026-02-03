@@ -1,1 +1,1 @@
-import %workspace%/../../../../files/files/test/test.bazelrc
+import %workspace%/../../../../bazel_util++file+files/files/test/test.bazelrc

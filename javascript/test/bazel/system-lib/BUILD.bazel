@@ -15,5 +15,5 @@ js_library(
 nodejs_binary(
     name = "bin",
     dep = ":a",
-    main = "better_rules_javascript_test/system-lib/a.js",
+    main = "_main/system-lib/a.js",
 )
