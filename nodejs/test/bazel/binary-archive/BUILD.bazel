@@ -1,6 +1,6 @@
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary_package")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary_package")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 pkg_tar(
@@ -10,7 +10,7 @@ pkg_tar(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/nodejs-binary",
+    package_name = "@rules-javascript-test/nodejs-binary",
     descriptors = ["package.json"],
 )
 

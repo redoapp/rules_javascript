@@ -1,7 +1,6 @@
 # CommonJS
 
-better_rules_javascript organizes modules and other files into CommonJS
-"packages."
+rules_javascript organizes modules and other files into CommonJS "packages."
 
 While the focus is JavaScript, this is also the organization used for other
 language, like CSS.
@@ -22,7 +21,7 @@ language, like CSS.
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
 
 cjs_root(
     name = "root",

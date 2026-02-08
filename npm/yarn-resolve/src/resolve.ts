@@ -1,4 +1,4 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { Locator, structUtils } from "@yarnpkg/core";
 import { patchUtils } from "@yarnpkg/plugin-patch";
 import { createHash } from "node:crypto";

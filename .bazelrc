@@ -5,9 +5,6 @@ startup --host_jvm_args=-DBAZEL_TRACK_SOURCE_DIRECTORIES=1
 import %workspace%/tools/file/files.bazelrc
 import %workspace%/tools/test/tests.bazelrc
 
-# Bzlmod
-common --enable_workspace
-
 # Cache
 build --disk_cache=~/.cache/bazel-disk
 clean --disk_cache ~/.cache/bazel-disk

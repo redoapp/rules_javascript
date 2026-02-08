@@ -1,5 +1,5 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { PackageTree } from "@rules-javascript/commonjs-package";
+import { JsonFormat } from "@rules-javascript/util-json";
 import * as fs from "node:fs";
 import { patchFs } from "./fs";
 import { patchFsPromises } from "./fs-promises";

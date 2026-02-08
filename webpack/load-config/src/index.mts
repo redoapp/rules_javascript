@@ -1,4 +1,4 @@
-import * as configure from "@better-rules-javascript/webpack-config";
+import * as configure from "@rules-javascript/webpack-config";
 import * as path from "node:path";
 import type { Configuration } from "webpack";
 

@@ -1,4 +1,4 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
+import { PackageTree } from "@rules-javascript/commonjs-package";
 import * as path from "node:path";
 import { VfsImpl, VfsNode } from "./vfs";
 

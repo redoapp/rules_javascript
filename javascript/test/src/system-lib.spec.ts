@@ -1,4 +1,4 @@
-import { spawnOptions } from "@better-rules-javascript/test";
+import { spawnOptions } from "@rules-javascript/test";
 import * as childProcess from "node:child_process";
 
 test("Works with system_lib", () => {
@@ -12,7 +12,7 @@ test("Works with system_lib", () => {
     "bazel",
     [
       "run",
-      "--@better_rules_javascript//javascript:system_lib=@@//system-lib:b",
+      "--@rules_javascript//javascript:system_lib=@@//system-lib:b",
       "system-lib:bin",
     ],
     {

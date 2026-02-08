@@ -1,4 +1,4 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { Configuration, Locator } from "@yarnpkg/core";
 import { npmHttpUtils } from "@yarnpkg/plugin-npm";
 

@@ -13,4 +13,4 @@ source "${RUNFILES_DIR:-/dev/null}/$f" 2>/dev/null || \
 
 set -euo pipefail
 
-"$(rlocation %{resolve})" --browsers="$(rlocation %{lib})"/browsers.json > "$BUILD_WORKSPACE_DIRECTORY"/%{output}
+"$(rlocation %{resolve})" --browsers="$(rlocation %{lib})"/browsers.json %{tools} > "$BUILD_WORKSPACE_DIRECTORY"/%{output}

@@ -1,6 +1,6 @@
 # Npm
 
-Better_rules_javascript can use npm packages.
+rules_javascript can use npm packages.
 
 <!-- START doctoc -->
 <!-- END doctoc -->
@@ -14,7 +14,7 @@ Bazel repositories. This approach integrates well into the Bazel ecosystem and
 avoid excessive downloads. Compare with
 [rules_jvm_external](https://github.com/bazelbuild/rules_jvm_external).
 
-better_rules_javascript uses Yarn 2.
+rules_javascript uses Yarn 2.
 
 ## Yarn
 
@@ -32,30 +32,32 @@ Create a package.json.
 }
 ```
 
-Create a `yarn_resolve` target.
+Also create an empty yarn.lock.
 
-**BUILD.bazel**
+**yarn.lock**
 
-```bzl
-yarn_resolve(
-    name = "resolve_npm",
-)
+```text
+
 ```
 
-Resolve packages and generate npm_data.bzl
+Add to yarn extension.
+
+**MODULE.bazel**
+
+```bzl
+yarn = use_extension("@rules_javascript//npm:extensions.bzl", "yarn")
+yarn.workspace(
+  name = "my_npm",
+  data = "npm.json",
+  path = "/",
+)
+use_repo(yarn, npm = "my_npm")
+```
+
+Resolve packages and generate npm.json.
 
 ```sh
-bazel run :resolve_npm
-```
-
-Load the repositories.
-
-**WORKSPACE.bazel**
-
-```bzl
-load("@better_rules_javascript//npm:workspace.bzl", "npm")
-load(":npm_data.bzl", npm_packages = "PACKAGES", npm_roots = "ROOTS")
-npm("npm", npm_packages, npm_roots)
+bazel run @npm//:resolve
 ```
 
 ### Plugins
@@ -65,24 +67,19 @@ TypeScript, CSS, etc.
 
 To support these, the npm repositories can be customized via "plugins."
 
-The defaults are:
+If you use TypeScript, use
 
 ```bzl
-load("@better_rules_javascript//commonjs:workspace.bzl", "cjs_npm_plugin")
-load("@better_rules_javascript//js:workspace.bzl", "js_npm_plugin")
-
-npm(
-  name = "npm",
-  packages = npm_packages,
-  roots = npm_roots,
-  plugins = [
-    cjs_npm_plugin(),
-    js_npm_plugin(),
-  ]
+yarn.workspace(
+    name = "my_npm",
+    data = "npm.json",
+    path = "/",
+    plugins = [
+        "@rules_javascript//commonjs:npm_plugin.bzl",
+        "@rules_javascript//typescript:npm_plugin.bzl",
+    ],
 )
 ```
-
-If you use TypeScript, replace `js_npm_plugin()` with `ts_npm_plugin()`.
 
 ### Usage
 

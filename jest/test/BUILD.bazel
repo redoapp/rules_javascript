@@ -12,7 +12,7 @@ js_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/jest-test",
+    package_name = "@rules-javascript/jest-test",
 )
 
 jest_test(

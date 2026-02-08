@@ -1,10 +1,10 @@
-import { rlocation } from "@better-rules-javascript/bazel-runfiles";
+import { rlocation } from "@rules-javascript/bazel-runfiles";
 import {
   InstallEntry,
   InstallManifest,
   installManifestFormat,
-} from "@better-rules-javascript/pkg-install-manifest";
-import { JsonFormat } from "@better-rules-javascript/util-json";
+} from "@rules-javascript/pkg-install-manifest";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import {
   chmod,
@@ -38,18 +38,18 @@ import { join } from "node:path";
     }
     existing = JsonFormat.parse(installManifestFormat(false), existingContent);
     await rm(existingPath); // don't allow partial progress
-  } catch (e) {
-    if (e instanceof Error && "code" in e && e.code === "ENOENT") {
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
       await rm(args.output, { force: true, recursive: true });
     } else {
-      throw e;
+      throw error;
     }
   }
 
   await install(manifest, existing, args.output);
   await writeFile(existingPath, manifestContent);
-})().catch((e) => {
-  console.error(e);
+})().catch((error) => {
+  console.error(error);
   process.exit(1);
 });
 
@@ -59,27 +59,25 @@ async function install(
   path: string,
 ) {
   switch (manifest.type) {
-    case InstallEntry.DIR:
+    case InstallEntry.DIR: {
       if (existing && existing.type !== InstallEntry.DIR) {
         await rm(path, { recursive: existing.type !== InstallEntry.FILE });
         existing = undefined;
       }
-      if (existing) {
-        await Promise.all(
-          Array.from(existing.entries.entries()).map(async ([name, entry]) => {
-            if (!manifest.entries.has(name)) {
-              const childPath = join(path, name);
-              await rm(childPath, {
-                recursive: entry.type !== InstallEntry.FILE,
-              });
-            }
-          }),
-        );
-      } else {
-        await mkdir(path);
-      }
+      await (existing
+        ? Promise.all(
+            [...existing.entries.entries()].map(async ([name, entry]) => {
+              if (!manifest.entries.has(name)) {
+                const childPath = join(path, name);
+                await rm(childPath, {
+                  recursive: entry.type !== InstallEntry.FILE,
+                });
+              }
+            }),
+          )
+        : mkdir(path));
       await Promise.all(
-        Array.from(manifest.entries.entries()).map(async ([name, entry]) => {
+        [...manifest.entries.entries()].map(async ([name, entry]) => {
           const childPath = join(path, name);
           await install(
             entry,
@@ -89,7 +87,8 @@ async function install(
         }),
       );
       break;
-    case InstallEntry.FILE:
+    }
+    case InstallEntry.FILE: {
       if (
         existing &&
         !(
@@ -105,7 +104,8 @@ async function install(
         await chmod(path, manifest.executable ? 0o755 : 0o644);
       }
       break;
-    case InstallEntry.SYMLINK:
+    }
+    case InstallEntry.SYMLINK: {
       if (
         existing &&
         !(
@@ -120,5 +120,6 @@ async function install(
         await symlink(manifest.target, path);
       }
       break;
+    }
   }
 }

@@ -12,7 +12,7 @@ js_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/angular-test",
+    package_name = "@rules-javascript/angular-test",
 )
 
 jest_test(

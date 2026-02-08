@@ -62,14 +62,14 @@ Add google-protobuf as an [external dependency](#external-dependencies).
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//protobuf:rules.bzl", "js_protoc")
+load("@rules_javascript//protobuf:rules.bzl", "js_protoc")
 
 package(default_visibility = ["//visibility:public"])
 
 cjs_root(
     descriptor = "proto.package.json",
     name = "proto_root",
-    package_name = "@better_rules_javascript_test/proto"
+    package_name = "@rules_javascript_test/proto"
 )
 
 js_protoc(
@@ -88,10 +88,10 @@ js_protoc(
 **rules.bzl**
 
 ```bzl
-load("@better_rules_javascript//protobuf:aspects.bzl", "js_proto_aspect")
-load("@better_rules_javascript//protobuf:rules.bzl", "js_proto_library_rule")
+load("@rules_javascript//protobuf:aspects.bzl", "js_proto_aspect")
+load("@rules_javascript//protobuf:rules.bzl", "js_proto_library_rule")
 
-js_proto = js_proto_aspect("@better_rules_javascript_test//:lib_protoc")
+js_proto = js_proto_aspect("@rules_javascript_test//:lib_protoc")
 
 js_proto_library = js_proto_library_rule(js_proto)
 ```
@@ -122,7 +122,7 @@ js_proto_library(
 ## js_proto_aspect
 
 <pre>
-load("@better_rules_javascript//protobuf:aspects.bzl", "js_proto_aspect")
+load("@rules_javascript//protobuf:aspects.bzl", "js_proto_aspect")
 
 js_proto_aspect(<a href="#js_proto_aspect-js_protoc">js_protoc</a>)
 </pre>
@@ -144,7 +144,7 @@ Create js_proto aspect.
 ## JsProtoInfo
 
 <pre>
-load("@better_rules_javascript//protobuf:providers.bzl", "JsProtoInfo")
+load("@rules_javascript//protobuf:providers.bzl", "JsProtoInfo")
 
 JsProtoInfo(<a href="#JsProtoInfo-transitive_libs">transitive_libs</a>)
 </pre>
@@ -160,7 +160,7 @@ JsProtoInfo(<a href="#JsProtoInfo-transitive_libs">transitive_libs</a>)
 ## JsProtobuf
 
 <pre>
-load("@better_rules_javascript//protobuf:providers.bzl", "JsProtobuf")
+load("@rules_javascript//protobuf:providers.bzl", "JsProtobuf")
 
 JsProtobuf(<a href="#JsProtobuf-runtime">runtime</a>)
 </pre>
@@ -176,7 +176,7 @@ JsProtobuf(<a href="#JsProtobuf-runtime">runtime</a>)
 ## create_lib
 
 <pre>
-load("@better_rules_javascript//protobuf:providers.bzl", "create_lib")
+load("@rules_javascript//protobuf:providers.bzl", "create_lib")
 
 create_lib(<a href="#create_lib-label">label</a>, <a href="#create_lib-path">path</a>, <a href="#create_lib-deps">deps</a>, <a href="#create_lib-js">js</a>, <a href="#create_lib-js_deps">js_deps</a>)
 </pre>
@@ -202,7 +202,7 @@ Create library struct
 ## js_proto_export
 
 <pre>
-load("@better_rules_javascript//protobuf:rules.bzl", "js_proto_export")
+load("@rules_javascript//protobuf:rules.bzl", "js_proto_export")
 
 js_proto_export(<a href="#js_proto_export-name">name</a>, <a href="#js_proto_export-dep">dep</a>, <a href="#js_proto_export-lib">lib</a>)
 </pre>
@@ -222,7 +222,7 @@ JavaScript protobuf library
 ## js_protoc
 
 <pre>
-load("@better_rules_javascript//protobuf:rules.bzl", "js_protoc")
+load("@rules_javascript//protobuf:rules.bzl", "js_protoc")
 
 js_protoc(<a href="#js_protoc-name">name</a>, <a href="#js_protoc-runtime">runtime</a>)
 </pre>
@@ -241,7 +241,7 @@ JavaScript protobuf tools
 ## js_proto_libraries_rule
 
 <pre>
-load("@better_rules_javascript//protobuf:rules.bzl", "js_proto_libraries_rule")
+load("@rules_javascript//protobuf:rules.bzl", "js_proto_libraries_rule")
 
 js_proto_libraries_rule(<a href="#js_proto_libraries_rule-js_proto">js_proto</a>)
 </pre>

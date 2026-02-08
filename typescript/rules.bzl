@@ -34,20 +34,20 @@ def configure_ts_compiler(name, ts, tslib = None, visibility = None):
 
     js_export(
         name = "%s.lib" % name,
-        dep = "@better_rules_javascript//typescript/js-compiler:dist_lib",
+        dep = "@rules_javascript//typescript/js-compiler:dist_lib",
         deps = [
             ts,
-            "@better_rules_javascript_npm//argparse:lib",
-            "@better_rules_javascript_npm//long:lib",
-            "@better_rules_javascript_npm//protobufjs:lib",
-            "@better_rules_javascript_npm//tslib:lib",
+            Label("@npm//argparse:lib"),
+            Label("@npm//long:lib"),
+            Label("@npm//protobufjs:lib"),
+            Label("@npm//tslib:lib"),
         ],
     )
 
     nodejs_binary(
         name = "%s.js_bin" % name,
         main = "dist/bundle.js",
-        node = "@better_rules_javascript//nodejs",
+        node = "@rules_javascript//nodejs",
         node_options = ["--title=tsc-js"],
         dep = ":%s.lib" % name,
         visibility = ["//visibility:private"],

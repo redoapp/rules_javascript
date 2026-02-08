@@ -1,11 +1,10 @@
-import { withFileCache } from "@better-rules-javascript/util-cache";
-import { JsonFormat } from "@better-rules-javascript/util-json";
-import { printStarlark } from "@better-rules-javascript/util-starlark";
+import { withFileCache } from "@rules-javascript/util-cache";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { structUtils } from "@yarnpkg/core";
 import { ArgumentParser } from "argparse";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { toStarlarkFile } from "./bzl";
+import { toJsonFile } from "./bzl";
 import { NpmRegistryClient } from "./npm";
 import { getPackage, ResolvedNpmPackage, resolvePackages } from "./resolve";
 import { getPackageInfos, yarnProject } from "./yarn";
@@ -53,8 +52,11 @@ import { getPackageInfos, yarnProject } from "./yarn";
   });
 
   // output
-  const starlarkFile = toStarlarkFile(bzlPackages, bzlRoots);
-  await fs.promises.writeFile(args.output, printStarlark(starlarkFile));
+  const starlarkFile = toJsonFile(bzlPackages, bzlRoots);
+  await fs.promises.writeFile(
+    args.output,
+    JSON.stringify(starlarkFile, undefined, 2),
+  );
   console.error(`Created ${bzlPackages.size} packages`);
 })().catch((error) => {
   console.error(error);

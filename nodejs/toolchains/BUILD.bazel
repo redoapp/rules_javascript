@@ -1,0 +1,7 @@
+load("//nodejs:rules.bzl", "nodejs_toolchains")
+
+nodejs_toolchains(
+    name = "nodejs",
+    repo_name = "nodejs",
+    toolchain_type = "//nodejs:nodejs_type",
+)

@@ -6,7 +6,6 @@ doc(
     [
         "//commonjs:providers.bzl",
         "//commonjs:rules.bzl",
-        "//commonjs:workspace.bzl",
     ],
     header = "doc.md",
     visibility = ["//:__subpackages__"],

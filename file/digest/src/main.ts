@@ -1,4 +1,4 @@
-import { workerMain } from "@better-rules-javascript/bazel-worker";
+import { workerMain } from "@rules-javascript/bazel-worker";
 import { ArgumentParser } from "argparse";
 import { DigestWorker } from "./worker";
 

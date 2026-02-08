@@ -1,5 +1,5 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
 
 package(default_visibility = ["//visibility:public"])
 
@@ -22,7 +22,7 @@ bzl_library(
 
 nodejs_binary(
     name = "openapi_typescript",
-    dep = "@better_rules_javascript_npm//openapi-typescript:lib",
+    dep = "@npm//openapi-typescript:lib",
     main = "bin/cli.js",
     visibility = ["//visibility:public"],
 )

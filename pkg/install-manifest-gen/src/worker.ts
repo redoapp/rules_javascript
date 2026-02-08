@@ -2,9 +2,9 @@ import {
   InstallEntry,
   InstallManifest,
   installManifestFormat,
-} from "@better-rules-javascript/pkg-install-manifest";
-import { AppendAction } from "@better-rules-javascript/util-argparse/actions";
-import { JsonFormat } from "@better-rules-javascript/util-json";
+} from "@rules-javascript/pkg-install-manifest";
+import { AppendAction } from "@rules-javascript/util-argparse/actions";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import { createHash } from "node:crypto";
 import {
@@ -204,8 +204,9 @@ async function fileDirEntry(
   origin: string,
 ): Promise<InstallEntry.Dir> {
   const entries = new Map<string, InstallEntry>();
+  const dir = await readdir(path, { withFileTypes: true });
   await Promise.all(
-    (await readdir(path, { withFileTypes: true })).map(async (child) => {
+    dir.map(async (child) => {
       if (child.isDirectory()) {
         entries.set(
           child.name,
@@ -228,9 +229,6 @@ async function fileDirEntry(
             origin,
           ),
         );
-      } else if (child.isSymbolicLink()) {
-        const target = await readlink(join(path, child.name));
-        entries.set(child.name, symlinkEntry(target, origin));
       }
     }),
   );

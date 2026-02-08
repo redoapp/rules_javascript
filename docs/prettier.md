@@ -24,7 +24,7 @@ Add prettier as an [external dependency](#external_dependencies).
 **tools/BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//prettier:rules.bzl", "configure_prettier")
+load("@rules_javascript//prettier:rules.bzl", "configure_prettier")
 
 configure_prettier(
     name = "prettier",
@@ -56,7 +56,7 @@ bazel run //:prettier_format
 ## prettier
 
 <pre>
-load("@better_rules_javascript//prettier:rules.bzl", "prettier")
+load("@rules_javascript//prettier:rules.bzl", "prettier")
 
 prettier(<a href="#prettier-name">name</a>, <a href="#prettier-bin">bin</a>, <a href="#prettier-config">config</a>, <a href="#prettier-config_dep">config_dep</a>)
 </pre>
@@ -75,7 +75,7 @@ prettier(<a href="#prettier-name">name</a>, <a href="#prettier-bin">bin</a>, <a 
 ## configure_prettier
 
 <pre>
-load("@better_rules_javascript//prettier:rules.bzl", "configure_prettier")
+load("@rules_javascript//prettier:rules.bzl", "configure_prettier")
 
 configure_prettier(<a href="#configure_prettier-name">name</a>, <a href="#configure_prettier-config">config</a>, <a href="#configure_prettier-config_dep">config_dep</a>, <a href="#configure_prettier-dep">dep</a>, <a href="#configure_prettier-visibility">visibility</a>)
 </pre>
@@ -87,5 +87,5 @@ configure_prettier(<a href="#configure_prettier-name">name</a>, <a href="#config
 | <a id="configure_prettier-name"></a>name             | <p align="center"> - </p> | none                                                |
 | <a id="configure_prettier-config"></a>config         | <p align="center"> - </p> | none                                                |
 | <a id="configure_prettier-config_dep"></a>config_dep | <p align="center"> - </p> | none                                                |
-| <a id="configure_prettier-dep"></a>dep               | <p align="center"> - </p> | `"@better_rules_javascript//prettier:prettier_lib"` |
+| <a id="configure_prettier-dep"></a>dep               | <p align="center"> - </p> | `Label("@rules_javascript//prettier:prettier_lib")` |
 | <a id="configure_prettier-visibility"></a>visibility | <p align="center"> - </p> | `None`                                              |

@@ -1,4 +1,4 @@
-import { memo } from "@better-rules-javascript/util/cache";
+import { memo } from "@rules-javascript/util/cache";
 import { readFileSync } from "node:fs";
 import Module from "node:module";
 import { dirname, join, sep } from "node:path";

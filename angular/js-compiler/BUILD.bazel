@@ -13,15 +13,15 @@ ts_library(
         "//commonjs/package:lib",
         "//nodejs/fs-linker:lib",
         "//util/json:lib",
-        "@better_rules_javascript_npm//@types/argparse:lib",
-        "@better_rules_javascript_npm//@types/node:lib",
-        "@better_rules_javascript_npm//argparse:lib",
+        "@npm//@types/argparse:lib",
+        "@npm//@types/node:lib",
+        "@npm//argparse:lib",
     ],
 )
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/angular-js-compiler",
+    package_name = "@rules-javascript/angular-js-compiler",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )

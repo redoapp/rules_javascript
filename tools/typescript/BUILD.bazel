@@ -9,7 +9,7 @@ alias(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/tools-typescript",
+    package_name = "@rules-javascript/tools-typescript",
     descriptors = ["package.json"],
     visibility = ["//:__subpackages__"],
 )

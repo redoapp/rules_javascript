@@ -50,8 +50,8 @@ console.log(text);
 **BAZEL.build**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
 
 cjs_root(
     name = "root",

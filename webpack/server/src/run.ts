@@ -1,12 +1,12 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
+import { PackageTree } from "@rules-javascript/commonjs-package";
 import {
   IbazelNotification,
   IbazelStatus,
   readNotifications,
-} from "@better-rules-javascript/ibazel-notification/index";
-import { createVfs } from "@better-rules-javascript/nodejs-fs-linker/package";
-import { WrapperVfs } from "@better-rules-javascript/nodejs-fs-linker/vfs";
-import { JsonFormat } from "@better-rules-javascript/util-json";
+} from "@rules-javascript/ibazel-notification/index";
+import { createVfs } from "@rules-javascript/nodejs-fs-linker/package";
+import { WrapperVfs } from "@rules-javascript/nodejs-fs-linker/vfs";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { readFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { Subject } from "rxjs";

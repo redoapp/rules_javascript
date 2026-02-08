@@ -1,12 +1,12 @@
-load("@better_rules_javascript//angular:rules.bzl", "angular_library")
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//typescript:rules.bzl", "ts_library")
-load("@better_rules_javascript//webpack:rules.bzl", "configure_webpack", "webpack_bundle")
+load("@rules_javascript//angular:rules.bzl", "angular_library")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//typescript:rules.bzl", "ts_library")
+load("@rules_javascript//webpack:rules.bzl", "configure_webpack", "webpack_bundle")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/angular-material",
+    package_name = "@rules-javascript-test/angular-material",
 )
 
 js_library(
@@ -61,9 +61,9 @@ js_library(
     srcs = ["webpack.config.mjs"],
     root = ":root",
     deps = [
-        "@better_rules_javascript_npm//webpack:lib",
         "@npm//@angular/compiler-cli:lib",
         "@npm//babel-loader:lib",
+        "@npm//webpack:lib",
     ],
 )
 

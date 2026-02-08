@@ -24,7 +24,7 @@ Angular Providers
 ## AngularCompilerInfo
 
 <pre>
-load("@better_rules_javascript//angular:providers.bzl", "AngularCompilerInfo")
+load("@rules_javascript//angular:providers.bzl", "AngularCompilerInfo")
 
 AngularCompilerInfo(<a href="#AngularCompilerInfo-bin">bin</a>, <a href="#AngularCompilerInfo-cjs_deps">cjs_deps</a>, <a href="#AngularCompilerInfo-js_deps">js_deps</a>, <a href="#AngularCompilerInfo-ts_deps">ts_deps</a>, <a href="#AngularCompilerInfo-js_compiler">js_compiler</a>, <a href="#AngularCompilerInfo-resource_compiler">resource_compiler</a>, <a href="#AngularCompilerInfo-tsc_bin">tsc_bin</a>)
 </pre>
@@ -48,7 +48,7 @@ Angular compiler
 ## resource_path
 
 <pre>
-load("@better_rules_javascript//angular:providers.bzl", "resource_path")
+load("@rules_javascript//angular:providers.bzl", "resource_path")
 
 resource_path(<a href="#resource_path-path">path</a>)
 </pre>
@@ -68,28 +68,28 @@ resource_path(<a href="#resource_path-path">path</a>)
 ## angular_compiler
 
 <pre>
-load("@better_rules_javascript//angular:rules.bzl", "angular_compiler")
+load("@rules_javascript//angular:rules.bzl", "angular_compiler")
 
 angular_compiler(<a href="#angular_compiler-name">name</a>, <a href="#angular_compiler-bin">bin</a>, <a href="#angular_compiler-js_compiler">js_compiler</a>, <a href="#angular_compiler-lib">lib</a>, <a href="#angular_compiler-resource_compiler">resource_compiler</a>, <a href="#angular_compiler-tsc_bin">tsc_bin</a>)
 </pre>
 
 **ATTRIBUTES**
 
-| Name                                                             | Description                    | Type                                                                | Mandatory | Default                                                     |
-| :--------------------------------------------------------------- | :----------------------------- | :------------------------------------------------------------------ | :-------- | :---------------------------------------------------------- |
-| <a id="angular_compiler-name"></a>name                           | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                                                             |
-| <a id="angular_compiler-bin"></a>bin                             | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                                                             |
-| <a id="angular_compiler-js_compiler"></a>js_compiler             | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                                                             |
-| <a id="angular_compiler-lib"></a>lib                             | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | required  |                                                             |
-| <a id="angular_compiler-resource_compiler"></a>resource_compiler | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `"@better_rules_javascript//angular/resource-compiler:bin"` |
-| <a id="angular_compiler-tsc_bin"></a>tsc_bin                     | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                                                             |
+| Name                                                             | Description                    | Type                                                                | Mandatory | Default                                              |
+| :--------------------------------------------------------------- | :----------------------------- | :------------------------------------------------------------------ | :-------- | :--------------------------------------------------- |
+| <a id="angular_compiler-name"></a>name                           | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                                                      |
+| <a id="angular_compiler-bin"></a>bin                             | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                                                      |
+| <a id="angular_compiler-js_compiler"></a>js_compiler             | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                                                      |
+| <a id="angular_compiler-lib"></a>lib                             | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | required  |                                                      |
+| <a id="angular_compiler-resource_compiler"></a>resource_compiler | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `"@rules_javascript//angular/resource-compiler:bin"` |
+| <a id="angular_compiler-tsc_bin"></a>tsc_bin                     | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |                                                      |
 
 <a id="angular_library"></a>
 
 ## angular_library
 
 <pre>
-load("@better_rules_javascript//angular:rules.bzl", "angular_library")
+load("@rules_javascript//angular:rules.bzl", "angular_library")
 
 angular_library(<a href="#angular_library-name">name</a>, <a href="#angular_library-deps">deps</a>, <a href="#angular_library-srcs">srcs</a>, <a href="#angular_library-resources">resources</a>, <a href="#angular_library-compiler">compiler</a>, <a href="#angular_library-config">config</a>, <a href="#angular_library-config_dep">config_dep</a>, <a href="#angular_library-declaration_prefix">declaration_prefix</a>,
                 <a href="#angular_library-extra_deps">extra_deps</a>, <a href="#angular_library-js_prefix">js_prefix</a>, <a href="#angular_library-jsx">jsx</a>, <a href="#angular_library-root">root</a>, <a href="#angular_library-src_prefix">src_prefix</a>, <a href="#angular_library-strip_prefix">strip_prefix</a>)
@@ -119,7 +119,7 @@ angular_library(<a href="#angular_library-name">name</a>, <a href="#angular_libr
 ## configure_angular_compiler
 
 <pre>
-load("@better_rules_javascript//angular:rules.bzl", "configure_angular_compiler")
+load("@rules_javascript//angular:rules.bzl", "configure_angular_compiler")
 
 configure_angular_compiler(<a href="#configure_angular_compiler-name">name</a>, <a href="#configure_angular_compiler-core">core</a>, <a href="#configure_angular_compiler-compiler_cli">compiler_cli</a>, <a href="#configure_angular_compiler-ts">ts</a>, <a href="#configure_angular_compiler-tslib">tslib</a>, <a href="#configure_angular_compiler-reflect_metadata">reflect_metadata</a>, <a href="#configure_angular_compiler-visibility">visibility</a>)
 </pre>

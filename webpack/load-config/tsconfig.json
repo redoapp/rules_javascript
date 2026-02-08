@@ -3,5 +3,5 @@
     "module": "es2022",
     "target": "es2019"
   },
-  "extends": "@better-rules-javascript/tools-typescript/tsconfig.common.json"
+  "extends": "@rules-javascript/tools-typescript/tsconfig.common.json"
 }

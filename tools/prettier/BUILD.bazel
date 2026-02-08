@@ -2,7 +2,7 @@ load("//prettier:rules.bzl", "configure_prettier")
 
 configure_prettier(
     name = "prettier",
-    config = "prettierrc.yml",
+    config = "prettierrc.yaml",
     config_dep = "//:prettier_config",
     visibility = ["//:__subpackages__"],
 )

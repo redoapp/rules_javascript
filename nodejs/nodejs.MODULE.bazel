@@ -1,0 +1,12 @@
+nodejs = use_extension("//nodejs:extensions.bzl", "nodejs")
+use_repo(
+    nodejs,
+    "nodejs_darwin_arm64",
+    "nodejs_darwin_x64",
+    "nodejs_linux_arm64",
+    "nodejs_linux_x64",
+    "nodejs_win_arm64",
+    "nodejs_win_x64",
+)
+
+register_toolchains("//nodejs/toolchains:all")

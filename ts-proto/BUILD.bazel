@@ -17,10 +17,10 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//typescript:bzl",
-        "@better_rules_javascript//commonjs:bzl",
-        "@better_rules_javascript//javascript:bzl",
-        "@better_rules_javascript//nodejs:bzl",
-        "@better_rules_javascript//util:bzl",
+        "@rules_javascript//commonjs:bzl",
+        "@rules_javascript//javascript:bzl",
+        "@rules_javascript//nodejs:bzl",
+        "@rules_javascript//util:bzl",
         "@rules_proto//proto:defs",
     ],
 )

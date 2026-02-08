@@ -32,7 +32,7 @@ Add protobufjs as an [external dependency](#external-dependencies).
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//protobufjs:rules.bzl", configure_js_proto)
+load("@rules_javascript//protobufjs:rules.bzl", configure_js_proto)
 
 configure_js_proto(
     name = "js_proto",
@@ -43,8 +43,8 @@ configure_js_proto(
 ## Use
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//protobufjs:rules.bzl", "js_proto_library")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//protobufjs:rules.bzl", "js_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 cjs_root(
@@ -75,7 +75,7 @@ js_proto_library(
 ## JsProtobuf
 
 <pre>
-load("@better_rules_javascript//protobufjs:providers.bzl", "JsProtobuf")
+load("@rules_javascript//protobufjs:providers.bzl", "JsProtobuf")
 
 JsProtobuf(<a href="#JsProtobuf-runtime">runtime</a>, <a href="#JsProtobuf-bin">bin</a>)
 </pre>
@@ -96,7 +96,7 @@ JsProtobuf(<a href="#JsProtobuf-runtime">runtime</a>, <a href="#JsProtobuf-bin">
 ## js_proto
 
 <pre>
-load("@better_rules_javascript//protobufjs:rules.bzl", "js_proto")
+load("@rules_javascript//protobufjs:rules.bzl", "js_proto")
 
 js_proto(<a href="#js_proto-name">name</a>, <a href="#js_proto-bin">bin</a>, <a href="#js_proto-runtime">runtime</a>)
 </pre>
@@ -114,7 +114,7 @@ js_proto(<a href="#js_proto-name">name</a>, <a href="#js_proto-bin">bin</a>, <a 
 ## js_proto_library
 
 <pre>
-load("@better_rules_javascript//protobufjs:rules.bzl", "js_proto_library")
+load("@rules_javascript//protobufjs:rules.bzl", "js_proto_library")
 
 js_proto_library(<a href="#js_proto_library-name">name</a>, <a href="#js_proto_library-deps">deps</a>, <a href="#js_proto_library-js_proto">js_proto</a>, <a href="#js_proto_library-output">output</a>, <a href="#js_proto_library-root">root</a>)
 </pre>
@@ -134,7 +134,7 @@ js_proto_library(<a href="#js_proto_library-name">name</a>, <a href="#js_proto_l
 ## configure_js_proto
 
 <pre>
-load("@better_rules_javascript//protobufjs:rules.bzl", "configure_js_proto")
+load("@rules_javascript//protobufjs:rules.bzl", "configure_js_proto")
 
 configure_js_proto(<a href="#configure_js_proto-name">name</a>, <a href="#configure_js_proto-dep">dep</a>, <a href="#configure_js_proto-visibility">visibility</a>)
 </pre>

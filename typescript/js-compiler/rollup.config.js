@@ -8,7 +8,7 @@ module.exports = {
     !moduleId.startsWith("/") &&
     !moduleId.startsWith("./") &&
     !moduleId.startsWith("../") &&
-    !moduleId.startsWith("@better-rules-javascript/"),
+    !moduleId.startsWith("@rules-javascript/"),
   inlineDynamicImports: true,
   output: { file: "bundle.js" },
   plugins: [commonjs(), nodeResolve()],

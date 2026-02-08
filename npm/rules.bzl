@@ -147,8 +147,8 @@ yarn_resolve = rule(
             default = "",
         ),
         "output": attr.string(
-            doc = "Package-relative output path",
-            default = "npm_data.bzl",
+            doc = "Output path",
+            mandatory = True,
         ),
         "refresh": attr.bool(
             default = True,

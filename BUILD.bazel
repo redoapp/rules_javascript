@@ -24,36 +24,31 @@ alias(
 )
 
 alias(
-    name = "bazelrc_gen",
-    actual = "//tools/bazel:bazelrc",
-)
-
-alias(
-    name = "js_gen",
-    actual = "//tools/javascript:js",
-)
-
-alias(
     name = "lint",
     actual = "//tools/lint",
 )
 
+alias(
+    name = "npm_resolve",
+    actual = "//tools/npm:resolve",
+)
+
 js_library(
     name = "prettier_config",
-    srcs = ["prettierrc.yml"],
+    srcs = ["prettierrc.yaml"],
     root = ":root",
     visibility = [":__subpackages__"],
     deps = ["@npm//prettier-plugin-organize-imports:lib"],
 )
 
 alias(
-    name = "nodejs_resolve",
-    actual = "//nodejs:nodejs_resolve",
+    name = "refresh",
+    actual = "//tools:refresh",
 )
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/root",
+    package_name = "@rules-javascript/root",
     descriptors = ["package.json"],
     visibility = [":__subpackages__"],
 )

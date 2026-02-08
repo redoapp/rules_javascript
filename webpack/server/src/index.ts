@@ -1,9 +1,9 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
-import { patchFs } from "@better-rules-javascript/nodejs-fs-linker/fs";
-import { patchFsPromises } from "@better-rules-javascript/nodejs-fs-linker/fs-promises";
-import { createVfs } from "@better-rules-javascript/nodejs-fs-linker/package";
-import { WrapperVfs } from "@better-rules-javascript/nodejs-fs-linker/vfs";
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { PackageTree } from "@rules-javascript/commonjs-package";
+import { patchFs } from "@rules-javascript/nodejs-fs-linker/fs";
+import { patchFsPromises } from "@rules-javascript/nodejs-fs-linker/fs-promises";
+import { createVfs } from "@rules-javascript/nodejs-fs-linker/package";
+import { WrapperVfs } from "@rules-javascript/nodejs-fs-linker/vfs";
+import { JsonFormat } from "@rules-javascript/util-json";
 import * as fs from "node:fs";
 import { isMainThread } from "node:worker_threads";
 import { Subject } from "rxjs";

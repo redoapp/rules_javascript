@@ -5,7 +5,7 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/angular-resource-compiler",
+    package_name = "@rules-javascript/angular-resource-compiler",
     descriptors = ["package.json"],
     visibility = ["//:__subpackages__"],
 )
@@ -26,8 +26,8 @@ ts_library(
     root = ":root",
     deps = [
         "//bazel/worker:lib",
-        "@better_rules_javascript_npm//@types/argparse:lib",
-        "@better_rules_javascript_npm//argparse:lib",
+        "@npm//@types/argparse:lib",
+        "@npm//argparse:lib",
     ],
 )
 

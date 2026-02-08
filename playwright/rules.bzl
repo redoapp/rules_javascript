@@ -1,9 +1,8 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "gen_manifest")
 load("//javascript:providers.bzl", "JsInfo")
-load("//nodejs:providers.bzl", "NodejsInfo")
+load("//nodejs:nodejs.bzl", "NodejsInfo")
 load("//util:path.bzl", "output", "runfile_path")
-load(":playwright.bzl", "TOOLS")
 load(":providers.bzl", "PlaywrightToolInfo")
 
 def _playwright_browsers_resolve_impl(ctx):
@@ -12,6 +11,7 @@ def _playwright_browsers_resolve_impl(ctx):
     lib = ctx.file.lib
     name = ctx.attr.name
     path = ctx.attr.path
+
     if path.startswith("/"):
         path = path[len("/"):]
     else:
@@ -19,6 +19,7 @@ def _playwright_browsers_resolve_impl(ctx):
     resolve = ctx.executable._resolve
     resolve_default = ctx.attr._resolve[DefaultInfo]
     runner = ctx.file._runner
+    tools = ctx.attr.tools
     workspace = ctx.workspace_name
 
     bin = actions.declare_file(name)
@@ -29,6 +30,7 @@ def _playwright_browsers_resolve_impl(ctx):
             "%{lib}": shell.quote(runfile_path(workspace, lib)),
             "%{output}": shell.quote(path),
             "%{resolve}": shell.quote(runfile_path(workspace, resolve)),
+            "%{tools}": " ".join([shell.quote(tool) for tool in tools]),
         },
         template = runner,
     )
@@ -46,6 +48,7 @@ playwright_browsers_resolve = rule(
     attrs = {
         "lib": attr.label(allow_single_file = True, mandatory = True),
         "path": attr.string(mandatory = True),
+        "tools": attr.string_list(mandatory = True),
         "_bash_runfiles": attr.label(default = "@bazel_tools//tools/bash/runfiles"),
         "_resolve": attr.label(
             cfg = "target",
@@ -271,13 +274,6 @@ playwright_toolchain = rule(
     },
 )
 
-def playwright_tool_types(tools, **kwargs):
-    for tool_name in tools:
-        native.toolchain_type(
-            name = "%s.toolchain_type" % (tool_name),
-            **kwargs
-        )
-
 def playwright_tool_rule(toolchain):
     def _impl(ctx):
         toolchain_ = ctx.toolchains[toolchain]
@@ -293,14 +289,3 @@ def playwright_tool_rule(toolchain):
         implementation = _impl,
         toolchains = [toolchain],
     )
-
-playwright_android = playwright_tool_rule(":android.toolchain_type")
-playwright_chromium = playwright_tool_rule(":chromium.toolchain_type")
-playwright_chromium_headless_shell = playwright_tool_rule(":chromium-headless-shell.toolchain_type")
-playwright_chromium_tip_of_tree_headless_shell = playwright_tool_rule(":chromium-tip-of-tree-headless-shell.toolchain_type")
-playwright_chromium_tip_of_tree = playwright_tool_rule(":chromium-tip-of-tree.toolchain_type")
-playwright_ffmpeg = playwright_tool_rule(":ffmpeg.toolchain_type")
-playwright_firefox_beta = playwright_tool_rule(":firefox-beta.toolchain_type")
-playwright_firefox = playwright_tool_rule(":firefox.toolchain_type")
-playwright_webkit = playwright_tool_rule(":webkit.toolchain_type")
-playwright_winldd = playwright_tool_rule(":winldd.toolchain_type")

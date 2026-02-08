@@ -1,7 +1,7 @@
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "gen_manifest")
 load("//javascript:providers.bzl", "JsInfo")
-load("//nodejs:providers.bzl", "NodejsInfo")
+load("//nodejs:nodejs.bzl", "NodejsInfo")
 load("//util:path.bzl", "output", "runfile_path")
 
 def _jest_transition_impl(settings, attrs):

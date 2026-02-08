@@ -14,7 +14,7 @@ Add prettier as an [external dependency](#external_dependencies).
 **tools/BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//prettier:rules.bzl", "configure_prettier")
+load("@rules_javascript//prettier:rules.bzl", "configure_prettier")
 
 configure_prettier(
     name = "prettier",

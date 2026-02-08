@@ -7,68 +7,72 @@ load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "create
 load("//javascript:providers.bzl", "JsInfo")
 load("//pkg:rules.bzl", "pkg_install")
 load("//util:path.bzl", "nearest", "relativize", "runfile_path")
-load(":providers.bzl", "NodejsInfo", "NodejsRuntimeInfo")
+load(":nodejs.bzl", "NodejsInfo", "NodejsRuntimeInfo", "nodejs_runtime_rule")
 
-def configure_nodejs_runtime(name, repo_name, nodejs_runtime_rule, visibility = None):
-    native.toolchain_type(name = "%s.toolchain_type" % name, visibility = visibility)
-
+def nodejs_toolchains(name, repo_name, toolchain_type, visibility = None):
     native.toolchain(
-        name = "%s.darwin_arm64_toolchain" % name,
+        name = "%s.darwin_aarch64" % name,
         target_compatible_with = [
-            "@platforms//cpu:arm64",
+            "@platforms//cpu:aarch64",
             "@platforms//os:osx",
         ],
         toolchain = "@%s_darwin_arm64//:nodejs" % repo_name,
-        toolchain_type = ":%s.toolchain_type" % name,
+        toolchain_type = toolchain_type,
         visibility = visibility,
     )
 
     native.toolchain(
-        name = "%s.darwin_x86_64_toolchain" % name,
+        name = "%s.darwin_x86_64" % name,
         target_compatible_with = [
             "@platforms//cpu:x86_64",
             "@platforms//os:osx",
         ],
-        toolchain = "@%s_darwin_x86_64//:nodejs" % repo_name,
-        toolchain_type = ":%s.toolchain_type" % name,
+        toolchain = "@%s_darwin_x64//:nodejs" % repo_name,
+        toolchain_type = toolchain_type,
         visibility = visibility,
     )
 
     native.toolchain(
-        name = "%s.linux_arm64_toolchain" % name,
+        name = "%s.linux_aarch64" % name,
         target_compatible_with = [
-            "@platforms//cpu:arm64",
+            "@platforms//cpu:aarch64",
             "@platforms//os:linux",
         ],
         toolchain = "@%s_linux_arm64//:nodejs" % repo_name,
-        toolchain_type = ":%s.toolchain_type" % name,
+        toolchain_type = toolchain_type,
         visibility = visibility,
     )
 
     native.toolchain(
-        name = "%s.linux_x86_64_toolchain" % name,
+        name = "%s.linux_x86_64" % name,
         target_compatible_with = [
             "@platforms//cpu:x86_64",
             "@platforms//os:linux",
         ],
-        toolchain = "@%s_linux_x86_64//:nodejs" % repo_name,
-        toolchain_type = ":%s.toolchain_type" % name,
+        toolchain = "@%s_linux_x64//:nodejs" % repo_name,
+        toolchain_type = toolchain_type,
         visibility = visibility,
     )
 
     native.toolchain(
-        name = "%s.windows_x86_64_toolchain" % name,
+        name = "%s.windows_aarch64" % name,
+        target_compatible_with = [
+            "@platforms//cpu:aarch64",
+            "@platforms//os:windows",
+        ],
+        toolchain = "@%s_win_arm64//:nodejs" % repo_name,
+        toolchain_type = toolchain_type,
+        visibility = visibility,
+    )
+
+    native.toolchain(
+        name = "%s.windows_x86_64" % name,
         target_compatible_with = [
             "@platforms//cpu:x86_64",
             "@platforms//os:windows",
         ],
-        toolchain = "@%s_windows_x86_64//:nodejs" % repo_name,
-        toolchain_type = ":%s.toolchain_type" % name,
-        visibility = visibility,
-    )
-
-    nodejs_runtime_rule(
-        name = name,
+        toolchain = "@%s_win_x64//:nodejs" % repo_name,
+        toolchain_type = toolchain_type,
         visibility = visibility,
     )
 
@@ -778,3 +782,5 @@ nodejs_system_runtime = rule(
     implementation = _nodejs_system_runtime_impl,
     provides = [NodejsRuntimeInfo],
 )
+
+nodejs_runtime = nodejs_runtime_rule(toolchain_type = Label(":nodejs_type"))

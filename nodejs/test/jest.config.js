@@ -1,3 +1,3 @@
-const { jestConfig } = require("@better-rules-javascript/test/jest-config");
+const { jestConfig } = require("@rules-javascript/test/jest-config");
 
 module.exports = jestConfig();

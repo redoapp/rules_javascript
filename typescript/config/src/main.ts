@@ -1,4 +1,4 @@
-import { AppendAction } from "@better-rules-javascript/util-argparse/actions";
+import { AppendAction } from "@rules-javascript/util-argparse/actions";
 import { ArgumentParser } from "argparse";
 import { writeFile } from "node:fs/promises";
 import { dirname, relative } from "node:path";
@@ -80,14 +80,17 @@ interface Args {
     switch (args.module.toLowerCase()) {
       case "es2015":
       case "es2020":
-      case "es2022":
+      case "es2022": {
         tsconfig.compilerOptions.moduleResolution = "bundler";
         break;
-      case "node20":
+      }
+      case "node20": {
         tsconfig.compilerOptions.moduleResolution = "nodenext";
         break;
-      default:
+      }
+      default: {
         tsconfig.compilerOptions.moduleResolution = "node";
+      }
     }
   }
 

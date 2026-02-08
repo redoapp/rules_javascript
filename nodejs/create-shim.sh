@@ -7,6 +7,6 @@ rm -fr runfile-js
 tsc -p runfile
 rm -fr shim-js
 tsc -p shim
-mkdir -p shim-js/node_modules/@better_rules_javascript
+mkdir -p shim-js/node_modules/@rules_javascript
 rollup -c shim.rollup.js
 sed -i "s/require('pnpapi')/{}/g" shim.js

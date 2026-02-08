@@ -1,4 +1,4 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { JsonFormat } from "@rules-javascript/util-json";
 
 export type InstallManifest = InstallEntry.Dir;
 
@@ -74,23 +74,29 @@ function installEntryFormat(origin: boolean): JsonFormat<InstallEntry> {
   return {
     fromJson(json) {
       switch (json.type) {
-        case InstallEntry.DIR.description:
+        case InstallEntry.DIR.description: {
           return dirFormat.fromJson(json);
-        case InstallEntry.FILE.description:
+        }
+        case InstallEntry.FILE.description: {
           return fileFormat.fromJson(json);
-        case InstallEntry.SYMLINK.description:
+        }
+        case InstallEntry.SYMLINK.description: {
           return symlinkFormat.fromJson(json);
+        }
       }
       throw new Error(`Invalid entry type: ${json.type}`);
     },
     toJson(value) {
       switch (value.type) {
-        case InstallEntry.DIR:
+        case InstallEntry.DIR: {
           return dirFormat.toJson(value);
-        case InstallEntry.FILE:
+        }
+        case InstallEntry.FILE: {
           return fileFormat.toJson(value);
-        case InstallEntry.SYMLINK:
+        }
+        case InstallEntry.SYMLINK: {
           return symlinkFormat.toJson(value);
+        }
       }
     },
   };

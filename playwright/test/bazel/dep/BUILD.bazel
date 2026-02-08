@@ -1,16 +1,16 @@
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//playwright:rules.bzl", "playwright_test")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//playwright:rules.bzl", "playwright_test")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/playwright-dep",
+    package_name = "@rules-javascript-test/playwright-dep",
     path = "root",
 )
 
 cjs_root(
     name = "other_root",
-    package_name = "@better-rules-javascript-test/playwright-other",
+    package_name = "@rules-javascript-test/playwright-other",
     path = "other_root",
 )
 

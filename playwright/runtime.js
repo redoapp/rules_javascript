@@ -10,5 +10,5 @@ path.resolve = function (base, path) {
   if (path === "../../../playwright") {
     return "/";
   }
-  return pathResolve.apply(this, arguments);
+  return Reflect.apply(pathResolve, this, arguments);
 };

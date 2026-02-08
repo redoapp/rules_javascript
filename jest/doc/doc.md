@@ -56,9 +56,9 @@ exports.verbose = true;
 **example/BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//jest:rules.bzl", "jest_test")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//jest:rules.bzl", "jest_test")
 
 cjs_root(
     name = "root",
@@ -82,7 +82,7 @@ jest_test(
     config_dep = ":jest_config",
     dep = ":test_lib",
     jest = "@npm//jest:lib",
-    node = "@better_rules_javascript//rules:nodejs",
+    node = "@rules_javascript//rules:nodejs",
 )
 
 js_library(

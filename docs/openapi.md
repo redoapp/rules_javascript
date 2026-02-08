@@ -35,7 +35,7 @@ bazel run //:prettier_format
 ## openapi_ts
 
 <pre>
-load("@better_rules_javascript//openapi:rules.bzl", "openapi_ts")
+load("@rules_javascript//openapi:rules.bzl", "openapi_ts")
 
 openapi_ts(<a href="#openapi_ts-name">name</a>, <a href="#openapi_ts-src">src</a>, <a href="#openapi_ts-options">options</a>, <a href="#openapi_ts-output">output</a>)
 </pre>

@@ -1,6 +1,6 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
-import { AppendAction } from "@better-rules-javascript/util-argparse/actions";
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { PackageTree } from "@rules-javascript/commonjs-package";
+import { AppendAction } from "@rules-javascript/util-argparse/actions";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import * as fs from "node:fs";
 import {

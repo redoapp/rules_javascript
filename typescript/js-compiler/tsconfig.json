@@ -1,5 +1,5 @@
 {
-  "extends": "@better-rules-javascript/tools-typescript/tsconfig.common.json",
+  "extends": "@rules-javascript/tools-typescript/tsconfig.common.json",
   "compilerOptions": {
     "esModuleInterop": true
   }

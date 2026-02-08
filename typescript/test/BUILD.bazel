@@ -12,7 +12,7 @@ js_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/typescript-test",
+    package_name = "@rules-javascript/typescript-test",
 )
 
 jest_test(
@@ -23,7 +23,7 @@ jest_test(
     data = glob(["bazel/**/*"]) + ["@files//:common"],
     dep = ":test_lib",
     jest = "@npm//jest:lib",
-    node = "@better_rules_javascript//tools/nodejs",
+    node = "@rules_javascript//tools/nodejs",
     tags = ["local"],
     visibility = ["//visibility:public"],
 )

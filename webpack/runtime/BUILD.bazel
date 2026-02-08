@@ -24,12 +24,12 @@ configure_rollup(
     name = "rollup",
     config = "rollup/rollup.config.js",
     config_dep = ":rollup_config",
-    dep = "@better_rules_javascript_npm//rollup:lib",
+    dep = "@npm//rollup:lib",
 )
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/webpack-runtime",
+    package_name = "@rules-javascript/webpack-runtime",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )
@@ -38,7 +38,7 @@ ts_library(
     name = "rollup_config",
     srcs = glob(["rollup/**/*.ts"]),
     compile_deps = [
-        "@better_rules_javascript_npm//rollup:lib",
+        "@npm//rollup:lib",
     ],
     compiler = "//tools/typescript:tsc",
     config = "rollup/tsconfig.json",

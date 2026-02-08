@@ -1,4 +1,4 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { readFile } from "node:fs/promises";
 import { WorkRequest, WorkResponse } from "./protocol";
 import { lines } from "./stream";

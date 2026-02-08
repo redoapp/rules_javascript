@@ -28,9 +28,9 @@ console.log("Hello world");
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
 
 cjs_root(
   name = "root",
@@ -65,7 +65,7 @@ IDEs use `node_modules`. To install external dependencies or link local files:
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_install", "nodejs_modules_package")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_install", "nodejs_modules_package")
 
 nodejs_install(
   name = "nodejs_install",

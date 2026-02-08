@@ -1,0 +1,105 @@
+{
+  "tools": {
+    "chromium": {
+      "ubuntu20.04-x64": "chromium-linux-1187",
+      "ubuntu22.04-x64": "chromium-linux-1187",
+      "ubuntu24.04-x64": "chromium-linux-1187",
+      "ubuntu20.04-arm64": "chromium-linux-arm64-1187",
+      "ubuntu22.04-arm64": "chromium-linux-arm64-1187",
+      "ubuntu24.04-arm64": "chromium-linux-arm64-1187",
+      "debian11-x64": "chromium-linux-1187",
+      "debian11-arm64": "chromium-linux-arm64-1187",
+      "debian12-x64": "chromium-linux-1187",
+      "debian12-arm64": "chromium-linux-arm64-1187",
+      "mac10.13": "chromium-mac-1187",
+      "mac10.14": "chromium-mac-1187",
+      "mac10.15": "chromium-mac-1187",
+      "mac11": "chromium-mac-1187",
+      "mac11-arm64": "chromium-mac-arm64-1187",
+      "mac12": "chromium-mac-1187",
+      "mac12-arm64": "chromium-mac-arm64-1187",
+      "mac13": "chromium-mac-1187",
+      "mac13-arm64": "chromium-mac-arm64-1187",
+      "mac14": "chromium-mac-1187",
+      "mac14-arm64": "chromium-mac-arm64-1187",
+      "mac15": "chromium-mac-1187",
+      "mac15-arm64": "chromium-mac-arm64-1187",
+      "win64": "chromium-win64-1187"
+    },
+    "chromium-headless-shell": {
+      "ubuntu20.04-x64": "chromium-headless-shell-linux-1187",
+      "ubuntu22.04-x64": "chromium-headless-shell-linux-1187",
+      "ubuntu24.04-x64": "chromium-headless-shell-linux-1187",
+      "ubuntu20.04-arm64": "chromium-headless-shell-linux-arm64-1187",
+      "ubuntu22.04-arm64": "chromium-headless-shell-linux-arm64-1187",
+      "ubuntu24.04-arm64": "chromium-headless-shell-linux-arm64-1187",
+      "debian11-x64": "chromium-headless-shell-linux-1187",
+      "debian11-arm64": "chromium-headless-shell-linux-arm64-1187",
+      "debian12-x64": "chromium-headless-shell-linux-1187",
+      "debian12-arm64": "chromium-headless-shell-linux-arm64-1187",
+      "mac11": "chromium-headless-shell-mac-1187",
+      "mac11-arm64": "chromium-headless-shell-mac-arm64-1187",
+      "mac12": "chromium-headless-shell-mac-1187",
+      "mac12-arm64": "chromium-headless-shell-mac-arm64-1187",
+      "mac13": "chromium-headless-shell-mac-1187",
+      "mac13-arm64": "chromium-headless-shell-mac-arm64-1187",
+      "mac14": "chromium-headless-shell-mac-1187",
+      "mac14-arm64": "chromium-headless-shell-mac-arm64-1187",
+      "mac15": "chromium-headless-shell-mac-1187",
+      "mac15-arm64": "chromium-headless-shell-mac-arm64-1187",
+      "win64": "chromium-headless-shell-win64-1187"
+    }
+  },
+  "toolVersions": {
+    "chromium-linux-1187": {
+      "integrity": "sha256-OV6Cnoj5/z/BCMyaPbSZB6/Z9YYAZulnhpSwGkBu6Xk=",
+      "path": "chromium-1187",
+      "urlPath": "builds/chromium/1187/chromium-linux.zip"
+    },
+    "chromium-linux-arm64-1187": {
+      "integrity": "sha256-/CjNvSYn7zn+mwpS0c2SfyFyDeaYl5gxOUT/RDEamnw=",
+      "path": "chromium-1187",
+      "urlPath": "builds/chromium/1187/chromium-linux-arm64.zip"
+    },
+    "chromium-mac-1187": {
+      "integrity": "sha256-leIXISV4M5dTWTgHPoyxAaJydTfJ+mVd27WZI8p12gs=",
+      "path": "chromium-1187",
+      "urlPath": "builds/chromium/1187/chromium-mac.zip"
+    },
+    "chromium-mac-arm64-1187": {
+      "integrity": "sha256-4Z2wxQhXfgOJY5i4kd12xn30JJ1RqWdoBFiEiFmUgmU=",
+      "path": "chromium-1187",
+      "urlPath": "builds/chromium/1187/chromium-mac-arm64.zip"
+    },
+    "chromium-win64-1187": {
+      "integrity": "sha256-X/To6F4RhKXGu32aXjqxVHJ3qIuiIhVWyYkG9ZaP9lg=",
+      "path": "chromium-1187",
+      "urlPath": "builds/chromium/1187/chromium-win64.zip"
+    },
+    "chromium-headless-shell-linux-1187": {
+      "integrity": "sha256-l4QsQ9SWJ+iT4UmPYVVP3+AiPTXa8kfkvt7hHnlQm44=",
+      "path": "chromium_headless_shell-1187",
+      "urlPath": "builds/chromium/1187/chromium-headless-shell-linux.zip"
+    },
+    "chromium-headless-shell-linux-arm64-1187": {
+      "integrity": "sha256-nU39xFgyB09Dz3vdC0XhW58aR3KS1ogQ2VdDHTdKYMk=",
+      "path": "chromium_headless_shell-1187",
+      "urlPath": "builds/chromium/1187/chromium-headless-shell-linux-arm64.zip"
+    },
+    "chromium-headless-shell-mac-1187": {
+      "integrity": "sha256-hrYqcjtHF8cTq1YMgQ80JUZTmME5wnnO9o8984NK/IA=",
+      "path": "chromium_headless_shell-1187",
+      "urlPath": "builds/chromium/1187/chromium-headless-shell-mac.zip"
+    },
+    "chromium-headless-shell-mac-arm64-1187": {
+      "integrity": "sha256-YzAuQEqw7hTkYnARe+Is3VAFr/d9VPEg6pCV9NjByKI=",
+      "path": "chromium_headless_shell-1187",
+      "urlPath": "builds/chromium/1187/chromium-headless-shell-mac-arm64.zip"
+    },
+    "chromium-headless-shell-win64-1187": {
+      "integrity": "sha256-6oARnJ4NoCK0lr7efLSqRJnMlw2dMwEjDnT1944wtfI=",
+      "path": "chromium_headless_shell-1187",
+      "urlPath": "builds/chromium/1187/chromium-headless-shell-win64.zip"
+    }
+  }
+}

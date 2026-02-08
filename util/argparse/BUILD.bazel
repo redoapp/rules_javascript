@@ -4,7 +4,7 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/util-argparse",
+    package_name = "@rules-javascript/util-argparse",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )
@@ -18,8 +18,8 @@ ts_library(
     root = ":root",
     visibility = ["//visibility:public"],
     deps = [
-        "@better_rules_javascript_npm//@types/argparse:lib",
-        "@better_rules_javascript_npm//argparse:lib",
+        "@npm//@types/argparse:lib",
+        "@npm//argparse:lib",
     ],
 )
 

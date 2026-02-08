@@ -1,14 +1,5 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
-import {
-  printStarlark,
-  StarlarkDict,
-  StarlarkEqualStatement,
-  StarlarkFile,
-  StarlarkString,
-  StarlarkStruct,
-  StarlarkValue,
-} from "@better-rules-javascript/util-starlark";
-import { Semaphore } from "@better-rules-javascript/util/lock";
+import { JsonFormat } from "@rules-javascript/util-json";
+import { Semaphore } from "@rules-javascript/util/lock";
 import { ArgumentParser } from "argparse";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
@@ -22,43 +13,38 @@ const parser = new ArgumentParser({
   prog: "playwright-resolve",
 });
 parser.add_argument("--browsers", { required: true });
-const args: { browsers: string } = parser.parse_args();
+parser.add_argument("tools", { nargs: "*" });
+const args: { browsers: string; tools: string[] } = parser.parse_args();
 
 (async () => {
+  const toolNames = new Set(args.tools);
+
   let { browsers } = JsonFormat.parse(
     browsersFormat,
     await readFile(args.browsers, "utf8"),
   );
+  browsers = browsers.filter((browser) => toolNames.has(browser.name));
 
-  const toolsElements = Array.from(
-    tools(browsers),
-    (tool): [StarlarkValue, StarlarkValue] => {
-      return [
-        new StarlarkString(tool.name),
-        new StarlarkDict(
-          Array.from(tool.platforms.entries(), ([platform, version]) => [
-            new StarlarkString(platform),
-            new StarlarkString(version),
-          ]),
-        ),
-      ];
-    },
+  const tools_ = Object.fromEntries(
+    [...tools(browsers)].map((tool) => [
+      tool.name,
+      Object.fromEntries(tool.platforms.entries()),
+    ]),
   );
-  const tools_ = new StarlarkDict(toolsElements);
 
   const requestThrottle = new Semaphore(4);
-  const toolVersionsElements = await Promise.all(
-    // deprecated-webkit URLs have 400
-    [...toolVersions(browsers)]
-      .filter(
-        (version) =>
-          !version.urlPath.includes("mac-10") &&
-          !version.urlPath.includes("mac-11") &&
-          !version.urlPath.includes("mac-12"),
-      )
-      .map((version) =>
-        requestThrottle.use(
-          async (): Promise<[StarlarkValue, StarlarkValue]> => {
+  const toolVersions_ = Object.fromEntries(
+    await Promise.all(
+      // deprecated-webkit URLs have 400
+      [...toolVersions(browsers)]
+        .filter(
+          (version) =>
+            !version.urlPath.includes("mac-10") &&
+            !version.urlPath.includes("mac-11") &&
+            !version.urlPath.includes("mac-12"),
+        )
+        .map((version) =>
+          requestThrottle.use(async () => {
             const url = new URL(
               version.urlPath,
               `${PLAYWRIGHT_CDN_MIRRORS[0]}/`,
@@ -76,36 +62,30 @@ const args: { browsers: string } = parser.parse_args();
                 response.body!,
               );
               return [
-                new StarlarkString(version.name),
-                new StarlarkStruct([
-                  [
-                    "integrity",
-                    new StarlarkString(`sha256-${hash.digest("base64")}`),
-                  ],
-                  ["path", new StarlarkString(version.path)],
-                  ["url_path", new StarlarkString(version.urlPath)],
-                ]),
+                version.name,
+                {
+                  integrity: `sha256-${hash.digest("base64")}`,
+                  path: version.path,
+                  urlPath: version.urlPath,
+                },
               ];
-            } catch (e) {
-              throw new Error(`Failed to fetch ${url}: ${e}`);
+            } catch (error) {
+              throw new Error(`Failed to fetch ${url}: ${error}`);
             }
-          },
+          }),
         ),
-      ),
-  );
-  const toolVersions_ = new StarlarkDict(toolVersionsElements);
-
-  const file = new StarlarkFile([
-    new StarlarkEqualStatement(new StarlarkString("TOOLS"), tools_),
-    new StarlarkEqualStatement(
-      new StarlarkString("TOOL_VERSIONS"),
-      toolVersions_,
     ),
-  ]);
+  );
 
-  process.stdout.write(printStarlark(file));
-})().catch((e) => {
-  console.error(e);
+  process.stdout.write(
+    JSON.stringify(
+      { tools: tools_, toolVersions: toolVersions_ },
+      undefined,
+      2,
+    ),
+  );
+})().catch((error) => {
+  console.error(error);
   process.exit(1);
 });
 

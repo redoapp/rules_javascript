@@ -20,14 +20,14 @@ Add ts-proto as an [external dependency](#external-dependencies).
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//protobuf:rules.bzl", "js_protoc")
+load("@rules_javascript//protobuf:rules.bzl", "js_protoc")
 
 package(default_visibility = ["//visibility:public"])
 
 cjs_root(
     descriptor = "proto.package.json",
     name = "proto_root",
-    package_name = "@better_rules_javascript_test/proto"
+    package_name = "@rules_javascript_test/proto"
 )
 
 js_protoc(
@@ -46,10 +46,10 @@ js_protoc(
 **rules.bzl**
 
 ```bzl
-load("@better_rules_javascript//ts-proto:aspects.bzl", "js_proto_aspect")
-load("@better_rules_javascript//ts-proto:rules.bzl", "js_proto_library_rule")
+load("@rules_javascript//ts-proto:aspects.bzl", "js_proto_aspect")
+load("@rules_javascript//ts-proto:rules.bzl", "js_proto_library_rule")
 
-js_proto = js_proto_aspect("@better_rules_javascript_test//:lib_protoc")
+js_proto = js_proto_aspect("@rules_javascript_test//:lib_protoc")
 
 js_proto_library = js_proto_library_rule(js_proto)
 ```
