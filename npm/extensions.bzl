@@ -1,3 +1,4 @@
+load(":npm.bzl", "package_repo_name")
 load(":repositories.bzl", "npm", "npm_package")
 
 _workspace_tag = tag_class(
@@ -19,7 +20,6 @@ def _yarn_impl(ctx):
 
             npm(
                 name = workspace.name,
-                packages = [json.encode({"id": _package_repo_name(workspace.name, root["id"]), "name": root["name"]}) for root in data["roots"]],
                 plugins = workspace.plugins,
                 data = workspace.data,
                 path = workspace.path,
@@ -27,19 +27,12 @@ def _yarn_impl(ctx):
 
             for package_id, package in data["packages"].items():
                 npm_package(
-                    name = _package_repo_name(workspace.name, package_id),
-                    arch = package.get("arch"),
-                    package_name = package["name"],
-                    plugins = workspace.plugins,
+                    name = package_repo_name(workspace.name, package_id),
+                    id = package_id,
                     integrity = package["integrity"],
-                    deps = [json.encode({"id": _package_repo_name(workspace.name, dep["id"]), "name": dep.get("name")}) for dep in package.get("deps", [])],
-                    extra_deps = {
-                        _package_repo_name(workspace.name, id): [json.encode({"id": _package_repo_name(workspace.name, dep["id"]), "name": dep.get("name")}) for dep in deps]
-                        for id, deps in package.get("extraDeps", {}).items()
-                    },
-                    libc = package.get("libc"),
-                    os = package.get("os"),
                     url = package["url"],
+                    repo = workspace.name,
+                    plugins = workspace.plugins,
                 )
 
     return ctx.extension_metadata(
@@ -50,18 +43,3 @@ yarn = module_extension(
     implementation = _yarn_impl,
     tag_classes = {"workspace": _workspace_tag},
 )
-
-def _package_repo_name(prefix, name):
-    """Repository name for npm package.
-
-    Replaces characters not permitted in Bazel repository names.
-
-    Args:
-        prefix: Namespace
-        name: ID
-    """
-    if name.startswith("@"):
-        name = name[len("@"):]
-    name = name.replace("@", "_")
-    name = name.replace("/", "_")
-    return "%s_%s" % (prefix, name)

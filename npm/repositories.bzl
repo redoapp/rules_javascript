@@ -29,10 +29,9 @@ DEFAULT_PLUGINS = [
 ]
 
 def _npm_package_impl(ctx):
-    deps = [json.decode(dep) for dep in ctx.attr.deps]
-    extra_deps = {id: [json.decode(d) for d in deps] for id, deps in ctx.attr.extra_deps.items()}
+    id = ctx.attr.id
+    repo = ctx.attr.repo
     plugins = ctx.attr.plugins
-    package_name = ctx.attr.package_name
     integrity = ctx.attr.integrity
     url = ctx.attr.url
 
@@ -52,20 +51,11 @@ def _npm_package_impl(ctx):
 
     build = ""
 
-    package = struct(
-        arch = [arch for arch in ctx.attr.arch if arch in ARCHES],
-        deps = deps,
-        extra_deps = extra_deps,
-        libc = ctx.attr.libc,
-        name = package_name,
-        os = [os for os in ctx.attr.os if os in PLATFORMS],
-    )
-
     content = ""
     for index, plugin in enumerate(plugins):
         content += """
 load({label}, {var} = "npm_plugin")
-{var}.spoke(package, FILES)
+{var}.spoke(repo = REPO, package = PACKAGE, files = FILES)
         """.strip().format(
             label = repr(str(plugin)),
             var = "plugin%s" % (index + 1),
@@ -77,40 +67,22 @@ load({label}, {var} = "npm_plugin")
         "BUILD.bazel",
         Label("package.BUILD.bazel.tpl"),
         substitutions = {
-            "%{files}": repr(files),
-            "%{npm}": repr(str(Label("npm.bzl"))),
-            "%{package_name}": repr(ctx.attr.package_name),
-            "%{arch}": repr([arch for arch in ctx.attr.arch if arch in ARCHES]),
-            "%{deps}": repr(deps),
-            "%{extra_deps}": repr(extra_deps),
-            "%{libc}": repr(ctx.attr.libc),
-            "%{os}": repr([os for os in ctx.attr.os if os in PLATFORMS]),
             "%{content}": content,
+            "%{data}": repr("@%s//_packages:%s" % (repo, _package_path(id))),
+            "%{files}": repr(files),
+            "%{repo}": repr(repo),
         },
+    )
+
+    return ctx.repo_metadata(
+        reproducible = True,
     )
 
 npm_package = repository_rule(
     implementation = _npm_package_impl,
     attrs = {
-        "arch": attr.string_list(
-            doc = "Architecture",
-        ),
-        "deps": attr.string_list(
-            doc = "Dependencies.",
-        ),
-        "extra_deps": attr.string_list_dict(
-            doc = "Extra dependencies.",
-        ),
-        "libc": attr.string_list(
-            doc = "Libc",
-        ),
-        "os": attr.string_list(
-            doc = "OS",
-        ),
-        "package_name": attr.string(
-            doc = "Package name.",
-            mandatory = True,
-        ),
+        "id": attr.string(mandatory = True),
+        "repo": attr.string(mandatory = True),
         "plugins": attr.label_list(
             default = DEFAULT_PLUGINS,
         ),
@@ -127,7 +99,6 @@ npm_package = repository_rule(
 
 def _npm_impl(ctx):
     data = ctx.attr.data
-    packages = [json.decode(package) for package in ctx.attr.packages]
     path = ctx.attr.path
     plugins = ctx.attr.plugins
 
@@ -146,44 +117,107 @@ def _npm_impl(ctx):
     else:
         data = {"packages": {}, "roots": []}
 
+    ctx.file("BUILD.bazel", "")
+
     ctx.template(
-        "data.bzl",
-        Label("data.bzl.tpl"),
+        "packages.bzl",
+        Label("packages.bzl.tpl"),
         substitutions = {
-            "%{packages}": json.encode_indent(data["packages"]),
-            "%{roots}": json.encode_indent(data["roots"]),
+            "%{loads}": "\n".join([
+                'load(%s, PACKAGE%s = "PACKAGE")' % (repr("//packages:%s" % _package_path(package_id)), index)
+                for index, package_id in enumerate(data["packages"])
+            ]),
+            "%{packages}": "[%s]" % ", ".join(["PACKAGE%s" % index for index, _ in enumerate(data["packages"])]),
         },
     )
 
-    for package in packages:
+    ctx.file("_packages/BUILD.bazel", "")
+    for package_id, package in data["packages"].items():
+        ctx.template(
+            "_packages/%s" % _package_path(package_id),
+            Label("package.bzl.tpl"),
+            substitutions = {
+                "%{package_name}": repr(package["name"]),
+                "%{arch}": repr([arch for arch in package.get("arch", []) if arch in ARCHES]),
+                "%{deps}": "[%s]" % ", ".join([
+                    "struct(id = %s, name = %s)" % (repr(dep["id"]), repr(dep.get("name")))
+                    for dep in package.get("deps", [])
+                ]),
+                "%{extra_deps}": "{%s}" % ", ".join([
+                    "%s: [%s]" % (repr(id), ", ".join([
+                        "struct(id = %s, name = %s)" % (repr(dep["id"]), repr(dep.get("name")))
+                        for dep in deps
+                    ]))
+                    for id, deps in package.get("extraDeps", {}).items()
+                ]),
+                "%{libc}": repr(package.get("libc", [])),
+                "%{os}": repr([os for os in package.get("os", []) if os in PLATFORMS]),
+            },
+        )
+
+    ctx.template(
+        "roots.bzl",
+        Label("roots.bzl.tpl"),
+        substitutions = {
+            "%{loads}": "\n".join([
+                'load(%s, ROOT%s = "ROOT")' % (repr("//_roots:%s" % _package_path(root["name"])), index)
+                for index, root in enumerate(data["roots"])
+            ]),
+            "%{roots}": "[%s]" % ", ".join(["ROOT%s" % index for index, _ in enumerate(data["roots"])]),
+        },
+    )
+    ctx.file("_roots/BUILD.bazel", "")
+    for root in data["roots"]:
+        ctx.template(
+            "_roots/%s" % _root_path(root["name"]),
+            Label("root.bzl.tpl"),
+            substitutions = {
+                "%{id}": repr(root["id"]),
+                "%{name}": repr(root["name"]),
+            },
+        )
+
+    for root in data["roots"]:
         content = ""
         for index, plugin in enumerate(plugins):
             content += """
 load({label}, {var} = "npm_plugin")
 {var}.hub(
-  id = {id},
-  package_name = {package_name}
+    repo = repository_name(),
+    root = ROOT,
 )
             """.strip().format(
                 label = repr(str(plugin)),
                 var = "plugin%s" % (index + 1),
-                id = repr(package["id"]),
-                package_name = repr(package["name"]),
             )
             content += "\n"
             content += "\n"
-        ctx.file("%s/BUILD.bazel" % package["name"], content)
+        ctx.template(
+            "%s/BUILD.bazel" % root["name"],
+            Label("hub.BUILD.bazel.tpl"),
+            substitutions = {
+                "%{content}": content,
+                "%{data}": repr("//_roots:%s" % _root_path(root["name"])),
+            },
+        )
+
+    return ctx.repo_metadata(
+        reproducible = True,
+    )
 
 npm = repository_rule(
     implementation = _npm_impl,
     attrs = {
         "data": attr.label(allow_single_file = [".json"], mandatory = True),
         "path": attr.string(mandatory = True),
-        "packages": attr.string_list(
-            doc = "Packages.",
-        ),
         "plugins": attr.label_list(
             default = DEFAULT_PLUGINS,
         ),
     },
 )
+
+def _package_path(id):
+    return "%s.bzl" % id.replace("/", "_")
+
+def _root_path(name):
+    return "%s.bzl" % name.replace("/", "_")
