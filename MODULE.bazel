@@ -36,6 +36,19 @@ bazel_dep(name = "platforms", version = "1.0.0")
 
 bazel_dep(name = "rules_proto", version = "7.1.0")
 
+# R Tools
+
+bazel_dep(name = "r_tools", dev_dependency = True)
+
+R_TOOLS_VERSION = "ad144b85448c0c8302c8f6b7537b6cac06a3678f"
+
+archive_override(
+    module_name = "r_tools",
+    sha256 = "a3ccdbcc6b8259510f59b8403b2239a7ea5c9876dd0fcd3db0224495535d6b0f",
+    strip_prefix = "r-tools-%s" % R_TOOLS_VERSION,
+    url = "https://github.com/redoapp/r-tools/archive/%s.tar.gz" % R_TOOLS_VERSION,
+)
+
 # Shell
 
 bazel_dep(name = "rules_shell_extra")
