@@ -1,3 +1,3 @@
-ROOTS = %{roots}
+%{loads}
 
 PACKAGES = %{packages}

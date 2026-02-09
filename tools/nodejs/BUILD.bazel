@@ -1,4 +1,6 @@
-load("@npm//:data.bzl", NPM_ROOTS = "ROOTS")
+load("@npm//:roots.bzl", NPM_ROOTS = "ROOTS")
+load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
+load("//javascript:npm.bzl", "js_npm_roots")
 load("//nodejs:rules.bzl", "nodejs_install", "nodejs_modules_package")
 load("//typescript:rules.bzl", "js_import_ts")
 
@@ -9,8 +11,8 @@ nodejs_install(
 
 sh_binary(
     name = "install",
-    srcs = ["install.sh"],
     data = [":install0"],
+    main = "install.sh",
 )
 
 nodejs_modules_package(
@@ -32,7 +34,7 @@ nodejs_modules_package(
         "//webpack/config:root",
     ],
     tags = ["no-cache"],
-    deps = [":npm_%s" % dep["name"] for dep in NPM_ROOTS],
+    deps = js_npm_roots("npm", NPM_ROOTS),
 )
 
 alias(
@@ -40,11 +42,3 @@ alias(
     actual = "//nodejs:nodejs",
     visibility = ["//visibility:public"],
 )
-
-[
-    js_import_ts(
-        name = "npm_%s" % dep["name"],
-        dep = "@npm//%s:lib" % dep["name"],
-    )
-    for dep in NPM_ROOTS
-]

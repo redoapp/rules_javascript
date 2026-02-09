@@ -1,27 +1,28 @@
 load("@rules_javascript//javascript:rules.bzl", "js_export", "js_library")
 load("//commonjs:providers.bzl", "cjs_npm_label")
-load(":providers.bzl", "js_npm_inner_label", "js_npm_label")
+load("//npm:npm.bzl", "package_repo_name")
+load(":npm.bzl", "js_npm_inner_label", "js_npm_label")
 
-def _js_npm_hub(id, package_name):
+def _js_npm_hub(repo, root):
     js_export(
         name = "lib",
-        dep = js_npm_label(id),
-        package_name = package_name,
+        dep = js_npm_label(package_repo_name(repo, root.id)),
+        package_name = root.name,
         visibility = ["//visibility:public"],
     )
 
-def _js_npm_spoke(package, files):
+def _js_npm_spoke(repo, package, files):
     deps = []
     exports = []
     for i, dep in enumerate(package.deps):
-        if not dep["name"]:
-            deps.append(js_npm_label(dep["id"]))
+        if not dep.name:
+            deps.append(js_npm_label(package_repo_name(repo, dep.id)))
             continue
         name = "import%s" % i
         deps.append(name)
         js_export(
             name = name,
-            dep = js_npm_label(dep["id"]),
+            dep = js_npm_label(package_repo_name(repo, dep.id)),
             package_name = dep["name"],
         )
 
@@ -45,7 +46,7 @@ def _js_npm_spoke(package, files):
         js_export(
             name = "lib",
             dep = ":lib.inner",
-            extra_deps = [":lib.export.%s" % i for i in range(len(package.extra_deps))],
+            extra_deps = [":lib.export.%s" % index for index, _ in enumerate(package.extra_deps)],
             visibility = ["//visibility:public"],
         )
     else:
@@ -58,8 +59,8 @@ def _js_npm_spoke(package, files):
     for i, (id, deps) in enumerate(package.extra_deps.items()):
         js_export(
             name = "lib.export.%s" % i,
-            dep = js_npm_inner_label(id),
-            deps = [js_npm_inner_label(dep["id"]) for dep in deps],
+            dep = js_npm_inner_label(package_repo_name(repo, id)),
+            deps = [js_npm_inner_label(package_repo_name(repo, dep.id)) for dep in deps],
         )
 
 npm_plugin = struct(

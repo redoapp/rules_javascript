@@ -1,7 +1,6 @@
-#!/bin/sh -e
-export RUNFILES_DIR="$0.runfiles"
+set -e
 
-"$RUNFILES_DIR/_main/tools/nodejs/install0"
+"$(rlocation rules_javascript/tools/nodejs/install0)"
 
 cd "$BUILD_WORKSPACE_DIRECTORY"
 

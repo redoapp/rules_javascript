@@ -38,7 +38,7 @@ bazel_dep(name = "rules_proto", version = "7.1.0")
 
 # Shell
 
-bazel_dep(name = "rules_shell_extra", dev_dependency = True)
+bazel_dep(name = "rules_shell_extra")
 
 RULES_SHELL_EXTRA_VERSION = "93090b47f81577ba4890c770effd889f61ce5d19"
 

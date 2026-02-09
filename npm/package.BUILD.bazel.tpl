@@ -1,13 +1,6 @@
-load(%{npm}, "create_package")
+load(%{data}, "PACKAGE")
 
-package = create_package(
-    arch = %{arch},
-    deps = %{deps},
-    extra_deps = %{extra_deps},
-    libc = %{libc},
-    name = %{package_name},
-    os = %{os},
-)
+REPO = %{repo}
 
 FILES = %{files}
 
