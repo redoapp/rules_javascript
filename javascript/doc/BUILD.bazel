@@ -6,7 +6,6 @@ doc(
     [
         "//javascript:providers.bzl",
         "//javascript:rules.bzl",
-        "//javascript:workspace.bzl",
     ],
     header = "doc.md",
     visibility = ["//:__subpackages__"],

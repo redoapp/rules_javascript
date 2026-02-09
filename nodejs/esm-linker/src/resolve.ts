@@ -1,8 +1,8 @@
 import {
   Resolution,
   Resolver,
-} from "@better-rules-javascript/commonjs-package/resolve";
-import { lazy } from "@better-rules-javascript/util/cache";
+} from "@rules-javascript/commonjs-package/resolve";
+import { lazy } from "@rules-javascript/util/cache";
 import { rmSync } from "node:fs";
 import { mkdir, mkdtemp, symlink } from "node:fs/promises";
 import Module from "node:module";

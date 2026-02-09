@@ -1,6 +1,6 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
-import { getOrSetAync } from "@better-rules-javascript/util/collection";
-import { ManagedResource } from "@better-rules-javascript/util/resource";
+import { JsonFormat } from "@rules-javascript/util-json";
+import { getOrSetAync } from "@rules-javascript/util/collection";
+import { ManagedResource } from "@rules-javascript/util/resource";
 import * as fs from "node:fs";
 
 interface Versioned<T> {

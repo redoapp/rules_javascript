@@ -1,5 +1,5 @@
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//typescript:rules.bzl", "configure_ts_compiler")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//typescript:rules.bzl", "configure_ts_compiler")
 
 package(default_visibility = ["//visibility:public"])
 

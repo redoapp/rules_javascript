@@ -31,14 +31,14 @@ const parser = new argparse.ArgumentParser({
 parser.add_argument("--config");
 parser.add_argument("--declaration-dir", { dest: "declarationDir" });
 parser.add_argument("--file", {
-    dest: "files", // https://github.com/nodeca/argparse/issues/184
+    dest: "files",
     action: AppendAction,
     default: [],
 });
 parser.add_argument("--module");
 parser.add_argument("--root-dir", { dest: "rootDir", required: true });
 parser.add_argument("--root-dirs", {
-    dest: "rootDirs", // https://github.com/nodeca/argparse/issues/184
+    dest: "rootDirs",
     action: AppendAction,
 });
 parser.add_argument("--source-map", { default: "false", dest: "sourceMap" });
@@ -81,14 +81,17 @@ parser.add_argument("output");
         switch (args.module.toLowerCase()) {
             case "es2015":
             case "es2020":
-            case "es2022":
+            case "es2022": {
                 tsconfig.compilerOptions.moduleResolution = "bundler";
                 break;
-            case "node20":
+            }
+            case "node20": {
                 tsconfig.compilerOptions.moduleResolution = "nodenext";
                 break;
-            default:
+            }
+            default: {
                 tsconfig.compilerOptions.moduleResolution = "node";
+            }
         }
     }
     if (args.declarationDir) {

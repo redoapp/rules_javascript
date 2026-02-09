@@ -1,7 +1,7 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
-import { Resolver } from "@better-rules-javascript/commonjs-package/resolve";
-import { JsonFormat } from "@better-rules-javascript/util-json";
-import { lazy } from "@better-rules-javascript/util/cache";
+import { PackageTree } from "@rules-javascript/commonjs-package";
+import { Resolver } from "@rules-javascript/commonjs-package/resolve";
+import { JsonFormat } from "@rules-javascript/util-json";
+import { lazy } from "@rules-javascript/util/cache";
 import { readFile } from "node:fs/promises";
 import { resolveFn } from "./resolve";
 

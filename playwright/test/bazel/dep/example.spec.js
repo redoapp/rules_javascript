@@ -1,6 +1,4 @@
-const {
-  add,
-} = require("@better-rules-javascript-test/playwright-other/example");
+const { add } = require("@rules-javascript-test/playwright-other/example");
 const { expect, test } = require("@playwright/test");
 
 test("adds numbers", () => {

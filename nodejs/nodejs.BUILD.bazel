@@ -1,9 +1,0 @@
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_toolchain")
-
-exports_files(["bin/node"], visibility = ["//visibility:public"])
-
-nodejs_toolchain(
-    name = "nodejs",
-    bin = "bin/node",
-    visibility = ["//visibility:public"],
-)

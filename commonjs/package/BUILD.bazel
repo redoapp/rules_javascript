@@ -4,7 +4,7 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/commonjs-package",
+    package_name = "@rules-javascript/commonjs-package",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )
@@ -22,7 +22,7 @@ ts_library(
     visibility = ["//visibility:public"],
     deps = [
         "//util/json:lib",
-        "@better_rules_javascript_npm//@types/node:lib",
+        "@npm//@types/node:lib",
     ],
 )
 

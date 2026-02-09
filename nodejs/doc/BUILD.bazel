@@ -4,9 +4,8 @@ doc(
     "doc",
     "//nodejs:bzl",
     [
-        "//nodejs:providers.bzl",
+        "//nodejs:nodejs.bzl",
         "//nodejs:rules.bzl",
-        "//nodejs:workspace.bzl",
     ],
     header = "doc.md",
     visibility = ["//:__subpackages__"],

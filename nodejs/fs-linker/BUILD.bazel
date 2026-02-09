@@ -35,7 +35,7 @@ js_gen(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/nodejs-fs-linker",
+    package_name = "@rules-javascript/nodejs-fs-linker",
     descriptors = ["package.json"],
     visibility = ["//:__subpackages__"],
 )
@@ -60,7 +60,7 @@ ts_library(
     deps = [
         "//commonjs/package:lib",
         "//util/json:lib",
-        "@better_rules_javascript_npm//@types/node:lib",
+        "@npm//@types/node:lib",
     ],
 )
 

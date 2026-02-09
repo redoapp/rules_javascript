@@ -1,5 +1,5 @@
-load("@better_rules_javascript//ts-proto:rules.bzl", "configure_ts_protoc")
-load("@better_rules_javascript//typescript:rules.bzl", "configure_ts_compiler")
+load("@rules_javascript//ts-proto:rules.bzl", "configure_ts_protoc")
+load("@rules_javascript//typescript:rules.bzl", "configure_ts_compiler")
 
 package(default_visibility = ["//visibility:public"])
 

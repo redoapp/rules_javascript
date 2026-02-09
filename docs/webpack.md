@@ -46,9 +46,9 @@ module.exports = {
 **BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//webpack:rules.bzl", "configure_webpack", "webpack_bundle")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//webpack:rules.bzl", "configure_webpack", "webpack_bundle")
 
 webpack_bundle(
     name = "bundle",
@@ -89,7 +89,7 @@ js_library(
 ## WebpackInfo
 
 <pre>
-load("@better_rules_javascript//webpack:providers.bzl", "WebpackInfo")
+load("@rules_javascript//webpack:providers.bzl", "WebpackInfo")
 
 WebpackInfo(<a href="#WebpackInfo-bin">bin</a>, <a href="#WebpackInfo-server">server</a>, <a href="#WebpackInfo-client_cjs">client_cjs</a>, <a href="#WebpackInfo-client_js">client_js</a>, <a href="#WebpackInfo-config_path">config_path</a>)
 </pre>
@@ -115,7 +115,7 @@ Webpack configuration
 ## webpack
 
 <pre>
-load("@better_rules_javascript//webpack:rules.bzl", "webpack")
+load("@rules_javascript//webpack:rules.bzl", "webpack")
 
 webpack(<a href="#webpack-name">name</a>, <a href="#webpack-bin">bin</a>, <a href="#webpack-client">client</a>, <a href="#webpack-config">config</a>, <a href="#webpack-config_dep">config_dep</a>, <a href="#webpack-language">language</a>, <a href="#webpack-module">module</a>, <a href="#webpack-server">server</a>)
 </pre>
@@ -140,7 +140,7 @@ Webpack tools
 ## webpack_bundle
 
 <pre>
-load("@better_rules_javascript//webpack:rules.bzl", "webpack_bundle")
+load("@rules_javascript//webpack:rules.bzl", "webpack_bundle")
 
 webpack_bundle(<a href="#webpack_bundle-name">name</a>, <a href="#webpack_bundle-dep">dep</a>, <a href="#webpack_bundle-output">output</a>, <a href="#webpack_bundle-root">root</a>, <a href="#webpack_bundle-webpack">webpack</a>)
 </pre>
@@ -162,7 +162,7 @@ Webpack bundle
 ## webpack_server
 
 <pre>
-load("@better_rules_javascript//webpack:rules.bzl", "webpack_server")
+load("@rules_javascript//webpack:rules.bzl", "webpack_server")
 
 webpack_server(<a href="#webpack_server-name">name</a>, <a href="#webpack_server-dep">dep</a>, <a href="#webpack_server-language">language</a>, <a href="#webpack_server-module">module</a>, <a href="#webpack_server-webpack">webpack</a>)
 </pre>
@@ -184,7 +184,7 @@ Run a webpack server
 ## configure_webpack
 
 <pre>
-load("@better_rules_javascript//webpack:rules.bzl", "configure_webpack")
+load("@rules_javascript//webpack:rules.bzl", "configure_webpack")
 
 configure_webpack(<a href="#configure_webpack-name">name</a>, <a href="#configure_webpack-config">config</a>, <a href="#configure_webpack-config_dep">config_dep</a>, <a href="#configure_webpack-cli">cli</a>, <a href="#configure_webpack-webpack">webpack</a>, <a href="#configure_webpack-dev_server">dev_server</a>, <a href="#configure_webpack-node_options">node_options</a>, <a href="#configure_webpack-visibility">visibility</a>)
 </pre>
@@ -198,8 +198,8 @@ Set up webpack tools.
 | <a id="configure_webpack-name"></a>name                 | Name                       | none                                                     |
 | <a id="configure_webpack-config"></a>config             | Configuration path         | none                                                     |
 | <a id="configure_webpack-config_dep"></a>config_dep     | Configuration library      | none                                                     |
-| <a id="configure_webpack-cli"></a>cli                   | Webpack CLI library        | `"@better_rules_javascript//webpack:webpack_cli"`        |
-| <a id="configure_webpack-webpack"></a>webpack           | Webpack library            | `"@better_rules_javascript//webpack"`                    |
-| <a id="configure_webpack-dev_server"></a>dev_server     | Webpack dev server library | `"@better_rules_javascript//webpack:webpack_dev_server"` |
+| <a id="configure_webpack-cli"></a>cli                   | Webpack CLI library        | `Label("@rules_javascript//webpack:webpack_cli")`        |
+| <a id="configure_webpack-webpack"></a>webpack           | Webpack library            | `Label("@rules_javascript//webpack:webpack")`            |
+| <a id="configure_webpack-dev_server"></a>dev_server     | Webpack dev server library | `Label("@rules_javascript//webpack:webpack_dev_server")` |
 | <a id="configure_webpack-node_options"></a>node_options | Node.js options            | `[]`                                                     |
 | <a id="configure_webpack-visibility"></a>visibility     | Visibility                 | `None`                                                   |

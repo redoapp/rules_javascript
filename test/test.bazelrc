@@ -3,8 +3,6 @@ run --symlink_prefix=/
 test --symlink_prefix=/
 test --test_output=errors
 
-common --enable_workspace
-
 build --incompatible_disable_starlark_host_transitions
 build --incompatible_disallow_struct_provider_syntax
 build --incompatible_disable_target_provider_fields

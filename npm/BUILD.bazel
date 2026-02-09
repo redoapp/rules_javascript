@@ -37,7 +37,7 @@ test_suite(
 
 nodejs_binary(
     name = "npm",
-    dep = "@better_rules_javascript_npm//npm:lib",
+    dep = "@npm//npm:lib",
     main = "bin/npm-cli.js",
     node = "//tools/nodejs",
     visibility = ["//visibility:public"],
@@ -45,7 +45,7 @@ nodejs_binary(
 
 nodejs_binary(
     name = "yarn",
-    dep = "@better_rules_javascript_npm//@yarnpkg/cli-dist:lib",
+    dep = "@npm//@yarnpkg/cli-dist:lib",
     main = "bin/yarn.js",
     node = "//tools/nodejs",
     visibility = ["//visibility:public"],

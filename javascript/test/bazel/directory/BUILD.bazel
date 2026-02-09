@@ -1,5 +1,5 @@
 load("@bazel_util//file:rules.bzl", "directory")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
 
 directory(
     name = "src",

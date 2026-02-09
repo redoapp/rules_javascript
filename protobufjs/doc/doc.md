@@ -18,7 +18,7 @@ Add protobufjs as an [external dependency](#external-dependencies).
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//protobufjs:rules.bzl", configure_js_proto)
+load("@rules_javascript//protobufjs:rules.bzl", configure_js_proto)
 
 configure_js_proto(
     name = "js_proto",
@@ -29,8 +29,8 @@ configure_js_proto(
 ## Use
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//protobufjs:rules.bzl", "js_proto_library")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//protobufjs:rules.bzl", "js_proto_library")
 load("@rules_proto//proto:defs.bzl", "proto_library")
 
 cjs_root(

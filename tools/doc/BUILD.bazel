@@ -36,7 +36,6 @@ pkg_tar(
         "//protobuf/doc",
         "//protobufjs/doc",
         "//rollup/doc",
-        "//rules/doc",
         "//ts-proto/doc",
         "//typescript-eslint/doc",
         "//typescript/doc",

@@ -1,19 +1,4 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load(":playwright.bzl", "TOOLS")
-load(
-    ":rules.bzl",
-    "playwright_android",
-    "playwright_chromium",
-    "playwright_chromium_headless_shell",
-    "playwright_chromium_tip_of_tree",
-    "playwright_chromium_tip_of_tree_headless_shell",
-    "playwright_ffmpeg",
-    "playwright_firefox",
-    "playwright_firefox_beta",
-    "playwright_tool_types",
-    "playwright_webkit",
-    "playwright_winldd",
-)
 
 exports_files(
     [
@@ -35,56 +20,4 @@ bzl_library(
         "//util:bzl",
         "@bazel_skylib//lib:shell",
     ],
-)
-
-playwright_tool_types(
-    tools = TOOLS,
-    visibility = ["//visibility:public"],
-)
-
-playwright_android(
-    name = "android",
-    visibility = ["//visibility:public"],
-)
-
-playwright_chromium_headless_shell(
-    name = "chromium_headless_shell",
-    visibility = ["//visibility:public"],
-)
-
-playwright_chromium_tip_of_tree_headless_shell(
-    name = "chromium_tip_of_tree_headless_shell",
-    visibility = ["//visibility:public"],
-)
-
-playwright_chromium_tip_of_tree(name = "chromium_tip_of_tree")
-
-playwright_chromium(
-    name = "chromium",
-    visibility = ["//visibility:public"],
-)
-
-playwright_ffmpeg(
-    name = "ffmpeg",
-    visibility = ["//visibility:public"],
-)
-
-playwright_firefox_beta(
-    name = "firefox_beta",
-    visibility = ["//visibility:public"],
-)
-
-playwright_firefox(
-    name = "firefox",
-    visibility = ["//visibility:public"],
-)
-
-playwright_webkit(
-    name = "webkit",
-    visibility = ["//visibility:public"],
-)
-
-playwright_winldd(
-    name = "winldd",
-    visibility = ["//visibility:public"],
 )

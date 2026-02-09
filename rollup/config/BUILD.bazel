@@ -9,8 +9,8 @@ ts_library(
         "src/**/*.ts",
     ]),
     compile_deps = [
-        "@better_rules_javascript_npm//@types/node:lib",
-        "@better_rules_javascript_npm//rollup:lib",
+        "@npm//@types/node:lib",
+        "@npm//rollup:lib",
     ],
     compiler = "//tools/typescript:tsc",
     config = "tsconfig.json",
@@ -21,7 +21,7 @@ ts_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/rollup-config",
+    package_name = "@rules-javascript/rollup-config",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )

@@ -1,4 +1,4 @@
-module(name = "better_rules_javascript_test")
+module(name = "rules_javascript_test")
 
 # Bazel Util
 
@@ -12,6 +12,26 @@ archive_override(
     strip_prefix = "bazel-util-%s" % BAZEL_UTIL_VERSION,
     url = "https://github.com/redoapp/bazel-util/archive/%s.tar.gz" % BAZEL_UTIL_VERSION,
 )
+
+# JavaScript
+
+bazel_dep(name = "rules_javascript")
+local_path_override(
+    module_name = "rules_javascript",
+    path = "../../../../bazel_util++file+files/files",
+)
+
+yarn = use_extension("@rules_javascript//npm:extensions.bzl", "yarn")
+yarn.workspace(
+    name = "rules_javascript_test_npm",
+    data = "@rules_javascript//test:npm.json",
+    path = "/",
+    plugins = [
+        "@rules_javascript//commonjs:npm_plugin.bzl",
+        "@rules_javascript//typescript:npm_plugin.bzl",
+    ],
+)
+use_repo(yarn, npm = "rules_javascript_test_npm")
 
 # Pkg
 

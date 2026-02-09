@@ -5,7 +5,7 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/yarn-resolve",
+    package_name = "@rules-javascript/yarn-resolve",
     descriptors = ["package.json"],
 )
 
@@ -26,16 +26,15 @@ ts_library(
     deps = [
         "//util/cache:lib",
         "//util/json:lib",
-        "//util/starlark:lib",
         "//util/util:lib",
-        "@better_rules_javascript_npm//@types/argparse:lib",
-        "@better_rules_javascript_npm//@types/node:lib",
-        "@better_rules_javascript_npm//@yarnpkg/cli:lib",
-        "@better_rules_javascript_npm//@yarnpkg/core:lib",
-        "@better_rules_javascript_npm//@yarnpkg/fslib:lib",
-        "@better_rules_javascript_npm//@yarnpkg/plugin-npm:lib",
-        "@better_rules_javascript_npm//@yarnpkg/plugin-patch:lib",
-        "@better_rules_javascript_npm//argparse:lib",
+        "@npm//@types/argparse:lib",
+        "@npm//@types/node:lib",
+        "@npm//@yarnpkg/cli:lib",
+        "@npm//@yarnpkg/core:lib",
+        "@npm//@yarnpkg/fslib:lib",
+        "@npm//@yarnpkg/plugin-npm:lib",
+        "@npm//@yarnpkg/plugin-patch:lib",
+        "@npm//argparse:lib",
     ],
 )
 

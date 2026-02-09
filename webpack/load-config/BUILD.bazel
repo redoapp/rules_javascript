@@ -6,8 +6,8 @@ ts_library(
     name = "lib",
     srcs = glob(["src/**/*.mts"]),
     compile_deps = [
-        "@better_rules_javascript_npm//@types/node:lib",
-        "@better_rules_javascript_npm//webpack:lib",
+        "@npm//@types/node:lib",
+        "@npm//webpack:lib",
     ],
     compiler = "//tools/typescript:tsc",
     config = "tsconfig.json",
@@ -22,7 +22,7 @@ ts_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/webpack-load-config",
+    package_name = "@rules-javascript/webpack-load-config",
     descriptors = ["package.json"],
 )
 

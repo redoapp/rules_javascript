@@ -2,5 +2,5 @@
   "compilerOptions": {
     "module": "es2020"
   },
-  "extends": "@better-rules-javascript/tools-typescript/tsconfig.common.json"
+  "extends": "@rules-javascript/tools-typescript/tsconfig.common.json"
 }

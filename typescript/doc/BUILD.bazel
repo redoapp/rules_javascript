@@ -6,7 +6,6 @@ doc(
     [
         "//typescript:providers.bzl",
         "//typescript:rules.bzl",
-        "//typescript:workspace.bzl",
     ],
     visibility = ["//:__subpackages__"],
 )

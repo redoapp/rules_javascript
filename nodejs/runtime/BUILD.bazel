@@ -41,7 +41,7 @@ ts_library(
     root = ":root",
     deps = [
         "//commonjs/package:lib",
-        "@better_rules_javascript_npm//@types/node:lib",
+        "@npm//@types/node:lib",
     ],
 )
 
@@ -64,7 +64,7 @@ js_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/nodejs-runtime",
+    package_name = "@rules-javascript/nodejs-runtime",
     descriptors = ["package.json"],
 )
 

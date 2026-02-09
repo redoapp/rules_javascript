@@ -18,7 +18,7 @@
 ## eslint
 
 <pre>
-load("@better_rules_javascript//eslint:rules.bzl", "eslint")
+load("@rules_javascript//eslint:rules.bzl", "eslint")
 
 eslint(<a href="#eslint-name">name</a>, <a href="#eslint-bin">bin</a>, <a href="#eslint-config">config</a>, <a href="#eslint-config_dep">config_dep</a>)
 </pre>
@@ -37,18 +37,18 @@ eslint(<a href="#eslint-name">name</a>, <a href="#eslint-bin">bin</a>, <a href="
 ## configure_eslint
 
 <pre>
-load("@better_rules_javascript//eslint:rules.bzl", "configure_eslint")
+load("@rules_javascript//eslint:rules.bzl", "configure_eslint")
 
 configure_eslint(<a href="#configure_eslint-name">name</a>, <a href="#configure_eslint-config">config</a>, <a href="#configure_eslint-config_dep">config_dep</a>, <a href="#configure_eslint-dep">dep</a>, <a href="#configure_eslint-plugins">plugins</a>, <a href="#configure_eslint-visibility">visibility</a>)
 </pre>
 
 **PARAMETERS**
 
-| Name                                               | Description               | Default Value                                   |
-| :------------------------------------------------- | :------------------------ | :---------------------------------------------- |
-| <a id="configure_eslint-name"></a>name             | <p align="center"> - </p> | none                                            |
-| <a id="configure_eslint-config"></a>config         | <p align="center"> - </p> | none                                            |
-| <a id="configure_eslint-config_dep"></a>config_dep | <p align="center"> - </p> | none                                            |
-| <a id="configure_eslint-dep"></a>dep               | <p align="center"> - </p> | `"@better_rules_javascript//eslint:eslint_lib"` |
-| <a id="configure_eslint-plugins"></a>plugins       | <p align="center"> - </p> | `[]`                                            |
-| <a id="configure_eslint-visibility"></a>visibility | <p align="center"> - </p> | `None`                                          |
+| Name                                               | Description               | Default Value                            |
+| :------------------------------------------------- | :------------------------ | :--------------------------------------- |
+| <a id="configure_eslint-name"></a>name             | <p align="center"> - </p> | none                                     |
+| <a id="configure_eslint-config"></a>config         | <p align="center"> - </p> | none                                     |
+| <a id="configure_eslint-config_dep"></a>config_dep | <p align="center"> - </p> | none                                     |
+| <a id="configure_eslint-dep"></a>dep               | <p align="center"> - </p> | `"@rules_javascript//eslint:eslint_lib"` |
+| <a id="configure_eslint-plugins"></a>plugins       | <p align="center"> - </p> | `[]`                                     |
+| <a id="configure_eslint-visibility"></a>visibility | <p align="center"> - </p> | `None`                                   |

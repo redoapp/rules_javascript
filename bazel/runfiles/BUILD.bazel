@@ -4,7 +4,7 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/bazel-runfiles",
+    package_name = "@rules-javascript/bazel-runfiles",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )
@@ -26,6 +26,6 @@ ts_library(
     visibility = ["//visibility:public"],
     deps = [
         "//util/util:lib",
-        "@better_rules_javascript_npm//@types/node:lib",
+        "@npm//@types/node:lib",
     ],
 )

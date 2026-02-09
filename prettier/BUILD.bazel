@@ -24,7 +24,7 @@ bzl_library(
 
 alias(
     name = "prettier_lib",
-    actual = "@better_rules_javascript_npm//prettier:lib",
+    actual = "@npm//prettier:lib",
     visibility = ["//visibility:public"],
 )
 

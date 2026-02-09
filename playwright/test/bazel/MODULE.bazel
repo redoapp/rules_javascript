@@ -1,4 +1,4 @@
-module(name = "better_rules_javascript_test")
+module(name = "rules_javascript_test")
 
 # Bazel Util
 
@@ -11,6 +11,41 @@ archive_override(
     sha256 = "d28ec8c5dfd84e55f58f6309f8ac5583ff8a5976bdd1fc6b20d88878e344e57f",
     strip_prefix = "bazel-util-%s" % BAZEL_UTIL_VERSION,
     url = "https://github.com/redoapp/bazel-util/archive/%s.tar.gz" % BAZEL_UTIL_VERSION,
+)
+
+# JavaScript
+
+bazel_dep(name = "rules_javascript")
+local_path_override(
+    module_name = "rules_javascript",
+    path = "../../../../bazel_util++file+files/files",
+)
+
+yarn = use_extension("@rules_javascript//npm:extensions.bzl", "yarn", dev_dependency = True)
+yarn.workspace(
+    name = "rules_javascript_test_npm",
+    data = "@rules_javascript//test:npm.json",
+    path = "/",
+    plugins = [
+        "@rules_javascript//commonjs:npm_plugin.bzl",
+        "@rules_javascript//javascript:npm_plugin.bzl",
+    ],
+)
+use_repo(yarn, npm = "rules_javascript_test_npm")
+
+playwright = use_extension("@rules_javascript//playwright:extensions.bzl", "playwright", dev_dependency = True)
+playwright.browsers(
+    name = "rules_javascript_test_playwright",
+    data = "@rules_javascript//test:browsers.json",
+    playwright = "@npm//playwright-core:lib",
+    tools = [
+        "chromium",
+        "chromium-headless-shell",
+    ],
+)
+use_repo(
+    playwright,
+    playwright = "rules_javascript_test_playwright",
 )
 
 # Pkg

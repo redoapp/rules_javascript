@@ -1,6 +1,6 @@
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library", "js_module_import")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library", "js_module_import")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
 
 js_library(
     name = "lib",
@@ -10,7 +10,7 @@ js_library(
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/nodejs-preload",
+    package_name = "@rules-javascript-test/nodejs-preload",
 )
 
 js_library(

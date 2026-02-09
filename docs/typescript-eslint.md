@@ -19,7 +19,7 @@
 ## ts_eslint
 
 <pre>
-load("@better_rules_javascript//typescript-eslint:rules.bzl", "ts_eslint")
+load("@rules_javascript//typescript-eslint:rules.bzl", "ts_eslint")
 
 ts_eslint(<a href="#ts_eslint-name">name</a>, <a href="#ts_eslint-bin">bin</a>, <a href="#ts_eslint-config">config</a>, <a href="#ts_eslint-config_dep">config_dep</a>)
 </pre>
@@ -38,7 +38,7 @@ ts_eslint(<a href="#ts_eslint-name">name</a>, <a href="#ts_eslint-bin">bin</a>, 
 ## ts_eslint_format
 
 <pre>
-load("@better_rules_javascript//typescript-eslint:rules.bzl", "ts_eslint_format")
+load("@rules_javascript//typescript-eslint:rules.bzl", "ts_eslint_format")
 
 ts_eslint_format(<a href="#ts_eslint_format-name">name</a>, <a href="#ts_eslint_format-srcs">srcs</a>, <a href="#ts_eslint_format-all_srcs">all_srcs</a>, <a href="#ts_eslint_format-ts">ts</a>, <a href="#ts_eslint_format-ts_eslint">ts_eslint</a>)
 </pre>
@@ -60,7 +60,7 @@ TypeScript ESLint
 ## configure_ts_eslint
 
 <pre>
-load("@better_rules_javascript//typescript-eslint:rules.bzl", "configure_ts_eslint")
+load("@rules_javascript//typescript-eslint:rules.bzl", "configure_ts_eslint")
 
 configure_ts_eslint(<a href="#configure_ts_eslint-name">name</a>, <a href="#configure_ts_eslint-config">config</a>, <a href="#configure_ts_eslint-config_dep">config_dep</a>, <a href="#configure_ts_eslint-dep">dep</a>, <a href="#configure_ts_eslint-plugins">plugins</a>, <a href="#configure_ts_eslint-node_options">node_options</a>, <a href="#configure_ts_eslint-visibility">visibility</a>)
 </pre>
@@ -72,7 +72,7 @@ configure_ts_eslint(<a href="#configure_ts_eslint-name">name</a>, <a href="#conf
 | <a id="configure_ts_eslint-name"></a>name                 | <p align="center"> - </p> | none                                            |
 | <a id="configure_ts_eslint-config"></a>config             | <p align="center"> - </p> | none                                            |
 | <a id="configure_ts_eslint-config_dep"></a>config_dep     | <p align="center"> - </p> | none                                            |
-| <a id="configure_ts_eslint-dep"></a>dep                   | <p align="center"> - </p> | `"@better_rules_javascript//eslint:eslint_lib"` |
+| <a id="configure_ts_eslint-dep"></a>dep                   | <p align="center"> - </p> | `Label("@rules_javascript//eslint:eslint_lib")` |
 | <a id="configure_ts_eslint-plugins"></a>plugins           | <p align="center"> - </p> | `[]`                                            |
 | <a id="configure_ts_eslint-node_options"></a>node_options | <p align="center"> - </p> | `[]`                                            |
 | <a id="configure_ts_eslint-visibility"></a>visibility     | <p align="center"> - </p> | `None`                                          |

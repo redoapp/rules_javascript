@@ -1,4 +1,4 @@
-import { bazelBin, spawnOptions } from "@better-rules-javascript/test";
+import { bazelBin, spawnOptions } from "@rules-javascript/test";
 import * as childProcess from "node:child_process";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

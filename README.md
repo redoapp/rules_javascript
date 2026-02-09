@@ -28,20 +28,18 @@ See [documentation](docs/index.md).
 
 ## Install
 
-**WORKSPACE.bazel**
+**MODULE.bazel**
 
 ```bzl
-# better_rules_javascript
+RULES_JAVACRIPT_VERSION = "<commit>"
 
-JAVACRIPT_VERSION = "..."
-http_archive(
-    name = "better_rules_javascript",
-    strip_prefix = "rules_javascript-%s" % JAVASCRIPT_VERSION,
-    urls = ["https://github.com/rivethealth/rules_javascript/archive/%s.tar.gz" % JAVACRIPT_VERSION],
+bazel_dep(name = "rules_javascript")
+archive_override(
+    module_name = "rules_javascript",
+    sha256 = "<sha256>",
+    strip_prefix = "rules_javascript-%s" % RULES_JAVACRIPT_VERSION,
+    url = "https://github.com/redoapp/rules_javascript/archive/%s.tar.gz" % RULES_JAVACRIPT_VERSION,
 )
-
-load("@better_rules_javascript//rules:workspace.bzl", javascript_repositories = "respositories")
-javascript_respositories()
 ```
 
 ## Example
@@ -61,10 +59,10 @@ console.log("Hello world");
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//typescript:rules.bzl", "tsconfig", "ts_library")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//typescript:rules.bzl", "tsconfig", "ts_library")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
 
 nodejs_binary(
     name = "bin",

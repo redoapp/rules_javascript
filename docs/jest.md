@@ -58,9 +58,9 @@ exports.verbose = true;
 **example/BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//jest:rules.bzl", "jest_test")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//jest:rules.bzl", "jest_test")
 
 cjs_root(
     name = "root",
@@ -84,7 +84,7 @@ jest_test(
     config_dep = ":jest_config",
     dep = ":test_lib",
     jest = "@npm//jest:lib",
-    node = "@better_rules_javascript//rules:nodejs",
+    node = "@rules_javascript//rules:nodejs",
 )
 
 js_library(
@@ -112,7 +112,7 @@ bazel run :example -- -u
 ## jest_test
 
 <pre>
-load("@better_rules_javascript//jest:rules.bzl", "jest_test")
+load("@rules_javascript//jest:rules.bzl", "jest_test")
 
 jest_test(<a href="#jest_test-name">name</a>, <a href="#jest_test-data">data</a>, <a href="#jest_test-bash_preamble">bash_preamble</a>, <a href="#jest_test-config">config</a>, <a href="#jest_test-config_dep">config_dep</a>, <a href="#jest_test-dep">dep</a>, <a href="#jest_test-env">env</a>, <a href="#jest_test-jest">jest</a>, <a href="#jest_test-node">node</a>, <a href="#jest_test-node_options">node_options</a>,
           <a href="#jest_test-preload">preload</a>)
@@ -120,16 +120,16 @@ jest_test(<a href="#jest_test-name">name</a>, <a href="#jest_test-data">data</a>
 
 **ATTRIBUTES**
 
-| Name                                              | Description                                       | Type                                                                          | Mandatory | Default                              |
-| :------------------------------------------------ | :------------------------------------------------ | :---------------------------------------------------------------------------- | :-------- | :----------------------------------- |
-| <a id="jest_test-name"></a>name                   | A unique name for this target.                    | <a href="https://bazel.build/concepts/labels#target-names">Name</a>           | required  |                                      |
-| <a id="jest_test-data"></a>data                   | Runtime data.                                     | <a href="https://bazel.build/concepts/labels">List of labels</a>              | optional  | `[]`                                 |
-| <a id="jest_test-bash_preamble"></a>bash_preamble | -                                                 | String                                                                        | optional  | `""`                                 |
-| <a id="jest_test-config"></a>config               | Path to config file, relative to config_dep root. | String                                                                        | required  |                                      |
-| <a id="jest_test-config_dep"></a>config_dep       | Jest config dependency.                           | <a href="https://bazel.build/concepts/labels">Label</a>                       | required  |                                      |
-| <a id="jest_test-dep"></a>dep                     | Test dependency.                                  | <a href="https://bazel.build/concepts/labels">Label</a>                       | required  |                                      |
-| <a id="jest_test-env"></a>env                     | Environment variables.                            | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional  | `{}`                                 |
-| <a id="jest_test-jest"></a>jest                   | Jest dependency.                                  | <a href="https://bazel.build/concepts/labels">Label</a>                       | required  |                                      |
-| <a id="jest_test-node"></a>node                   | -                                                 | <a href="https://bazel.build/concepts/labels">Label</a>                       | optional  | `"@better_rules_javascript//nodejs"` |
-| <a id="jest_test-node_options"></a>node_options   | Node.js options.                                  | List of strings                                                               | optional  | `[]`                                 |
-| <a id="jest_test-preload"></a>preload             | Preloaded modules                                 | <a href="https://bazel.build/concepts/labels">List of labels</a>              | optional  | `[]`                                 |
+| Name                                              | Description                                       | Type                                                                          | Mandatory | Default                       |
+| :------------------------------------------------ | :------------------------------------------------ | :---------------------------------------------------------------------------- | :-------- | :---------------------------- |
+| <a id="jest_test-name"></a>name                   | A unique name for this target.                    | <a href="https://bazel.build/concepts/labels#target-names">Name</a>           | required  |                               |
+| <a id="jest_test-data"></a>data                   | Runtime data.                                     | <a href="https://bazel.build/concepts/labels">List of labels</a>              | optional  | `[]`                          |
+| <a id="jest_test-bash_preamble"></a>bash_preamble | -                                                 | String                                                                        | optional  | `""`                          |
+| <a id="jest_test-config"></a>config               | Path to config file, relative to config_dep root. | String                                                                        | required  |                               |
+| <a id="jest_test-config_dep"></a>config_dep       | Jest config dependency.                           | <a href="https://bazel.build/concepts/labels">Label</a>                       | required  |                               |
+| <a id="jest_test-dep"></a>dep                     | Test dependency.                                  | <a href="https://bazel.build/concepts/labels">Label</a>                       | required  |                               |
+| <a id="jest_test-env"></a>env                     | Environment variables.                            | <a href="https://bazel.build/rules/lib/dict">Dictionary: String -> String</a> | optional  | `{}`                          |
+| <a id="jest_test-jest"></a>jest                   | Jest dependency.                                  | <a href="https://bazel.build/concepts/labels">Label</a>                       | required  |                               |
+| <a id="jest_test-node"></a>node                   | -                                                 | <a href="https://bazel.build/concepts/labels">Label</a>                       | optional  | `"@rules_javascript//nodejs"` |
+| <a id="jest_test-node_options"></a>node_options   | Node.js options.                                  | List of strings                                                               | optional  | `[]`                          |
+| <a id="jest_test-preload"></a>preload             | Preloaded modules                                 | <a href="https://bazel.build/concepts/labels">List of labels</a>              | optional  | `[]`                          |

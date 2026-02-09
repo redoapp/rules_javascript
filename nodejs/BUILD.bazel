@@ -1,4 +1,5 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+load(":rules.bzl", "nodejs", "nodejs_runtime", "nodejs_system_runtime")
 
 exports_files(
     glob(["**/*.bzl"]),
@@ -17,9 +18,33 @@ exports_files(
     visibility = ["//visibility:public"],
 )
 
-alias(
+nodejs(
     name = "nodejs",
-    actual = "//nodejs/default:nodejs",
+    options = ["--enable-source-maps"],
+    runtime = ":nodejs_runtime",
+    visibility = ["//visibility:public"],
+)
+
+nodejs_runtime(
+    name = "nodejs_runtime",
+    visibility = ["//visibility:public"],
+)
+
+toolchain_type(
+    name = "nodejs_type",
+    visibility = ["//visibility:public"],
+)
+
+nodejs(
+    name = "system_nodejs",
+    options = ["--enable-source-maps"],
+    runtime = ":system_nodejs_runtime",
+    visibility = ["//visibility:public"],
+)
+
+nodejs_system_runtime(
+    name = "system_nodejs_runtime",
+    node = "node",
     visibility = ["//visibility:public"],
 )
 
@@ -36,19 +61,6 @@ bzl_library(
         "@bazel_util//file:bzl",
         "@rules_pkg//pkg:bzl_srcs",
     ],
-)
-
-sh_binary(
-    name = "nodejs_resolve",
-    srcs = ["nodejs-resolve.sh"],
-    data = ["//nodejs/resolve:bin"],
-    visibility = ["//:__subpackages__"],
-)
-
-alias(
-    name = "system_nodejs",
-    actual = "//nodejs/default:system_nodejs",
-    visibility = ["//visibility:public"],
 )
 
 test_suite(

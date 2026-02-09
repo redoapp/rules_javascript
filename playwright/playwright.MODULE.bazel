@@ -1,0 +1,7 @@
+playwright = use_extension("//playwright:extensions.bzl", "playwright")
+use_repo(
+    playwright,
+    "playwright_toolchains",
+)
+
+register_toolchains("@playwright_toolchains//:all")

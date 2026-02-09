@@ -1,6 +1,6 @@
 # Npm
 
-Better_rules_javascript can use npm packages.
+rules_javascript can use npm packages.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -15,11 +15,6 @@ Better_rules_javascript can use npm packages.
   - [yarn_audit_test](#yarn_audit_test)
   - [yarn_resolve](#yarn_resolve)
   - [npm_package](#npm_package)
-- [//npm:workspace.bzl](#npmworkspacebzl)
-  - [npm](#npm)
-  - [npm_import_external_rule](#npm_import_external_rule)
-  - [npm_import_rule](#npm_import_rule)
-  - [package_repo_name](#package_repo_name)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -32,7 +27,7 @@ Bazel repositories. This approach integrates well into the Bazel ecosystem and
 avoid excessive downloads. Compare with
 [rules_jvm_external](https://github.com/bazelbuild/rules_jvm_external).
 
-better_rules_javascript uses Yarn 2.
+rules_javascript uses Yarn 2.
 
 ## Yarn
 
@@ -50,30 +45,32 @@ Create a package.json.
 }
 ```
 
-Create a `yarn_resolve` target.
+Also create an empty yarn.lock.
 
-**BUILD.bazel**
+**yarn.lock**
 
-```bzl
-yarn_resolve(
-    name = "resolve_npm",
-)
+```text
+
 ```
 
-Resolve packages and generate npm_data.bzl
+Add to yarn extension.
+
+**MODULE.bazel**
+
+```bzl
+yarn = use_extension("@rules_javascript//npm:extensions.bzl", "yarn")
+yarn.workspace(
+  name = "my_npm",
+  data = "npm.json",
+  path = "/",
+)
+use_repo(yarn, npm = "my_npm")
+```
+
+Resolve packages and generate npm.json.
 
 ```sh
-bazel run :resolve_npm
-```
-
-Load the repositories.
-
-**WORKSPACE.bazel**
-
-```bzl
-load("@better_rules_javascript//npm:workspace.bzl", "npm")
-load(":npm_data.bzl", npm_packages = "PACKAGES", npm_roots = "ROOTS")
-npm("npm", npm_packages, npm_roots)
+bazel run @npm//:resolve
 ```
 
 ### Plugins
@@ -83,24 +80,19 @@ TypeScript, CSS, etc.
 
 To support these, the npm repositories can be customized via "plugins."
 
-The defaults are:
+If you use TypeScript, use
 
 ```bzl
-load("@better_rules_javascript//commonjs:workspace.bzl", "cjs_npm_plugin")
-load("@better_rules_javascript//js:workspace.bzl", "js_npm_plugin")
-
-npm(
-  name = "npm",
-  packages = npm_packages,
-  roots = npm_roots,
-  plugins = [
-    cjs_npm_plugin(),
-    js_npm_plugin(),
-  ]
+yarn.workspace(
+    name = "my_npm",
+    data = "npm.json",
+    path = "/",
+    plugins = [
+        "@rules_javascript//commonjs:npm_plugin.bzl",
+        "@rules_javascript//typescript:npm_plugin.bzl",
+    ],
 )
 ```
-
-If you use TypeScript, replace `js_npm_plugin()` with `ts_npm_plugin()`.
 
 ### Usage
 
@@ -139,7 +131,7 @@ rules to replicate the build process.
 ## npm_publish
 
 <pre>
-load("@better_rules_javascript//npm:rules.bzl", "npm_publish")
+load("@rules_javascript//npm:rules.bzl", "npm_publish")
 
 npm_publish(<a href="#npm_publish-name">name</a>, <a href="#npm_publish-src">src</a>)
 </pre>
@@ -156,7 +148,7 @@ npm_publish(<a href="#npm_publish-name">name</a>, <a href="#npm_publish-src">src
 ## yarn_audit_test
 
 <pre>
-load("@better_rules_javascript//npm:rules.bzl", "yarn_audit_test")
+load("@rules_javascript//npm:rules.bzl", "yarn_audit_test")
 
 yarn_audit_test(<a href="#yarn_audit_test-name">name</a>, <a href="#yarn_audit_test-data">data</a>, <a href="#yarn_audit_test-path">path</a>)
 </pre>
@@ -174,7 +166,7 @@ yarn_audit_test(<a href="#yarn_audit_test-name">name</a>, <a href="#yarn_audit_t
 ## yarn_resolve
 
 <pre>
-load("@better_rules_javascript//npm:rules.bzl", "yarn_resolve")
+load("@rules_javascript//npm:rules.bzl", "yarn_resolve")
 
 yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-output">output</a>, <a href="#yarn_resolve-path">path</a>, <a href="#yarn_resolve-refresh">refresh</a>)
 </pre>
@@ -193,7 +185,7 @@ yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-outpu
 ## npm_package
 
 <pre>
-load("@better_rules_javascript//npm:rules.bzl", "npm_package")
+load("@rules_javascript//npm:rules.bzl", "npm_package")
 
 npm_package(<a href="#npm_package-name">name</a>, <a href="#npm_package-srcs">srcs</a>, <a href="#npm_package-visibility">visibility</a>, <a href="#npm_package-kwargs">**kwargs</a>)
 </pre>
@@ -206,87 +198,3 @@ npm_package(<a href="#npm_package-name">name</a>, <a href="#npm_package-srcs">sr
 | <a id="npm_package-srcs"></a>srcs             | <p align="center"> - </p> | none          |
 | <a id="npm_package-visibility"></a>visibility | <p align="center"> - </p> | `None`        |
 | <a id="npm_package-kwargs"></a>kwargs         | <p align="center"> - </p> | none          |
-
-# //npm:workspace.bzl
-
-<!-- Generated with Stardoc: http://skydoc.bazel.build -->
-
-<a id="npm"></a>
-
-## npm
-
-<pre>
-load("@better_rules_javascript//npm:workspace.bzl", "npm")
-
-npm(<a href="#npm-name">name</a>, <a href="#npm-packages">packages</a>, <a href="#npm-roots">roots</a>, <a href="#npm-plugins">plugins</a>, <a href="#npm-auth_patterns">auth_patterns</a>, <a href="#npm-netrc">netrc</a>)
-</pre>
-
-Npm repositories.
-
-**PARAMETERS**
-
-| Name                                        | Description   | Default Value                                                                                                                                                                                                                                                                                                  |
-| :------------------------------------------ | :------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| <a id="npm-name"></a>name                   | Namespace     | none                                                                                                                                                                                                                                                                                                           |
-| <a id="npm-packages"></a>packages           | Packages      | none                                                                                                                                                                                                                                                                                                           |
-| <a id="npm-roots"></a>roots                 | Roots         | none                                                                                                                                                                                                                                                                                                           |
-| <a id="npm-plugins"></a>plugins             | Plugins       | `[struct(alias_build = <function alias_build from //commonjs:workspace.bzl>, package_build = <function package_build from //commonjs:workspace.bzl>), struct(alias_build = <function alias_build from //javascript:workspace.bzl>, package_build = <function package_build from //javascript:workspace.bzl>)]` |
-| <a id="npm-auth_patterns"></a>auth_patterns | Auth patterns | `None`                                                                                                                                                                                                                                                                                                         |
-| <a id="npm-netrc"></a>netrc                 | Netrc         | `None`                                                                                                                                                                                                                                                                                                         |
-
-<a id="npm_import_external_rule"></a>
-
-## npm_import_external_rule
-
-<pre>
-load("@better_rules_javascript//npm:workspace.bzl", "npm_import_external_rule")
-
-npm_import_external_rule(<a href="#npm_import_external_rule-plugins">plugins</a>)
-</pre>
-
-Create a npm_import_external rule.
-
-**PARAMETERS**
-
-| Name                                                 | Description               | Default Value |
-| :--------------------------------------------------- | :------------------------ | :------------ |
-| <a id="npm_import_external_rule-plugins"></a>plugins | <p align="center"> - </p> | none          |
-
-<a id="npm_import_rule"></a>
-
-## npm_import_rule
-
-<pre>
-load("@better_rules_javascript//npm:workspace.bzl", "npm_import_rule")
-
-npm_import_rule(<a href="#npm_import_rule-plugins">plugins</a>)
-</pre>
-
-Create an npm import rule.
-
-**PARAMETERS**
-
-| Name                                        | Description               | Default Value |
-| :------------------------------------------ | :------------------------ | :------------ |
-| <a id="npm_import_rule-plugins"></a>plugins | <p align="center"> - </p> | none          |
-
-<a id="package_repo_name"></a>
-
-## package_repo_name
-
-<pre>
-load("@better_rules_javascript//npm:workspace.bzl", "package_repo_name")
-
-package_repo_name(<a href="#package_repo_name-prefix">prefix</a>, <a href="#package_repo_name-name">name</a>)
-</pre>
-
-Repository name for npm package.
-
-Replaces characters not permitted in Bazel repository names.
-
-**PARAMETERS**
-
-| Name                                        | Description | Default Value |
-| :------------------------------------------ | :---------- | :------------ |
-| <a id="package_repo_name-prefix"></a>prefix | Namespace   | none          |
-| <a id="package_repo_name-name"></a>name     | ID          | none          |

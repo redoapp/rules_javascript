@@ -2,9 +2,17 @@ load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:rules.bzl", "js_library")
 load("//typescript:rules.bzl", "ts_library")
 
+exports_files(
+    [
+        "browsers.json",
+        "yarn.lock",
+    ],
+    visibility = ["//visibility:public"],  # tests
+)
+
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript/test",
+    package_name = "@rules-javascript/test",
     descriptors = ["package.json"],
     visibility = ["//:__subpackages__"],
 )

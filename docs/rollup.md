@@ -62,8 +62,8 @@ export default {
 **example/BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//javascript:rules.bzl", "js_file", "js_library")
-load("@better_rules_javascript//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
+load("@rules_javascript//javascript:rules.bzl", "js_file", "js_library")
+load("@rules_javascript//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
 
 cjs_root(
   name = "root",
@@ -104,7 +104,7 @@ rollup_bundle(
 ## RollupInfo
 
 <pre>
-load("@better_rules_javascript//rollup:providers.bzl", "RollupInfo")
+load("@rules_javascript//rollup:providers.bzl", "RollupInfo")
 
 RollupInfo(<a href="#RollupInfo-bin">bin</a>, <a href="#RollupInfo-config_path">config_path</a>)
 </pre>
@@ -127,7 +127,7 @@ Rollup configuration
 ## rollup
 
 <pre>
-load("@better_rules_javascript//rollup:rules.bzl", "rollup")
+load("@rules_javascript//rollup:rules.bzl", "rollup")
 
 rollup(<a href="#rollup-name">name</a>, <a href="#rollup-bin">bin</a>, <a href="#rollup-config">config</a>, <a href="#rollup-config_dep">config_dep</a>)
 </pre>
@@ -148,7 +148,7 @@ Rollup tools.
 ## rollup_bundle
 
 <pre>
-load("@better_rules_javascript//rollup:rules.bzl", "rollup_bundle")
+load("@rules_javascript//rollup:rules.bzl", "rollup_bundle")
 
 rollup_bundle(<a href="#rollup_bundle-name">name</a>, <a href="#rollup_bundle-dep">dep</a>, <a href="#rollup_bundle-output">output</a>, <a href="#rollup_bundle-rollup">rollup</a>)
 </pre>
@@ -169,7 +169,7 @@ Rollup bundle
 ## configure_rollup
 
 <pre>
-load("@better_rules_javascript//rollup:rules.bzl", "configure_rollup")
+load("@rules_javascript//rollup:rules.bzl", "configure_rollup")
 
 configure_rollup(<a href="#configure_rollup-name">name</a>, <a href="#configure_rollup-dep">dep</a>, <a href="#configure_rollup-config">config</a>, <a href="#configure_rollup-config_dep">config_dep</a>, <a href="#configure_rollup-visibility">visibility</a>)
 </pre>

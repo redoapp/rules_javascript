@@ -1,12 +1,12 @@
-def playwright_tool_toolchains(tools, types, **kwargs):
+def playwright_tool_toolchains(tools, name, **kwargs):
     for tool_name, tool_platforms in tools.items():
-        toolchain_type = "%s%s.toolchain_type" % (types, tool_name)
+        toolchain_type = "@%s//:%s_type" % (name, tool_name.replace("-", "_"))
         tool_platforms = {tool_platform(platform): tool for platform, tool in tool_platforms.items()}
         for platform, tool in tool_platforms.items():
             native.toolchain(
                 name = "%s.%s_%s" % (tool_name, str(platform.os).replace("@platforms//os:", ""), str(platform.arch).replace("@platforms//cpu:", "")) if platform else tool_name,
                 target_compatible_with = [platform.arch, platform.os] if platform else None,
-                toolchain = "@playwright_%s//:tool" % tool,
+                toolchain = "@%s_%s//:tool" % (name, tool.replace("-", "_")),
                 toolchain_type = toolchain_type,
                 **kwargs
             )

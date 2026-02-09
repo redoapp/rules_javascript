@@ -34,9 +34,9 @@ module.exports = {
 **BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//webpack:rules.bzl", "configure_webpack", "webpack_bundle")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//webpack:rules.bzl", "configure_webpack", "webpack_bundle")
 
 webpack_bundle(
     name = "bundle",

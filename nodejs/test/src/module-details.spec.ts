@@ -1,4 +1,4 @@
-import { spawnOptions } from "@better-rules-javascript/test";
+import { spawnOptions } from "@rules-javascript/test";
 import * as childProcess from "node:child_process";
 
 test("Module details", () => {
@@ -14,6 +14,6 @@ test("Module details", () => {
   );
   expect(result.status).toBe(0);
   expect(result.stdout).toBe(
-    "@better-rules-javascript-test/module-details\nmain.js\n",
+    "@rules-javascript-test/module-details\nmain.js\n",
   );
 });

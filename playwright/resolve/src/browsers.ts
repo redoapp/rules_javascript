@@ -1,4 +1,4 @@
-import { JsonFormat } from "@better-rules-javascript/util-json";
+import { JsonFormat } from "@rules-javascript/util-json";
 import { BrowserName, InternalTool } from "./playwright/registry";
 
 export interface Browsers {

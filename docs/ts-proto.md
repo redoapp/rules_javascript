@@ -38,14 +38,14 @@ Add ts-proto as an [external dependency](#external-dependencies).
 **BUILD.bazel**
 
 ```bzl
-load("@better_rules_javascript//protobuf:rules.bzl", "js_protoc")
+load("@rules_javascript//protobuf:rules.bzl", "js_protoc")
 
 package(default_visibility = ["//visibility:public"])
 
 cjs_root(
     descriptor = "proto.package.json",
     name = "proto_root",
-    package_name = "@better_rules_javascript_test/proto"
+    package_name = "@rules_javascript_test/proto"
 )
 
 js_protoc(
@@ -64,10 +64,10 @@ js_protoc(
 **rules.bzl**
 
 ```bzl
-load("@better_rules_javascript//ts-proto:aspects.bzl", "js_proto_aspect")
-load("@better_rules_javascript//ts-proto:rules.bzl", "js_proto_library_rule")
+load("@rules_javascript//ts-proto:aspects.bzl", "js_proto_aspect")
+load("@rules_javascript//ts-proto:rules.bzl", "js_proto_library_rule")
 
-js_proto = js_proto_aspect("@better_rules_javascript_test//:lib_protoc")
+js_proto = js_proto_aspect("@rules_javascript_test//:lib_protoc")
 
 js_proto_library = js_proto_library_rule(js_proto)
 ```
@@ -98,7 +98,7 @@ js_proto_library(
 ## TsProtoInfo
 
 <pre>
-load("@better_rules_javascript//ts-proto:providers.bzl", "TsProtoInfo")
+load("@rules_javascript//ts-proto:providers.bzl", "TsProtoInfo")
 
 TsProtoInfo(<a href="#TsProtoInfo-transitive_libs">transitive_libs</a>)
 </pre>
@@ -116,7 +116,7 @@ TS proto info
 ## TsProtobuf
 
 <pre>
-load("@better_rules_javascript//ts-proto:providers.bzl", "TsProtobuf")
+load("@rules_javascript//ts-proto:providers.bzl", "TsProtobuf")
 
 TsProtobuf(<a href="#TsProtobuf-bin">bin</a>, <a href="#TsProtobuf-tsc">tsc</a>, <a href="#TsProtobuf-deps_cjs">deps_cjs</a>, <a href="#TsProtobuf-deps_js">deps_js</a>, <a href="#TsProtobuf-deps_ts">deps_ts</a>, <a href="#TsProtobuf-options">options</a>)
 </pre>
@@ -139,7 +139,7 @@ TypeScript Protobuf compiler
 ## TsProtosInfo
 
 <pre>
-load("@better_rules_javascript//ts-proto:providers.bzl", "TsProtosInfo")
+load("@rules_javascript//ts-proto:providers.bzl", "TsProtosInfo")
 
 TsProtosInfo(<a href="#TsProtosInfo-cjs">cjs</a>, <a href="#TsProtosInfo-js">js</a>, <a href="#TsProtosInfo-ts">ts</a>, <a href="#TsProtosInfo-default">default</a>)
 </pre>
@@ -158,7 +158,7 @@ TsProtosInfo(<a href="#TsProtosInfo-cjs">cjs</a>, <a href="#TsProtosInfo-js">js<
 ## create_lib
 
 <pre>
-load("@better_rules_javascript//ts-proto:providers.bzl", "create_lib")
+load("@rules_javascript//ts-proto:providers.bzl", "create_lib")
 
 create_lib(<a href="#create_lib-label">label</a>, <a href="#create_lib-path">path</a>, <a href="#create_lib-files">files</a>, <a href="#create_lib-deps">deps</a>)
 </pre>
@@ -183,7 +183,7 @@ Create library struct
 ## ts_proto_export
 
 <pre>
-load("@better_rules_javascript//ts-proto:rules.bzl", "ts_proto_export")
+load("@rules_javascript//ts-proto:rules.bzl", "ts_proto_export")
 
 ts_proto_export(<a href="#ts_proto_export-name">name</a>, <a href="#ts_proto_export-dep">dep</a>, <a href="#ts_proto_export-lib">lib</a>)
 </pre>
@@ -203,7 +203,7 @@ TypeScript protobuf library
 ## ts_protoc
 
 <pre>
-load("@better_rules_javascript//ts-proto:rules.bzl", "ts_protoc")
+load("@rules_javascript//ts-proto:rules.bzl", "ts_protoc")
 
 ts_protoc(<a href="#ts_protoc-name">name</a>, <a href="#ts_protoc-deps">deps</a>, <a href="#ts_protoc-bin">bin</a>, <a href="#ts_protoc-options">options</a>, <a href="#ts_protoc-tsc">tsc</a>)
 </pre>
@@ -223,7 +223,7 @@ ts_protoc(<a href="#ts_protoc-name">name</a>, <a href="#ts_protoc-deps">deps</a>
 ## configure_ts_protoc
 
 <pre>
-load("@better_rules_javascript//ts-proto:rules.bzl", "configure_ts_protoc")
+load("@rules_javascript//ts-proto:rules.bzl", "configure_ts_protoc")
 
 configure_ts_protoc(<a href="#configure_ts_protoc-name">name</a>, <a href="#configure_ts_protoc-tsc">tsc</a>, <a href="#configure_ts_protoc-ts_proto">ts_proto</a>, <a href="#configure_ts_protoc-deps">deps</a>, <a href="#configure_ts_protoc-options">options</a>, <a href="#configure_ts_protoc-visibility">visibility</a>)
 </pre>
@@ -244,7 +244,7 @@ configure_ts_protoc(<a href="#configure_ts_protoc-name">name</a>, <a href="#conf
 ## ts_proto_libraries_rule
 
 <pre>
-load("@better_rules_javascript//ts-proto:rules.bzl", "ts_proto_libraries_rule")
+load("@rules_javascript//ts-proto:rules.bzl", "ts_proto_libraries_rule")
 
 ts_proto_libraries_rule(<a href="#ts_proto_libraries_rule-aspect">aspect</a>, <a href="#ts_proto_libraries_rule-compiler">compiler</a>)
 </pre>

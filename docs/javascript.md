@@ -20,9 +20,6 @@ resolution, see [Module Resolution](module.md).
   - [js_export](#js_export)
   - [js_library](#js_library)
   - [js_module_import](#js_module_import)
-- [//javascript:workspace.bzl](#javascriptworkspacebzl)
-  - [js_directory_npm_package_build](#js_directory_npm_package_build)
-  - [js_npm_plugin](#js_npm_plugin)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -68,8 +65,8 @@ console.log(text);
 **BAZEL.build**
 
 ```bzl
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
 
 cjs_root(
     name = "root",
@@ -99,7 +96,7 @@ js_library(
 ## JsInfo
 
 <pre>
-load("@better_rules_javascript//javascript:providers.bzl", "JsInfo")
+load("@rules_javascript//javascript:providers.bzl", "JsInfo")
 
 JsInfo(<a href="#JsInfo-transitive_files">transitive_files</a>)
 </pre>
@@ -117,7 +114,7 @@ JavaScript
 ## create_js_info
 
 <pre>
-load("@better_rules_javascript//javascript:providers.bzl", "create_js_info")
+load("@rules_javascript//javascript:providers.bzl", "create_js_info")
 
 create_js_info(<a href="#create_js_info-cjs_root">cjs_root</a>, <a href="#create_js_info-files">files</a>, <a href="#create_js_info-deps">deps</a>)
 </pre>
@@ -135,7 +132,7 @@ create_js_info(<a href="#create_js_info-cjs_root">cjs_root</a>, <a href="#create
 ## js_npm_inner_label
 
 <pre>
-load("@better_rules_javascript//javascript:providers.bzl", "js_npm_inner_label")
+load("@rules_javascript//javascript:providers.bzl", "js_npm_inner_label")
 
 js_npm_inner_label(<a href="#js_npm_inner_label-repo">repo</a>)
 </pre>
@@ -151,7 +148,7 @@ js_npm_inner_label(<a href="#js_npm_inner_label-repo">repo</a>)
 ## js_npm_label
 
 <pre>
-load("@better_rules_javascript//javascript:providers.bzl", "js_npm_label")
+load("@rules_javascript//javascript:providers.bzl", "js_npm_label")
 
 js_npm_label(<a href="#js_npm_label-repo">repo</a>)
 </pre>
@@ -171,7 +168,7 @@ js_npm_label(<a href="#js_npm_label-repo">repo</a>)
 ## js_export
 
 <pre>
-load("@better_rules_javascript//javascript:rules.bzl", "js_export")
+load("@rules_javascript//javascript:rules.bzl", "js_export")
 
 js_export(<a href="#js_export-name">name</a>, <a href="#js_export-deps">deps</a>, <a href="#js_export-dep">dep</a>, <a href="#js_export-extra_deps">extra_deps</a>, <a href="#js_export-global_deps">global_deps</a>, <a href="#js_export-package_name">package_name</a>)
 </pre>
@@ -194,7 +191,7 @@ Add dependencies, or use alias.
 ## js_library
 
 <pre>
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
 
 js_library(<a href="#js_library-name">name</a>, <a href="#js_library-deps">deps</a>, <a href="#js_library-srcs">srcs</a>, <a href="#js_library-data">data</a>, <a href="#js_library-global_deps">global_deps</a>, <a href="#js_library-prefix">prefix</a>, <a href="#js_library-root">root</a>, <a href="#js_library-strip_prefix">strip_prefix</a>)
 </pre>
@@ -219,7 +216,7 @@ JavaScript library
 ## js_module_import
 
 <pre>
-load("@better_rules_javascript//javascript:rules.bzl", "js_module_import")
+load("@rules_javascript//javascript:rules.bzl", "js_module_import")
 
 js_module_import(<a href="#js_module_import-name">name</a>, <a href="#js_module_import-dep">dep</a>, <a href="#js_module_import-path">path</a>)
 </pre>
@@ -231,27 +228,3 @@ js_module_import(<a href="#js_module_import-name">name</a>, <a href="#js_module_
 | <a id="js_module_import-name"></a>name | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
 | <a id="js_module_import-dep"></a>dep   | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
 | <a id="js_module_import-path"></a>path | -                              | String                                                              | optional  | `""`    |
-
-# //javascript:workspace.bzl
-
-<!-- Generated with Stardoc: http://skydoc.bazel.build -->
-
-<a id="js_directory_npm_package_build"></a>
-
-## js_directory_npm_package_build
-
-<pre>
-load("@better_rules_javascript//javascript:workspace.bzl", "js_directory_npm_package_build")
-
-js_directory_npm_package_build()
-</pre>
-
-<a id="js_npm_plugin"></a>
-
-## js_npm_plugin
-
-<pre>
-load("@better_rules_javascript//javascript:workspace.bzl", "js_npm_plugin")
-
-js_npm_plugin()
-</pre>

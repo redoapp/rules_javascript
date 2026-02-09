@@ -1,4 +1,4 @@
-module(name = "better_rules_javascript")
+module(name = "rules_javascript")
 
 # Bazel Util
 
@@ -17,9 +17,20 @@ archive_override(
 
 include("//tools/file:file.MODULE.bazel")
 
+# JavaScript
+
+include("//nodejs:nodejs.MODULE.bazel")
+include("//playwright:playwright.MODULE.bazel")
+include("//test:test.MODULE.bazel")
+include("//tools/npm:npm.MODULE.bazel")
+
 # Pkg
 
 bazel_dep(name = "rules_pkg", version = "1.2.0")
+
+# Platform
+
+bazel_dep(name = "platforms", version = "1.0.0")
 
 # Protobuf
 
@@ -27,7 +38,7 @@ bazel_dep(name = "rules_proto", version = "7.1.0")
 
 # Shell
 
-bazel_dep(name = "rules_shell_extra")
+bazel_dep(name = "rules_shell_extra", dev_dependency = True)
 
 RULES_SHELL_EXTRA_VERSION = "93090b47f81577ba4890c770effd889f61ce5d19"
 
@@ -44,4 +55,4 @@ bazel_dep(name = "bazel_skylib", version = "1.9.0")
 
 # Stardoc
 
-bazel_dep(name = "stardoc", version = "0.8.0")
+bazel_dep(name = "stardoc", version = "0.8.0", dev_dependency = True)

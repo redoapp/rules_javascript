@@ -18,25 +18,14 @@ To generate documentation:
 bazel run :doc
 ```
 
-## Node.js
-
-To resolve additional Node.js versions, run `bazel run :nodejs_resolve`.
-
 ## NPM
 
-After updating `package.json`, run `bazel run tools/npm:resolve` to resolve the
-packages.
+After updating `package.json` or `test/package.json`, run
+`bazel run :npm_resolve` to resolve the packages.
 
-## Bazel Pacakges
+## Refresh
 
-After creating or deleting Bazel packages, run `bazel run :bazelrc_gen` to
-update `--deleted_packages`, necessary for formatting and integration testing.
+After some changes, `bazel run :refresh` is required.
 
-## Bootstrapped JS
-
-Some JS build products need to be boostrapped. They are checking into version
-control.
-
-To refresh these, run `bazel run :js_gen`, which re-builds and copies them to
-source tree. If that breaks, you'll have to rollback to the last good state of
-the generated files.
+This will update the list of `--deleted_packages` (for linting and tests) and
+the bootstrapped JS products.

@@ -49,8 +49,8 @@ export default {
 **example/BUILD.bzl**
 
 ```bzl
-load("@better_rules_javascript//javascript:rules.bzl", "js_file", "js_library")
-load("@better_rules_javascript//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
+load("@rules_javascript//javascript:rules.bzl", "js_file", "js_library")
+load("@rules_javascript//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
 
 cjs_root(
   name = "root",

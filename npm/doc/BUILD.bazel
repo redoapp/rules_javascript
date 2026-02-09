@@ -5,7 +5,6 @@ doc(
     "//npm:bzl",
     [
         "//npm:rules.bzl",
-        "//npm:workspace.bzl",
     ],
     header = "doc.md",
     visibility = ["//:__subpackages__"],

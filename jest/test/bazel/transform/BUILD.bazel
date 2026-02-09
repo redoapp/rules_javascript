@@ -1,16 +1,10 @@
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_export", "js_library")
-load("@better_rules_javascript//jest:rules.bzl", "jest_test")
-
-js_export(
-    name = "babel",
-    dep = "@npm_babel_core_7.18.10//:lib",
-    deps = ["@npm//@babel/plugin-transform-modules-commonjs:lib"],
-)
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_export", "js_library")
+load("@rules_javascript//jest:rules.bzl", "jest_test")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/jest-transform",
+    package_name = "@rules-javascript-test/jest-transform",
 )
 
 js_library(
@@ -38,7 +32,6 @@ js_library(
 js_export(
     name = "main",
     dep = ":test_lib",
-    extra_deps = [":babel"],
 )
 
 jest_test(

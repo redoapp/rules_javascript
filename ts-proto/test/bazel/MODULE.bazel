@@ -1,4 +1,4 @@
-module(name = "better_rules_javascript_test")
+module(name = "rules_javascript_test")
 
 # Bazel Util
 

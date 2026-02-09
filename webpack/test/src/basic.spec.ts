@@ -1,4 +1,4 @@
-import { bazelBin, spawnOptions } from "@better-rules-javascript/test";
+import { bazelBin, spawnOptions } from "@rules-javascript/test";
 import * as childProcess from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";

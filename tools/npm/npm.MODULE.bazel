@@ -1,0 +1,11 @@
+yarn = use_extension("//npm:extensions.bzl", "yarn")
+yarn.workspace(
+    name = "npm",
+    data = "//tools/npm:npm.json",
+    path = "/",
+    plugins = [
+        "//commonjs:npm_plugin.bzl",
+        "//typescript:npm_plugin.bzl",
+    ],
+)
+use_repo(yarn, npm = "npm")

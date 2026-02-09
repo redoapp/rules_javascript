@@ -1,0 +1,22 @@
+playwright = use_extension("//playwright:extensions.bzl", "playwright", dev_dependency = True)
+playwright.browsers(
+    name = "rules_javascript_test_playwright",
+    data = "//test:browsers.json",
+    playwright = "@npm//playwright-core:lib",
+    tools = [
+        "chromium",
+        "chromium-headless-shell",
+    ],
+)
+use_repo(
+    playwright,
+    test_playwright = "rules_javascript_test_playwright",
+)
+
+yarn = use_extension("//npm:extensions.bzl", "yarn", dev_dependency = True)
+yarn.workspace(
+    name = "rules_javascript_test_npm",
+    data = "//test:npm.json",
+    path = "/test",
+)
+use_repo(yarn, test_npm = "rules_javascript_test_npm")

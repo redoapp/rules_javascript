@@ -1,4 +1,4 @@
-import { spawnOptions } from "@better-rules-javascript/test";
+import { spawnOptions } from "@rules-javascript/test";
 import * as childProcess from "node:child_process";
 
 test("Server", async () => {

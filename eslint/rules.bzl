@@ -5,7 +5,7 @@ load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//util:path.bzl", "runfile_path")
 
-def configure_eslint(name, config, config_dep, dep = "@better_rules_javascript//eslint:eslint_lib", plugins = [], visibility = None):
+def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:eslint_lib", plugins = [], visibility = None):
     js_export(
         name = "%s.main" % name,
         dep = Label("//eslint/linter:lib"),

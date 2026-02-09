@@ -1,4 +1,4 @@
-import { lazy } from "@better-rules-javascript/util/cache";
+import { lazy } from "@rules-javascript/util/cache";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 

@@ -1,0 +1,4 @@
+*.lock linguist-generated
+
+browsers.json linguist-generated
+npm.json linguist-generated

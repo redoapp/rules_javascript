@@ -1,7 +1,7 @@
 load("@bazel_util//generate:rules.bzl", "format")
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//prettier:rules.bzl", "configure_prettier")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//prettier:rules.bzl", "configure_prettier")
 
 format(
     name = "format",
@@ -11,20 +11,20 @@ format(
 
 js_library(
     name = "prettier_config",
-    srcs = ["prettierrc.yml"],
+    srcs = ["prettierrc.yaml"],
     root = "root",
     deps = ["@npm//@prettier/plugin-xml:lib"],
 )
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/prettier-plugin",
+    package_name = "@rules-javascript-test/prettier-plugin",
     descriptors = ["package.json"],
 )
 
 configure_prettier(
     name = "prettier",
-    config = "prettierrc.yml",
+    config = "prettierrc.yaml",
     config_dep = ":prettier_config",
     dep = "@npm//prettier:lib",
 )

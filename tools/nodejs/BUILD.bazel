@@ -1,5 +1,5 @@
+load("@npm//:data.bzl", NPM_ROOTS = "ROOTS")
 load("//nodejs:rules.bzl", "nodejs_install", "nodejs_modules_package")
-load("//tools/npm:npm.bzl", NPM_ROOTS = "ROOTS")
 load("//typescript:rules.bzl", "js_import_ts")
 
 nodejs_install(
@@ -28,7 +28,6 @@ nodejs_modules_package(
         "//util/argparse:root",
         "//util/cache:root",
         "//util/json:root",
-        "//util/starlark:root",
         "//util/util:root",
         "//webpack/config:root",
     ],

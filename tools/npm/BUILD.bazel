@@ -1,7 +1,11 @@
-load("//npm:rules.bzl", "yarn_resolve")
+load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
 
-yarn_resolve(
+sh_binary(
     name = "resolve",
-    output = "npm.bzl",
-    path = "/",
+    data = [
+        "@npm//:resolve",
+        "@test_npm//:resolve",
+    ],
+    main = "resolve.sh",
+    visibility = ["//:__subpackages__"],
 )

@@ -1,4 +1,4 @@
-import { PackageTree } from "@better-rules-javascript/commonjs-package";
+import { PackageTree } from "@rules-javascript/commonjs-package";
 
 export interface DepArg {
   dep: string;

@@ -1,14 +1,3 @@
-import {
-  StarlarkBoolean,
-  StarlarkDict,
-  StarlarkEqualStatement,
-  StarlarkFile,
-  StarlarkList,
-  StarlarkString,
-  StarlarkValue,
-  StarlarkVariable,
-} from "@better-rules-javascript/util-starlark";
-
 export interface BzlPackage {
   arch: string[] | undefined;
   deps: BzlDeps;
@@ -21,67 +10,38 @@ export interface BzlPackage {
 }
 
 export namespace BzlPackage {
-  export function toStarlark(value: BzlPackage): StarlarkValue {
-    const extraDepsEntries: [StarlarkValue, StarlarkValue][] = [];
+  export function toJson(value: BzlPackage): any {
     const extraDeps = [...value.extraDeps.entries()].sort(
       (a, b) => +(b[0] < a[0]) - +(a[0] < b[0]),
     );
-    for (const [id, deps] of extraDeps) {
-      extraDepsEntries.push([new StarlarkString(id), BzlDeps.toStarlark(deps)]);
-    }
 
-    const entries: [StarlarkValue, StarlarkValue][] = [];
-    if (value.arch) {
-      entries.push([
-        new StarlarkString("arch"),
-        new StarlarkList(value.arch.map((arch) => new StarlarkString(arch))),
-      ]);
-    }
-    if (value.libc) {
-      entries.push([
-        new StarlarkString("libc"),
-        new StarlarkList(value.libc.map((libc) => new StarlarkString(libc))),
-      ]);
-    }
-    if (value.os) {
-      entries.push([
-        new StarlarkString("os"),
-        new StarlarkList(value.os.map((os) => new StarlarkString(os))),
-      ]);
-    }
-    if (value.deps.length > 0) {
-      entries.push([
-        new StarlarkString("deps"),
-        BzlDeps.toStarlark(value.deps),
-      ]);
-    }
-    if (extraDepsEntries.length > 0) {
-      entries.push([
-        new StarlarkString("extra_deps"),
-        new StarlarkDict(extraDepsEntries),
-      ]);
-    }
-    entries.push(
-      [new StarlarkString("integrity"), new StarlarkString(value.integrity)],
-      [new StarlarkString("name"), new StarlarkString(value.name)],
-      [new StarlarkString("url"), new StarlarkString(value.url)],
-    );
-    return new StarlarkDict(entries);
+    return {
+      arch: value.arch,
+      deps: value.deps.length > 0 ? BzlDeps.toJson(value.deps) : undefined,
+      extraDeps:
+        extraDeps.length > 0
+          ? Object.fromEntries(
+              extraDeps.map(([id, deps]) => [id, BzlDeps.toJson(deps)]),
+            )
+          : undefined,
+      integrity: value.integrity,
+      libc: value.libc,
+      name: value.name,
+      os: value.os,
+      url: value.url,
+    };
   }
 }
 
 export type BzlPackages = Map<string, BzlPackage>;
 
 export namespace BzlPackages {
-  export function toStarlark(value: BzlPackages) {
+  export function toJson(value: BzlPackages) {
     const entries = [...value.entries()].sort(
       (a, b) => +(b[0] < a[0]) - +(a[0] < b[0]),
     );
-    return new StarlarkDict(
-      entries.map(([id, value]) => [
-        new StarlarkString(id),
-        BzlPackage.toStarlark(value),
-      ]),
+    return Object.fromEntries(
+      entries.map(([id, value]) => [id, BzlPackage.toJson(value)]),
     );
   }
 }
@@ -89,45 +49,30 @@ export namespace BzlPackages {
 export interface BzlDep {
   name: string | null;
   id: string;
+  optional: boolean;
 }
 
 export type BzlDeps = BzlDep[];
 
 export namespace BzlDeps {
-  export function toStarlark(value: BzlDeps): StarlarkValue {
+  export function toJson(value: BzlDeps) {
     const entries = [...value].sort((a, b) => +(b.id < a.id) - +(a.id < b.id));
-    return new StarlarkList(
-      entries.map((dep) => {
-        const entries: [StarlarkValue, StarlarkValue][] = [];
-        entries.push([new StarlarkString("id"), new StarlarkString(dep.id)]);
-        if (dep.name !== null) {
-          entries.push([
-            new StarlarkString("name"),
-            new StarlarkString(dep.name),
-          ]);
-        }
-        if (dep.optional) {
-          entries.push([
-            new StarlarkString("optional"),
-            new StarlarkBoolean(dep.optional),
-          ]);
-        }
-        return new StarlarkDict(entries);
-      }),
-    );
+    return entries.map((dep) => {
+      const result: Record<string, any> = { id: dep.id };
+      if (dep.name !== null) {
+        result.name = dep.name;
+      }
+      if (dep.optional) {
+        result.optional = dep.optional;
+      }
+      return result;
+    });
   }
 }
 
-export function toStarlarkFile(packages: BzlPackages, roots: BzlDeps) {
-  const packagesStatement = new StarlarkEqualStatement(
-    new StarlarkVariable("PACKAGES"),
-    BzlPackages.toStarlark(packages),
-  );
-
-  const rootsStatement = new StarlarkEqualStatement(
-    new StarlarkVariable("ROOTS"),
-    BzlDeps.toStarlark(roots),
-  );
-
-  return new StarlarkFile([packagesStatement, rootsStatement]);
+export function toJsonFile(packages: BzlPackages, roots: BzlDeps) {
+  return {
+    packages: BzlPackages.toJson(packages),
+    roots: BzlDeps.toJson(roots),
+  };
 }

@@ -1,11 +1,11 @@
 load("@bazel_util//file:rules.bzl", "directory")
-load("@better_rules_javascript//commonjs:rules.bzl", "cjs_root")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary")
-load("@better_rules_javascript//typescript:rules.bzl", "ts_library")
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+load("@rules_javascript//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@better-rules-javascript-test/typescript-directory",
+    package_name = "@rules-javascript-test/typescript-directory",
 )
 
 directory(

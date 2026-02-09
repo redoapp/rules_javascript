@@ -1,5 +1,5 @@
-load("@better_rules_javascript//javascript:rules.bzl", "js_library")
-load("@better_rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
 
 js_library(
     name = "a",
