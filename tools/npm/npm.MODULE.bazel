@@ -1,6 +1,6 @@
 yarn = use_extension("//npm:extensions.bzl", "yarn")
 yarn.workspace(
-    name = "npm",
+    name = "rules_javascript_npm",
     data = "//tools/npm:npm.json",
     path = "/",
     plugins = [
@@ -8,4 +8,4 @@ yarn.workspace(
         "//typescript:npm_plugin.bzl",
     ],
 )
-use_repo(yarn, npm = "npm")
+use_repo(yarn, npm = "rules_javascript_npm")

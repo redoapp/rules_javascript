@@ -117,8 +117,6 @@ def _npm_impl(ctx):
     else:
         data = {"packages": {}, "roots": []}
 
-    ctx.file("BUILD.bazel", "")
-
     ctx.template(
         "packages.bzl",
         Label("packages.bzl.tpl"),

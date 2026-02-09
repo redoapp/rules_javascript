@@ -23,7 +23,7 @@ def _js_npm_spoke(repo, package, files):
         js_export(
             name = name,
             dep = js_npm_label(package_repo_name(repo, dep.id)),
-            package_name = dep["name"],
+            package_name = dep.name,
         )
 
     native.alias(
