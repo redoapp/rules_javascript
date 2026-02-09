@@ -5,7 +5,7 @@ load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
 def _cjs_npm_hub(id, package_name):
     pass
 
-def _cjs_npm_spoke(package):
+def _cjs_npm_spoke(package, files):
     selects.config_setting_group(
         name = "arch",
         match_any = [Label("//nodejs/platform:arch_%s" % arch) for arch in package.arch] if package.arch else ["//conditions:default"],
