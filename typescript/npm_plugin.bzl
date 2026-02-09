@@ -1,7 +1,6 @@
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("//commonjs:providers.bzl", "cjs_npm_label")
-
-# load("//javascript:npm_plugin.bzl", js_npm_plugin = "npm_plugin")
+load("//javascript:npm_plugin.bzl", js_npm_plugin = "npm_plugin")
 load("//javascript:providers.bzl", "JsInfo", "js_npm_inner_label", "js_npm_label")
 load("//javascript:rules.bzl", "js_library")
 load("//typescript:rules.bzl", "ts_export", "ts_import")
@@ -14,10 +13,14 @@ def _ts_npm_hub(id, package_name):
         visibility = ["//visibility:public"],
     )
 
-def _ts_npm_spoke(package):
-    # if not native.glob(["**/*.d.ts"], allow_empty = True):
-    #     js_npm_plugin.spoke(package)
-    #     return
+def _ts_npm_spoke(package, files):
+    has_ts = False
+    for file in files:
+        if file.endswith(".d.ts"):
+            has_ts = True
+            break
+    if not has_ts:
+        return js_npm_plugin.spoke(package, files)
 
     deps = []
     exports = []

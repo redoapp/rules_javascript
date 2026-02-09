@@ -42,6 +42,14 @@ def _npm_package_impl(ctx):
         url = url,
     )
 
+    result = ctx.execute(["tar", "tzf", "package.tar.gz"])
+    if result.return_code:
+        fail("Failed to list package:\n%s" % result.stderr)
+    files = [
+        path.removeprefix("./")
+        for path in result.stdout.strip().split("\n")
+    ]
+
     build = ""
 
     package = struct(
@@ -57,7 +65,7 @@ def _npm_package_impl(ctx):
     for index, plugin in enumerate(plugins):
         content += """
 load({label}, {var} = "npm_plugin")
-{var}.spoke(package)
+{var}.spoke(package, FILES)
         """.strip().format(
             label = repr(str(plugin)),
             var = "plugin%s" % (index + 1),
@@ -69,6 +77,7 @@ load({label}, {var} = "npm_plugin")
         "BUILD.bazel",
         Label("package.BUILD.bazel.tpl"),
         substitutions = {
+            "%{files}": repr(files),
             "%{npm}": repr(str(Label("npm.bzl"))),
             "%{package_name}": repr(ctx.attr.package_name),
             "%{arch}": repr([arch for arch in ctx.attr.arch if arch in ARCHES]),

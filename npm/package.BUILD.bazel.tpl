@@ -9,4 +9,6 @@ package = create_package(
     os = %{os},
 )
 
+FILES = %{files}
+
 %{content}

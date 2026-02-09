@@ -10,7 +10,7 @@ def _js_npm_hub(id, package_name):
         visibility = ["//visibility:public"],
     )
 
-def _js_npm_spoke(package):
+def _js_npm_spoke(package, files):
     deps = []
     exports = []
     for i, dep in enumerate(package.deps):
