@@ -99,6 +99,7 @@ npm_package = repository_rule(
 
 def _npm_impl(ctx):
     data = ctx.attr.data
+    data_output = ctx.attr.data_output or ctx.attr.data
     path = ctx.attr.path
     plugins = ctx.attr.plugins
 
@@ -106,7 +107,7 @@ def _npm_impl(ctx):
         "BUILD.bazel",
         Label("npm.BUILD.bazel.tpl"),
         substitutions = {
-            "%{output}": repr("/%s" % "/".join([part for part in [data.package, data.name] if part])),
+            "%{output}": repr("/%s" % "/".join([part for part in [data_output.package, data_output.name] if part])),
             "%{path}": repr(path),
             "%{rules}": repr(str(Label("rules.bzl"))),
         },
@@ -208,6 +209,7 @@ npm = repository_rule(
     implementation = _npm_impl,
     attrs = {
         "data": attr.label(allow_single_file = [".json"], mandatory = True),
+        "data_output": attr.label(allow_single_file = [".json"]),
         "path": attr.string(mandatory = True),
         "plugins": attr.label_list(
             default = DEFAULT_PLUGINS,

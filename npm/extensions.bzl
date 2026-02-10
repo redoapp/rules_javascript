@@ -3,10 +3,26 @@ load(":repositories.bzl", "npm", "npm_package")
 
 _workspace_tag = tag_class(
     attrs = {
-        "path": attr.string(mandatory = True),
-        "name": attr.string(mandatory = True),
-        "data": attr.label(mandatory = True),
-        "plugins": attr.label_list(),
+        "data_output": attr.label(
+            allow_single_file = [".json"],
+            doc = "Output data file. Defaults to data.",
+        ),
+        "data": attr.label(
+            allow_single_file = [".json"],
+            doc = "Data file.",
+            mandatory = True,
+        ),
+        "name": attr.string(
+            doc = "Repository name. Must be unique.",
+            mandatory = True,
+        ),
+        "path": attr.string(
+            doc = "Path to Yarn workspace, relative to workspace root.",
+            mandatory = True,
+        ),
+        "plugins": attr.label_list(
+            doc = "Plugins to use.",
+        ),
     },
 )
 
@@ -22,6 +38,7 @@ def _yarn_impl(ctx):
                 name = workspace.name,
                 plugins = workspace.plugins,
                 data = workspace.data,
+                data_output = workspace.data_output,
                 path = workspace.path,
             )
 
