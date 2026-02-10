@@ -5,7 +5,7 @@ load("//javascript:npm_plugin.bzl", js_npm_plugin = "npm_plugin")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_library")
 load("//npm:npm.bzl", "package_repo_name")
-load("//typescript:rules.bzl", "ts_export", "ts_import")
+load("//typescript:rules.bzl", "js_import_ts", "ts_export", "ts_import")
 
 def _ts_npm_hub(repo, root):
     ts_export(
@@ -14,6 +14,18 @@ def _ts_npm_hub(repo, root):
         package_name = root.name,
         visibility = ["//visibility:public"],
     )
+    if root.name.startswith("@types/"):
+        js_import_ts(
+            name = "lib_js",
+            dep = ":lib",
+            visibility = ["//visibility:public"],
+        )
+    else:
+        native.alias(
+            name = "lib_js",
+            actual = ":lib",
+            visibility = ["//visibility:public"],
+        )
 
 def _ts_npm_spoke(repo, package, files):
     has_ts = False
@@ -22,7 +34,8 @@ def _ts_npm_spoke(repo, package, files):
             has_ts = True
             break
     if not has_ts:
-        return js_npm_plugin.spoke(repo, package, files)
+        js_npm_plugin.spoke(repo, package, files)
+        return
 
     deps = []
     exports = []

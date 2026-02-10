@@ -115,6 +115,7 @@ def _npm_impl(ctx):
     if ctx.path(data).exists:
         data = json.decode(ctx.read(data))
     else:
+        print("Warning: %s does not exist, run @@%s//:resolve" % (data, ctx.name))
         data = {"packages": {}, "roots": []}
 
     ctx.template(

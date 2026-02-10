@@ -55,7 +55,8 @@ export async function getPackageInfos(
           const resolution = project.storedPackages.get(resolutionHash)!;
           return [
             structUtils.stringifyIdent(dependency),
-            structUtils.stringifyLocator(resolution),
+            // TODO: support optional
+            { id: structUtils.stringifyLocator(resolution), optional: false },
           ];
         }),
       ),
@@ -69,7 +70,7 @@ export async function getPackageInfos(
 
 export type YarnPackageInfos = Map<string, YarnPackageInfo>;
 
-export type YarnDependencies = Map<string, string>;
+export type YarnDependencies = Map<string, { id: string; optional: boolean }>;
 
 export interface YarnPackageInfo {
   constraints: YarnConstraints;

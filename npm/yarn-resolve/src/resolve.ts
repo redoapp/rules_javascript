@@ -8,17 +8,17 @@ import { NpmRegistryClient } from "./npm";
 import { YarnDependencies, YarnPackageInfos } from "./yarn";
 
 export interface ResolvedNpmPackage {
+  bundleDependencies: string[];
   contentIntegrity: string;
   contentUrl: string;
 }
 
 export namespace ResolvedNpmPackage {
-  export function json(): JsonFormat<ResolvedNpmPackage> {
-    return JsonFormat.object({
-      contentIntegrity: JsonFormat.string(),
-      contentUrl: JsonFormat.string(),
-    });
-  }
+  export const json: JsonFormat<ResolvedNpmPackage> = JsonFormat.object({
+    bundleDependencies: JsonFormat.array(JsonFormat.string()),
+    contentIntegrity: JsonFormat.string(),
+    contentUrl: JsonFormat.string(),
+  });
 }
 
 export async function getPackage(
@@ -34,6 +34,7 @@ export async function getPackage(
     const hash = createHash("sha256");
     hash.update(Buffer.from(buffer));
     return {
+      bundleDependencies: [],
       contentIntegrity: `sha256-${hash.digest().toString("base64")}`,
       contentUrl: npmLocator.reference,
     };
@@ -48,6 +49,7 @@ export async function getPackage(
   }
 
   return {
+    bundleDependencies: package_.bundleDependencies ?? [],
     contentIntegrity: integrity,
     contentUrl: package_.dist.tarball,
   };
@@ -73,11 +75,15 @@ export async function resolvePackages(
   let reported = process.hrtime.bigint();
   await Promise.all(
     [...yarnPackages.values()].map(async (yarnPackage) => {
-      const deps = bzlDeps(yarnPackages, yarnPackage.dependencies);
       const id = bzlId(yarnPackage.locator);
       const specifier = npmLocator(yarnPackage.locator);
       if (id && specifier) {
         const npmPackage = await getPackage(specifier);
+        const deps = bzlDeps(
+          yarnPackages,
+          yarnPackage.dependencies,
+          new Set(npmPackage.bundleDependencies),
+        );
         bzlPackages.set(id, {
           arch: yarnPackage.constraints.cpu,
           deps,
@@ -90,7 +96,7 @@ export async function resolvePackages(
         });
         finished++;
       } else if (yarnPackage.locator.reference === "workspace:.") {
-        bzlRoots = deps;
+        bzlRoots = bzlDeps(yarnPackages, yarnPackage.dependencies, new Set());
       }
       const now = process.hrtime.bigint();
       if (reported + BigInt(2 * 1e9) < now) {
@@ -172,12 +178,16 @@ function bzlId(locator: Locator): string | undefined {
 function bzlDeps(
   yarnPackages: YarnPackageInfos,
   yarnDependencies: YarnDependencies,
+  bundleDependencies: Set<string>,
 ): BzlDeps {
   const result: BzlDeps = [];
-  for (const [depName, depId] of yarnDependencies.entries()) {
-    const id = bzlId(yarnPackages.get(depId)!.locator);
+  for (const [depName, dep] of yarnDependencies.entries()) {
+    if (bundleDependencies.has(depName)) {
+      continue;
+    }
+    const id = bzlId(yarnPackages.get(dep.id)!.locator);
     if (id) {
-      result.push({ name: depName, id });
+      result.push({ name: depName, id, optional: dep.optional });
     }
   }
   return result;

@@ -33,9 +33,9 @@ import { getPackageInfos, yarnProject } from "./yarn";
   const cachePath = path.join(args.dir, ".bazel-npm-cache.json");
   const { packages: bzlPackages, roots: bzlRoots } = await withFileCache(
     cachePath,
-    "2",
+    "3",
     JsonFormat.string(),
-    ResolvedNpmPackage.json(),
+    ResolvedNpmPackage.json,
   )(async (cache) => {
     const npmClient = new NpmRegistryClient(configuration);
     return await resolvePackages(

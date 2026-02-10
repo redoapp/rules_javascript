@@ -3,6 +3,7 @@ import { Configuration, Locator } from "@yarnpkg/core";
 import { npmHttpUtils } from "@yarnpkg/plugin-npm";
 
 export interface NpmPackage {
+  bundleDependencies: string[];
   dist: {
     integrity?: string;
     tarball: string;
@@ -10,14 +11,13 @@ export interface NpmPackage {
 }
 
 export namespace NpmPackage {
-  export function json(): JsonFormat<NpmPackage> {
-    return JsonFormat.object({
-      dist: JsonFormat.object({
-        integrity: JsonFormat.string(),
-        tarball: JsonFormat.string(),
-      }),
-    });
-  }
+  export const json: JsonFormat<NpmPackage> = JsonFormat.object({
+    bundleDependencies: JsonFormat.array(JsonFormat.string()),
+    dist: JsonFormat.object({
+      integrity: JsonFormat.string(),
+      tarball: JsonFormat.string(),
+    }),
+  });
 }
 
 export class NpmRegistryClient {
@@ -33,6 +33,6 @@ export class NpmRegistryClient {
       jsonResponse: true,
     });
 
-    return NpmPackage.json().fromJson(response);
+    return NpmPackage.json.fromJson(response);
   }
 }
