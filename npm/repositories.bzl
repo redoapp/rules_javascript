@@ -41,7 +41,8 @@ def _npm_package_impl(ctx):
         url = url,
     )
 
-    result = ctx.execute(["tar", "tzf", "package.tar.gz"])
+    # stripe bundleDependencies (challenging, unnecessary, and Yarn doesn't support either)
+    result = ctx.execute(["tar", "tzf", "package.tar.gz", "--exclude=node_modules"])
     if result.return_code:
         fail("Failed to list package:\n%s" % result.stderr)
     files = [

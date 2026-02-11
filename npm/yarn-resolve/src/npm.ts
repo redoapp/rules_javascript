@@ -3,7 +3,6 @@ import { Configuration, Locator } from "@yarnpkg/core";
 import { npmHttpUtils } from "@yarnpkg/plugin-npm";
 
 export interface NpmPackage {
-  bundleDependencies: string[];
   dist: {
     integrity?: string;
     tarball: string;
@@ -12,7 +11,6 @@ export interface NpmPackage {
 
 export namespace NpmPackage {
   export const json: JsonFormat<NpmPackage> = JsonFormat.object({
-    bundleDependencies: JsonFormat.array(JsonFormat.string()),
     dist: JsonFormat.object({
       integrity: JsonFormat.string(),
       tarball: JsonFormat.string(),

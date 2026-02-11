@@ -8,14 +8,12 @@ import { NpmRegistryClient } from "./npm";
 import { YarnDependencies, YarnPackageInfos } from "./yarn";
 
 export interface ResolvedNpmPackage {
-  bundleDependencies: string[];
   contentIntegrity: string;
   contentUrl: string;
 }
 
 export namespace ResolvedNpmPackage {
   export const json: JsonFormat<ResolvedNpmPackage> = JsonFormat.object({
-    bundleDependencies: JsonFormat.array(JsonFormat.string()),
     contentIntegrity: JsonFormat.string(),
     contentUrl: JsonFormat.string(),
   });
@@ -34,7 +32,6 @@ export async function getPackage(
     const hash = createHash("sha256");
     hash.update(Buffer.from(buffer));
     return {
-      bundleDependencies: [],
       contentIntegrity: `sha256-${hash.digest().toString("base64")}`,
       contentUrl: npmLocator.reference,
     };
@@ -49,7 +46,6 @@ export async function getPackage(
   }
 
   return {
-    bundleDependencies: package_.bundleDependencies ?? [],
     contentIntegrity: integrity,
     contentUrl: package_.dist.tarball,
   };
@@ -82,7 +78,6 @@ export async function resolvePackages(
         const deps = bzlDeps(
           yarnPackages,
           yarnPackage.dependencies,
-          new Set(npmPackage.bundleDependencies),
         );
         bzlPackages.set(id, {
           arch: yarnPackage.constraints.cpu,
@@ -178,13 +173,9 @@ function bzlId(locator: Locator): string | undefined {
 function bzlDeps(
   yarnPackages: YarnPackageInfos,
   yarnDependencies: YarnDependencies,
-  bundleDependencies: Set<string>,
 ): BzlDeps {
   const result: BzlDeps = [];
   for (const [depName, dep] of yarnDependencies.entries()) {
-    if (bundleDependencies.has(depName)) {
-      continue;
-    }
     const id = bzlId(yarnPackages.get(dep.id)!.locator);
     if (id) {
       result.push({ name: depName, id, optional: dep.optional });
