@@ -18,7 +18,8 @@ def _cjs_npm_spoke(repo, package, files):
 
     untar(
         name = "files",
-        srcs = ["package.tar.gz"],
+        excludes = ["node_modules"],
+        src = "package.tar.gz",
         strip_components = 1,
     )
 

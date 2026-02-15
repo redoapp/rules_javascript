@@ -4,11 +4,11 @@ module(name = "rules_javascript")
 
 bazel_dep(name = "bazel_util")
 
-BAZEL_UTIL_VERSION = "7691525d0f7da7ae27ceb47ab7bf061251363fe4"
+BAZEL_UTIL_VERSION = "080694bcfa6d75771e6b72e4bcb66edd9e40fbfe"
 
 archive_override(
     module_name = "bazel_util",
-    sha256 = "d28ec8c5dfd84e55f58f6309f8ac5583ff8a5976bdd1fc6b20d88878e344e57f",
+    sha256 = "5e6ad7a1a0c4a9160139cdd639162924e285ba6b125291bbd4805c07f31d32b7",
     strip_prefix = "bazel-util-%s" % BAZEL_UTIL_VERSION,
     url = "https://github.com/redoapp/bazel-util/archive/%s.tar.gz" % BAZEL_UTIL_VERSION,
 )
@@ -40,11 +40,11 @@ bazel_dep(name = "rules_proto", version = "7.1.0")
 
 bazel_dep(name = "r_tools", dev_dependency = True)
 
-R_TOOLS_VERSION = "ad144b85448c0c8302c8f6b7537b6cac06a3678f"
+R_TOOLS_VERSION = "e7e53de9b0fd382501ad588815833dde24f58576"
 
 archive_override(
     module_name = "r_tools",
-    sha256 = "a3ccdbcc6b8259510f59b8403b2239a7ea5c9876dd0fcd3db0224495535d6b0f",
+    sha256 = "a1ca9273aaaaabed389e7854fac92b7838459e8d5b03706150fc22819d5d5be1",
     strip_prefix = "r-tools-%s" % R_TOOLS_VERSION,
     url = "https://github.com/redoapp/r-tools/archive/%s.tar.gz" % R_TOOLS_VERSION,
 )
