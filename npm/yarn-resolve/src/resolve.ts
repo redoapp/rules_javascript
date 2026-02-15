@@ -75,10 +75,7 @@ export async function resolvePackages(
       const specifier = npmLocator(yarnPackage.locator);
       if (id && specifier) {
         const npmPackage = await getPackage(specifier);
-        const deps = bzlDeps(
-          yarnPackages,
-          yarnPackage.dependencies,
-        );
+        const deps = bzlDeps(yarnPackages, yarnPackage.dependencies);
         bzlPackages.set(id, {
           arch: yarnPackage.constraints.cpu,
           deps,

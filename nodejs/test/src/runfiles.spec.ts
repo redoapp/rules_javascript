@@ -1,0 +1,13 @@
+import { spawnOptions } from "@rules-javascript/test";
+import * as childProcess from "node:child_process";
+
+test("rlocation", () => {
+  const result = childProcess.spawnSync("bazel", ["run", "runfiles:bin"], {
+    cwd: "nodejs/test/bazel",
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "inherit"],
+    ...spawnOptions(),
+  });
+  expect(result.status).toBe(0);
+  expect(result.stdout).toContain("Hello world!\n");
+});

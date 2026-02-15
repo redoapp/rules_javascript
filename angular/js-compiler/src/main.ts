@@ -1,7 +1,7 @@
-import { workerMain } from "@rules-javascript/bazel-worker";
 import { patchFs } from "@rules-javascript/nodejs-fs-linker/fs";
 import { patchFsPromises } from "@rules-javascript/nodejs-fs-linker/fs-promises";
 import { WrapperVfs } from "@rules-javascript/nodejs-fs-linker/vfs";
+import { workerMain } from "@rules-javascript/nodejs-worker";
 
 workerMain(async () => {
   const vfs = new WrapperVfs();

@@ -15,7 +15,7 @@ ts_library(
         "@npm//@types/argparse:lib",
         "@npm//@types/node:lib",
         "@npm//argparse:lib",
-        "@rules_javascript//bazel/worker:lib",
+        "@rules_javascript//nodejs/worker:lib",
     ],
 )
 

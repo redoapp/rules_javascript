@@ -1,4 +1,4 @@
-import { workerMain } from "@rules-javascript/bazel-worker";
+import { workerMain } from "@rules-javascript/nodejs-worker";
 
 workerMain(async () => {
   const { ResourceWorker, ResourceWorkerError } = await import("./worker");

@@ -1,4 +1,4 @@
-import { rlocation } from "@rules-javascript/bazel-runfiles";
+import { rlocation } from "@rules-javascript/nodejs-runfiles";
 import {
   InstallEntry,
   InstallManifest,

@@ -25,7 +25,7 @@ ts_library(
     config_dep = ":tsconfig",
     root = ":root",
     deps = [
-        "//bazel/worker:lib",
+        "//nodejs/worker:lib",
         "@npm//@types/argparse:lib",
         "@npm//argparse:lib",
     ],

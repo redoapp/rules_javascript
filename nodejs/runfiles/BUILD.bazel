@@ -4,8 +4,9 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@rules-javascript/prettier-format",
+    package_name = "@rules-javascript/nodejs-runfiles",
     descriptors = ["package.json"],
+    visibility = ["//visibility:public"],
 )
 
 js_library(
@@ -15,29 +16,17 @@ js_library(
     deps = ["//tools/typescript:tsconfig"],
 )
 
-js_library(
-    name = "lib_js",
-    srcs = glob([
-        "src/**/*.js",
-        "src/**/*.mjs",
-    ]),
-    root = ":root",
-)
-
 ts_library(
     name = "lib",
     srcs = glob(["src/**/*.ts"]),
-    compile_deps = ["@npm//prettier:lib"],
-    compiler = "@rules_javascript//typescript:tsc",
+    compiler = "//tools/typescript:tsc",
     config = "tsconfig.json",
     config_dep = ":tsconfig",
     root = ":root",
     visibility = ["//visibility:public"],
     deps = [
-        ":lib_js",
-        "@npm//@types/argparse:lib",
+        "//javascript/runfiles:lib",
+        "//util/util:lib",
         "@npm//@types/node:lib",
-        "@npm//argparse:lib",
-        "@rules_javascript//nodejs/worker:lib",
     ],
 )

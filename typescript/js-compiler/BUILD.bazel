@@ -47,9 +47,9 @@ ts_library(
     config_dep = ":tsconfig",
     root = ":root",
     deps = [
-        "//bazel/worker:lib",
         "//commonjs/package:lib",
         "//nodejs/fs-linker:lib",
+        "//nodejs/worker:lib",
         "//util/json:lib",
         "@npm//@types/argparse:lib",
         "@npm//@types/node:lib",

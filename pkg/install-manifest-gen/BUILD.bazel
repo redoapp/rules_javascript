@@ -12,7 +12,7 @@ ts_library(
     config_dep = ":tsconfig",
     root = ":root",
     deps = [
-        "//bazel/worker:lib",
+        "//nodejs/worker:lib",
         "//pkg/install-manifest:lib",
         "//util/argparse:lib",
         "//util/json:lib",

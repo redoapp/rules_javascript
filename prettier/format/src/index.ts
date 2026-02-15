@@ -1,4 +1,4 @@
-import { workerMain } from "@rules-javascript/bazel-worker";
+import { workerMain } from "@rules-javascript/nodejs-worker";
 import { ArgumentParser } from "argparse";
 
 interface Args {

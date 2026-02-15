@@ -1,0 +1,22 @@
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
+
+nodejs_binary(
+    name = "bin",
+    data = ["data.txt"],
+    dep = ":lib",
+    main = "main.js",
+)
+
+js_library(
+    name = "lib",
+    srcs = ["main.js"],
+    root = ":root",
+    deps = ["@rules_javascript//nodejs/runfiles:lib"],
+)
+
+cjs_root(
+    name = "root",
+    package_name = "@rules-javascript-test/nodejs-runfiles",
+)

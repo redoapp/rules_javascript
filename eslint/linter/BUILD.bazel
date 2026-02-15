@@ -12,7 +12,7 @@ ts_library(
     root = ":root",
     visibility = ["//visibility:public"],
     deps = [
-        "//bazel/worker:lib",
+        "//nodejs/worker:lib",
         "@npm//@types/argparse:lib",
         "@npm//@types/eslint:lib",
         "@npm//@types/node:lib",

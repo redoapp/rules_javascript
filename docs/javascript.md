@@ -14,8 +14,6 @@ resolution, see [Module Resolution](module.md).
 - [//javascript:providers.bzl](#javascriptprovidersbzl)
   - [JsInfo](#jsinfo)
   - [create_js_info](#create_js_info)
-  - [js_npm_inner_label](#js_npm_inner_label)
-  - [js_npm_label](#js_npm_label)
 - [//javascript:rules.bzl](#javascriptrulesbzl)
   - [js_export](#js_export)
   - [js_library](#js_library)
@@ -126,38 +124,6 @@ create_js_info(<a href="#create_js_info-cjs_root">cjs_root</a>, <a href="#create
 | <a id="create_js_info-cjs_root"></a>cjs_root | <p align="center"> - </p> | none          |
 | <a id="create_js_info-files"></a>files       | <p align="center"> - </p> | `[]`          |
 | <a id="create_js_info-deps"></a>deps         | <p align="center"> - </p> | `[]`          |
-
-<a id="js_npm_inner_label"></a>
-
-## js_npm_inner_label
-
-<pre>
-load("@rules_javascript//javascript:providers.bzl", "js_npm_inner_label")
-
-js_npm_inner_label(<a href="#js_npm_inner_label-repo">repo</a>)
-</pre>
-
-**PARAMETERS**
-
-| Name                                     | Description               | Default Value |
-| :--------------------------------------- | :------------------------ | :------------ |
-| <a id="js_npm_inner_label-repo"></a>repo | <p align="center"> - </p> | none          |
-
-<a id="js_npm_label"></a>
-
-## js_npm_label
-
-<pre>
-load("@rules_javascript//javascript:providers.bzl", "js_npm_label")
-
-js_npm_label(<a href="#js_npm_label-repo">repo</a>)
-</pre>
-
-**PARAMETERS**
-
-| Name                               | Description               | Default Value |
-| :--------------------------------- | :------------------------ | :------------ |
-| <a id="js_npm_label-repo"></a>repo | <p align="center"> - </p> | none          |
 
 # //javascript:rules.bzl
 

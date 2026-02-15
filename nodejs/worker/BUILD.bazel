@@ -4,7 +4,7 @@ load("//typescript:rules.bzl", "ts_library")
 
 cjs_root(
     name = "root",
-    package_name = "@rules-javascript/bazel-worker",
+    package_name = "@rules-javascript/nodejs-worker",
     descriptors = ["package.json"],
     visibility = ["//visibility:public"],
 )

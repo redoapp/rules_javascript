@@ -60,8 +60,8 @@ ts_library(
     root = ":root",
     strip_prefix = "src",
     deps = [
-        "//bazel/worker:lib",
         "//commonjs/package:lib",
+        "//nodejs/worker:lib",
         "//util/argparse:lib",
         "//util/json:lib",
         "@npm//@types/argparse:lib",

@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "lib": ["es2019"],
-    "module": "commonjs"
-  },
-  "extends": "@rules-javascript/tools-typescript/tsconfig.common.json"
-}

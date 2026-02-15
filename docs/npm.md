@@ -173,12 +173,12 @@ yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-outpu
 
 **ATTRIBUTES**
 
-| Name                                     | Description                                                   | Type                                                                | Mandatory | Default          |
-| :--------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------ | :-------- | :--------------- |
-| <a id="yarn_resolve-name"></a>name       | A unique name for this target.                                | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |                  |
-| <a id="yarn_resolve-output"></a>output   | Package-relative output path                                  | String                                                              | optional  | `"npm_data.bzl"` |
-| <a id="yarn_resolve-path"></a>path       | Package-relative path to package.json and yarn.lock directory | String                                                              | optional  | `""`             |
-| <a id="yarn_resolve-refresh"></a>refresh | Whether to refresh                                            | Boolean                                                             | optional  | `True`           |
+| Name                                     | Description                                                   | Type                                                                | Mandatory | Default |
+| :--------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="yarn_resolve-name"></a>name       | A unique name for this target.                                | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="yarn_resolve-output"></a>output   | Output path                                                   | String                                                              | required  |         |
+| <a id="yarn_resolve-path"></a>path       | Package-relative path to package.json and yarn.lock directory | String                                                              | optional  | `""`    |
+| <a id="yarn_resolve-refresh"></a>refresh | Whether to refresh                                            | Boolean                                                             | optional  | `True`  |
 
 <a id="npm_package"></a>
 
