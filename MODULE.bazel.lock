@@ -690,7 +690,8 @@
           "node-v24.4.1-linux-x64.tar.xz": "7e067b13cd0dc7ee8b239f4ebe1ae54f3bba3a6e904553fcb5f581530eb8306d",
           "node-v24.4.1-win-arm64.zip": "8cb993d89d13119f582c77a4c734be5bdfeee5557e6cfe850ea1a2f23fa94686",
           "node-v24.4.1-win-x64.zip": "0428a6ca7544df310de4ed12c10e84c0bc7c9022945dc16de22f7c0dc4893dd2"
-        }
+        },
+        "version": "24.4.1"
       }
     },
     "@@bazel_util+//buildifier:extensions.bzl%buildifier": {

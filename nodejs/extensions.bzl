@@ -20,7 +20,7 @@ def _nodejs_impl(ctx):
                 version = toolchain.version
     version = version or "24.4.1"
 
-    if facts != None:
+    if facts != None and facts.get("version") == version:
         sha256s = facts["sha256s"]
     else:
         sha256s = {}
@@ -46,7 +46,7 @@ def _nodejs_impl(ctx):
 
     return ctx.extension_metadata(
         reproducible = True,
-        facts = {_FACTS_KEY: {"sha256s": sha256s, "_version": _FACTS_VERSION}},
+        facts = {_FACTS_KEY: {"sha256s": sha256s, "version": version, "_version": _FACTS_VERSION}},
     )
 
 nodejs = module_extension(
