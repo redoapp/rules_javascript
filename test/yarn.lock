@@ -5267,6 +5267,7 @@ __metadata:
     jest: "npm:^29.0.0"
     lodash3: "npm:lodash@^3.0.0"
     playwright: "npm:1.55.0"
+    playwright-core: "npm:1.55.0"
     prettier: "npm:^3"
     reflect-metadata: "npm:0.1.13"
     rollup: "npm:^2.78.0"

@@ -8693,6 +8693,10 @@
       "name": "lodash3"
     },
     {
+      "id": "playwright-core@1.55.0",
+      "name": "playwright-core"
+    },
+    {
       "id": "playwright@1.55.0",
       "name": "playwright"
     },

@@ -1856,6 +1856,64 @@
       "name": "@protobufjs/utf8",
       "url": "https://registry.npmjs.org/@protobufjs/utf8/-/utf8-1.1.0.tgz"
     },
+    "@redocly/ajv@8.17.4": {
+      "deps": [
+        {
+          "id": "fast-deep-equal@3.1.3"
+        },
+        {
+          "id": "fast-uri@3.1.0"
+        },
+        {
+          "id": "json-schema-traverse@1.0.0"
+        },
+        {
+          "id": "require-from-string@2.0.2"
+        }
+      ],
+      "integrity": "sha512-BieiCML/IgP6x99HZByJSt7fJE4ipgzO7KAFss92Bs+PEI35BhY7vGIysFXLT+YmS7nHtQjZjhOQyPPEf7xGHA==",
+      "name": "@redocly/ajv",
+      "url": "https://registry.npmjs.org/@redocly/ajv/-/ajv-8.17.4.tgz"
+    },
+    "@redocly/config@0.22.2": {
+      "integrity": "sha512-roRDai8/zr2S9YfmzUfNhKjOF0NdcOIqF7bhf4MVC5UxpjIysDjyudvlAiVbpPHp3eDRWbdzUgtkK1a7YiDNyQ==",
+      "name": "@redocly/config",
+      "url": "https://registry.npmjs.org/@redocly/config/-/config-0.22.2.tgz"
+    },
+    "@redocly/openapi-core@1.34.6": {
+      "deps": [
+        {
+          "id": "@redocly/ajv@8.17.4"
+        },
+        {
+          "id": "@redocly/config@0.22.2"
+        },
+        {
+          "id": "colorette@1.4.0"
+        },
+        {
+          "id": "https-proxy-agent@7.0.6"
+        },
+        {
+          "id": "js-levenshtein@1.1.6"
+        },
+        {
+          "id": "js-yaml@4.1.1"
+        },
+        {
+          "id": "minimatch@5.1.6"
+        },
+        {
+          "id": "pluralize@8.0.0"
+        },
+        {
+          "id": "yaml-ast-parser@0.0.43"
+        }
+      ],
+      "integrity": "sha512-2+O+riuIUgVSuLl3Lyh5AplWZyVMNuG2F98/o6NrutKJfW4/GTZdPpZlIphS0HGgcOHgmWcCSHj+dWFlZaGSHw==",
+      "name": "@redocly/openapi-core",
+      "url": "https://registry.npmjs.org/@redocly/openapi-core/-/openapi-core-1.34.6.tgz"
+    },
     "@rollup/plugin-commonjs@29.0.0-dc3fc578": {
       "deps": [
         {
@@ -9549,6 +9607,11 @@
       "name": "chalk",
       "url": "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz"
     },
+    "change-case@5.4.4": {
+      "integrity": "sha512-HRQyTk2/YPEkt9TnUPbOpr64Uw3KOicFWPVBb+xiHvd6eBx/qPr9xqfBFDT8P2vWsvvz4jbEkfDe71W3VyNu2w==",
+      "name": "change-case",
+      "url": "https://registry.npmjs.org/change-case/-/change-case-5.4.4.tgz"
+    },
     "char-regex@1.0.2": {
       "integrity": "sha512-kWWXztvZ5SBQV+eRgKFeh8q5sLuZY2+8WUIzlxWVTg+oGwY14qylx1KbKzHd8P6ZYkAg0xyIDU9JMHhyJMZ1jw==",
       "name": "char-regex",
@@ -9779,6 +9842,11 @@
       "integrity": "sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==",
       "name": "color-name",
       "url": "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
+    },
+    "colorette@1.4.0": {
+      "integrity": "sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==",
+      "name": "colorette",
+      "url": "https://registry.npmjs.org/colorette/-/colorette-1.4.0.tgz"
     },
     "colorette@2.0.20": {
       "integrity": "sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==",
@@ -12170,6 +12238,11 @@
       "name": "indent-string",
       "url": "https://registry.npmjs.org/indent-string/-/indent-string-4.0.0.tgz"
     },
+    "index-to-position@1.2.0": {
+      "integrity": "sha512-Yg7+ztRkqslMAS2iFaU+Oa4KTSidr63OsFGlOrJoW981kIYO3CGCS3wA95P1mUi/IVSJkn0D479KTJpVpvFNuw==",
+      "name": "index-to-position",
+      "url": "https://registry.npmjs.org/index-to-position/-/index-to-position-1.2.0.tgz"
+    },
     "inflight@1.0.6": {
       "deps": [
         {
@@ -14009,6 +14082,11 @@
       "name": "jest",
       "url": "https://registry.npmjs.org/jest/-/jest-29.7.0.tgz"
     },
+    "js-levenshtein@1.1.6": {
+      "integrity": "sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==",
+      "name": "js-levenshtein",
+      "url": "https://registry.npmjs.org/js-levenshtein/-/js-levenshtein-1.1.6.tgz"
+    },
     "js-tokens@4.0.0": {
       "integrity": "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==",
       "name": "js-tokens",
@@ -14451,6 +14529,16 @@
       "name": "minimatch",
       "url": "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz"
     },
+    "minimatch@5.1.6": {
+      "deps": [
+        {
+          "id": "brace-expansion@2.0.2"
+        }
+      ],
+      "integrity": "sha512-lKwV/1brpG6mBUFHtb7NUmtABCb2WZZmm2wNiOA5hAb8VdCS4B3dtMWyvcoViccwAW/COERjXLt0zP1zXUN26g==",
+      "name": "minimatch",
+      "url": "https://registry.npmjs.org/minimatch/-/minimatch-5.1.6.tgz"
+    },
     "minimatch@9.0.5": {
       "deps": [
         {
@@ -14862,6 +14950,34 @@
       "name": "open",
       "url": "https://registry.npmjs.org/open/-/open-8.4.2.tgz"
     },
+    "openapi-typescript@7.13.0-dc3fc578": {
+      "deps": [
+        {
+          "id": "@redocly/openapi-core@1.34.6"
+        },
+        {
+          "id": "ansi-colors@4.1.3"
+        },
+        {
+          "id": "change-case@5.4.4"
+        },
+        {
+          "id": "parse-json@8.3.0"
+        },
+        {
+          "id": "supports-color@10.2.2"
+        },
+        {
+          "id": "typescript@5.0.4-ce5481e5"
+        },
+        {
+          "id": "yargs-parser@21.1.1"
+        }
+      ],
+      "integrity": "sha512-EFP392gcqXS7ntPvbhBzbF8TyBA+baIYEm791Hy5YkjDYKTnk/Tn5OQeKm5BIZvJihpp8Zzr4hzx0Irde1LNGQ==",
+      "name": "openapi-typescript",
+      "url": "https://registry.npmjs.org/openapi-typescript/-/openapi-typescript-7.13.0.tgz"
+    },
     "optionator@0.9.4": {
       "deps": [
         {
@@ -15029,6 +15145,22 @@
       "integrity": "sha512-ayCKvm/phCGxOkYRSCM82iDwct8/EonSEgCSxWxD7ve6jHggsFl4fZVQBPRNgQoKiuV/odhFrGzQXZwbifC8Rg==",
       "name": "parse-json",
       "url": "https://registry.npmjs.org/parse-json/-/parse-json-5.2.0.tgz"
+    },
+    "parse-json@8.3.0": {
+      "deps": [
+        {
+          "id": "@babel/code-frame@7.29.0"
+        },
+        {
+          "id": "index-to-position@1.2.0"
+        },
+        {
+          "id": "type-fest@4.41.0"
+        }
+      ],
+      "integrity": "sha512-ybiGyvspI+fAoRQbIPRddCcSTV9/LsJbf0e/S85VLowVGzRmokfneg2kwVW/KU5rOXrPSbF1qAKPMgNTqqROQQ==",
+      "name": "parse-json",
+      "url": "https://registry.npmjs.org/parse-json/-/parse-json-8.3.0.tgz"
     },
     "parse-path@7.1.0": {
       "deps": [
@@ -16895,6 +17027,11 @@
       "name": "structured-source",
       "url": "https://registry.npmjs.org/structured-source/-/structured-source-3.0.2.tgz"
     },
+    "supports-color@10.2.2": {
+      "integrity": "sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==",
+      "name": "supports-color",
+      "url": "https://registry.npmjs.org/supports-color/-/supports-color-10.2.2.tgz"
+    },
     "supports-color@7.2.0": {
       "deps": [
         {
@@ -17395,6 +17532,11 @@
       "integrity": "sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==",
       "name": "type-fest",
       "url": "https://registry.npmjs.org/type-fest/-/type-fest-0.8.1.tgz"
+    },
+    "type-fest@4.41.0": {
+      "integrity": "sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==",
+      "name": "type-fest",
+      "url": "https://registry.npmjs.org/type-fest/-/type-fest-4.41.0.tgz"
     },
     "type-is@1.6.18": {
       "deps": [
@@ -18778,6 +18920,11 @@
       "name": "yallist",
       "url": "https://registry.npmjs.org/yallist/-/yallist-5.0.0.tgz"
     },
+    "yaml-ast-parser@0.0.43": {
+      "integrity": "sha512-2PTINUwsRqSd+s8XxKaJWQlUuEMHJQyEuh2edBbW8KNJz0SJPwUSD2zRWqezFEdN7IzAgeuYHFUCF7o8zRdZ0A==",
+      "name": "yaml-ast-parser",
+      "url": "https://registry.npmjs.org/yaml-ast-parser/-/yaml-ast-parser-0.0.43.tgz"
+    },
     "yargs-parser@21.1.1": {
       "integrity": "sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw==",
       "name": "yargs-parser",
@@ -18927,6 +19074,10 @@
     {
       "id": "long@4.0.0",
       "name": "long"
+    },
+    {
+      "id": "openapi-typescript@7.13.0-dc3fc578",
+      "name": "openapi-typescript"
     },
     {
       "id": "playwright-core@1.55.0",

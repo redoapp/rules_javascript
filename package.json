@@ -25,6 +25,7 @@
     "jest": "^29.0.0",
     "jest-junit": "^16",
     "long": "~4.0.0",
+    "openapi-typescript": "^7",
     "playwright": "1.55.0",
     "playwright-core": "1.55.0",
     "prettier": "^3",
