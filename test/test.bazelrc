@@ -3,11 +3,12 @@ run --symlink_prefix=/
 test --symlink_prefix=/
 test --test_output=errors
 
-build --incompatible_compact_repo_mapping_manifest
+build --experimental_output_paths strip
+build --trim_test_configuration
+build --incompatible_disable_autoloads_in_main_repo
 build --incompatible_disable_starlark_host_transitions
-build --incompatible_disallow_struct_provider_syntax
 build --incompatible_disable_target_provider_fields
-build --incompatible_top_level_aspects_require_providers
+build --incompatible_no_implicit_file_export
+build --incompatible_resolve_select_keys_eagerly
+build --incompatible_stop_exporting_build_file_path
 build --incompatible_use_cc_configure_from_rules_cc
-build --noincompatible_disallow_struct_provider_syntax
-build --test_env=PATH

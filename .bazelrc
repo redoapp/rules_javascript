@@ -15,18 +15,22 @@ sync --disk_cache ~/.cache/bazel-disk
 
 # Build
 build -k
-build --test_env=PATH
-build --incompatible_disable_starlark_host_transitions
-build --incompatible_disallow_struct_provider_syntax
-build --incompatible_disable_target_provider_fields
-build --incompatible_top_level_aspects_require_providers
+build --experimental_output_paths strip
+build --trim_test_configuration
+build --incompatible_disable_autoloads_in_main_repo
+build --incompatible_no_implicit_file_export
+build --incompatible_resolve_select_keys_eagerly
 build --incompatible_use_cc_configure_from_rules_cc
-build --noincompatible_disallow_struct_provider_syntax
-build --verbose_failures
+
+# Rules
+build --incompatible_disable_starlark_host_transitions
+build --incompatible_disable_target_provider_fields
+build --incompatible_stop_exporting_build_file_path
 
 # Test
 build --test_output=streamed
 build --test_env=HOME
+build --test_env=PATH
 build:ci --test_output=errors
 
 # Runfiles

@@ -1,6 +1,7 @@
 load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
 load("@rules_javascript//javascript:rules.bzl", "js_library")
 load("@rules_javascript//jest:rules.bzl", "jest_test")
+load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
 
 cjs_root(
     name = "root",
@@ -30,5 +31,5 @@ jest_test(
 
 sh_binary(
     name = "bin",
-    srcs = ["bin.sh"],
+    main = "bin.sh",
 )

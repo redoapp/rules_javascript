@@ -51,6 +51,7 @@ archive_override(
 
 # Shell
 
+bazel_dep(name = "rules_shell", version = "0.6.1")
 bazel_dep(name = "rules_shell_extra")
 
 RULES_SHELL_EXTRA_VERSION = "93090b47f81577ba4890c770effd889f61ce5d19"

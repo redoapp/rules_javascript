@@ -39,6 +39,8 @@ bazel_dep(name = "rules_pkg", version = "1.2.0")
 
 # Shell
 
+bazel_dep(name = "rules_shell_extra")
+
 RULES_SHELL_EXTRA_VERSION = "93090b47f81577ba4890c770effd889f61ce5d19"
 
 archive_override(
