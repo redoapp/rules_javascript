@@ -1,5 +1,7 @@
-load("@npm//:roots.bzl", NPM_ROOTS = "ROOTS")
+load("@npm//:packages.bzl", NPM_PACKAGES = "PACKAGES")
+load("@npm//:roots.bzl", NPM_REPO = "REPO", NPM_ROOTS = "ROOTS")
 load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
+load("//bin:npm.bzl", "bin_npm_binaries")
 load("//nodejs:rules.bzl", "nodejs_install", "nodejs_modules_package")
 load("//typescript:npm.bzl", "ts_node_modules")
 load("//typescript:rules.bzl", "js_import_ts")
@@ -17,6 +19,7 @@ sh_binary(
 
 nodejs_modules_package(
     name = "node_modules",
+    bins = bin_npm_binaries(NPM_PACKAGES),
     links = [
         "//angular/resource-compiler:root",
         "//commonjs/package:root",
@@ -35,7 +38,7 @@ nodejs_modules_package(
         "//webpack/config:root",
     ],
     tags = ["no-cache"],
-    deps = ts_node_modules("npm", NPM_ROOTS),
+    deps = ts_node_modules(NPM_REPO, NPM_ROOTS),
 )
 
 alias(

@@ -1,10 +1,9 @@
 .bazel_cache
 .bazel-npm-cache.json
+.bazelrc.user
 .node_modules
 .yarn
 *.log
 bazel-*
 jest/test/bazel/snapshot/__snapshots__
 node_modules
-
-/user.bazelrc

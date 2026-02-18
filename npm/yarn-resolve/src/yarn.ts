@@ -41,6 +41,7 @@ export async function getPackageInfos(
       ? conditionsParse(pkg.conditions)
       : new Map();
     const package_: YarnPackageInfo = {
+      binaries: pkg.bin,
       constraints: {
         cpu: conditions.get("cpu"),
         libc: conditions.get("libc"),
@@ -73,6 +74,7 @@ export type YarnPackageInfos = Map<string, YarnPackageInfo>;
 export type YarnDependencies = Map<string, { id: string; optional: boolean }>;
 
 export interface YarnPackageInfo {
+  binaries: Map<string, string>;
   constraints: YarnConstraints;
   dependencies: YarnDependencies;
   locator: Locator;

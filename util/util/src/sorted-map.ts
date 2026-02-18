@@ -6,7 +6,10 @@ export interface SortedMap<K, V> {
   get(key: K): V | undefined;
 }
 
-export function sortedMap<K, V>(entries: Iterable<[K, V]>, compare: (a: K, b: K) => number = defaultCompare): SortedMap<K, V> {
+export function sortedMap<K, V>(
+  entries: Iterable<[K, V]>,
+  compare: (a: K, b: K) => number = defaultCompare,
+): SortedMap<K, V> {
   const values = [...entries];
   values.sort(([a], [b]) => compare(a, b));
 

@@ -1,25 +1,24 @@
-import { removePrefix } from "@rules-javascript/util/string";
-import { sep } from "node:path";
 import {
-  RepoMapping,
-  repoMappingParse,
-  runfilesDirRunfiles,
-  runfilesManifestParse,
+  ApparentRepo,
+  CanonicalRepo,
   executableRunfilesDir,
   executableRunfilesManifest,
-  Runfiles,
+  Location,
+  MAIN_REPO,
+  RepoMapping,
   repoMappingLocation,
+  repoMappingParse,
   Runfile,
   runfileParse,
+  Runfiles,
+  runfilesDirRunfiles,
   runfileSerialize,
-  CanonicalRepo,
-  MAIN_REPO,
-  ApparentRepo,
-  Location,
+  runfilesManifestParse,
 } from "@rules-javascript/runfiles";
 import { lazy } from "@rules-javascript/util/cache";
+import { removePrefix } from "@rules-javascript/util/string";
 import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { resolve, sep } from "node:path";
 import { callSitePath } from "./stack";
 
 const repoMapping = lazy((): RepoMapping | undefined => {
@@ -53,7 +52,9 @@ const runfiles = lazy((): Runfiles | undefined => {
     return runfilesDirRunfiles(runfilesDir);
   }
 
-  const runfilesManifest = executableRunfilesManifest(process.argv0 as Location);
+  const runfilesManifest = executableRunfilesManifest(
+    process.argv0 as Location,
+  );
   if (existsSync(runfilesManifest)) {
     return runfilesManifestParse(readFileSync(runfilesManifest, "utf8"));
   }
@@ -74,7 +75,8 @@ export function rlocation(path: Runfile, source?: Function | string) {
     if (typeof source !== "string") {
       // caller
       const path = callSitePath(source ?? rlocation);
-      sourceRepo = path === undefined ? MAIN_REPO : pathToRepo(path) as CanonicalRepo;
+      sourceRepo =
+        path === undefined ? MAIN_REPO : (pathToRepo(path) as CanonicalRepo);
     } else if (source.includes(sep)) {
       // resolved path
       sourceRepo = pathToRepo(source) as CanonicalRepo;
@@ -84,7 +86,10 @@ export function rlocation(path: Runfile, source?: Function | string) {
     }
 
     const { repo, path: workspacePath } = runfileParse(path);
-    const canonicalRepo = repoMapping_.canonical(sourceRepo, repo as ApparentRepo);
+    const canonicalRepo = repoMapping_.canonical(
+      sourceRepo,
+      repo as ApparentRepo,
+    );
     if (canonicalRepo !== undefined) {
       path = runfileSerialize({ repo: canonicalRepo, path: workspacePath });
     }

@@ -1,5 +1,6 @@
 export interface BzlPackage {
   arch: string[] | undefined;
+  binaries: Map<string, string>;
   deps: BzlDeps;
   extraDeps: Map<string, BzlDeps>;
   integrity: string;
@@ -17,6 +18,10 @@ export namespace BzlPackage {
 
     return {
       arch: value.arch,
+      bins:
+        value.binaries.size > 0
+          ? Object.fromEntries(value.binaries.entries())
+          : undefined,
       deps: value.deps.length > 0 ? BzlDeps.toJson(value.deps) : undefined,
       extraDeps:
         extraDeps.length > 0

@@ -1,0 +1,4 @@
+exports_files(
+    ["binary-runner.sh.tpl"],
+    visibility = ["//visibility:public"],
+)

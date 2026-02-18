@@ -22,9 +22,9 @@ ts_library(
     compiler = "//tools/typescript:tsc",
     config = "tsconfig.json",
     config_dep = ":tsconfig",
+    root = ":root",
+    visibility = ["//visibility:public"],
     deps = [
         "//util/util:lib",
     ],
-    root = ":root",
-    visibility = ["//visibility:public"],
 )

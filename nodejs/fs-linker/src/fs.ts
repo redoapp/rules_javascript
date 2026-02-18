@@ -265,7 +265,7 @@ export function stringPath(value: fs.PathLike): string {
     }
     value = fileURLToPath(value);
   }
-  return path.resolve(value);
+  return path.resolve(value as string);
 }
 
 export function replaceArguments<F extends Function>(

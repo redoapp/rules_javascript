@@ -3,6 +3,9 @@ load("//commonjs:providers.bzl", "cjs_npm_label")
 load("//npm:npm.bzl", "package_repo_name")
 load(":npm.bzl", "js_npm_inner_label", "js_npm_label")
 
+def _js_npm_bin(repo, package_id, bin):
+    pass
+
 def _js_npm_hub(repo, root):
     js_export(
         name = "lib",
@@ -64,6 +67,7 @@ def _js_npm_spoke(repo, package, files):
         )
 
 npm_plugin = struct(
+    bin = _js_npm_bin,
     hub = _js_npm_hub,
     spoke = _js_npm_spoke,
 )

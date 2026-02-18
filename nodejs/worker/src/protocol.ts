@@ -9,7 +9,11 @@ export namespace Input {
   export function json(): JsonFormat<Input> {
     const digest: JsonFormat<ArrayBuffer> = {
       fromJson(json) {
-        return Buffer.from(json, "base64");
+        const buffer = Buffer.from(json, "base64");
+        return buffer.buffer.slice(
+          buffer.byteOffset,
+          buffer.byteOffset + buffer.byteLength,
+        );
       },
       toJson(value) {
         return Buffer.from(value).toString("base64");

@@ -7,6 +7,9 @@ load("//javascript:rules.bzl", "js_library")
 load("//npm:npm.bzl", "package_repo_name")
 load("//typescript:rules.bzl", "js_import_ts", "ts_export", "ts_import")
 
+def _ts_npm_bin(repo, package_id, bin):
+    pass
+
 def _ts_npm_hub(repo, root):
     ts_export(
         name = "lib",
@@ -91,6 +94,7 @@ def _ts_npm_spoke(repo, package, files):
         )
 
 npm_plugin = struct(
+    bin = _ts_npm_bin,
     hub = _ts_npm_hub,
     spoke = _ts_npm_spoke,
 )

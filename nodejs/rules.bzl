@@ -3,6 +3,7 @@ load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_util//file:rules.bzl", "untar")
 load("@rules_pkg//pkg:providers.bzl", "PackageFilegroupInfo", "PackageFilesInfo", "PackageSymlinkInfo")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
+load("//bin:bin.bzl", "BinInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "create_links", "create_package", "gen_manifest", "package_path")
 load("//javascript:providers.bzl", "JsInfo")
 load("//pkg:rules.bzl", "pkg_install")
@@ -436,6 +437,12 @@ def _nodejs_modules_package_impl(ctx):
         files_map[".content/%s" % runfile_path(workspace, file)] = file
     files = PackageFilesInfo(attributes = {}, dest_src_map = files_map)
 
+    package_bins = {}
+    for target in ctx.attr.bins:
+        if target[CjsInfo].package.path not in package_bins:
+            package_bins[target[CjsInfo].package.path] = []
+        package_bins[target[CjsInfo].package.path].append(target[BinInfo])
+
     symlinks = []
     transitive_links = depset(
         create_globals(label, deps_cjs + links_cjs),
@@ -456,6 +463,16 @@ def _nodejs_modules_package_impl(ctx):
         )
         symlinks.append(symlink)
 
+        for bin in package_bins.get(link.dep, []):
+            if link.path == None:
+                destination = ".bin/%s" % bin.name
+            else:
+                destination = "%s/node_modules/.bin/%s" % (package_paths[link.path], bin.name)
+            symlinks.append(PackageSymlinkInfo(
+                destination = destination,
+                target = "%s/%s" % (relativize(package_paths[link.dep], paths.dirname(destination)), bin.path),
+            ))
+
     default_info = DefaultInfo(files = transitive_files)
 
     filegroup_info = PackageFilegroupInfo(
@@ -468,6 +485,7 @@ def _nodejs_modules_package_impl(ctx):
 
 nodejs_modules_package = rule(
     attrs = {
+        "bins": attr.label_list(cfg = nodejs_transition, providers = [BinInfo]),
         "deps": attr.label_list(cfg = nodejs_transition, providers = [CjsInfo]),
         "links": attr.label_list(cfg = nodejs_transition, providers = [CjsInfo]),
         "_allowlist_function_transition": attr.label(

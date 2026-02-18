@@ -1,3 +1,3 @@
-load(%{data}, "ROOT")
+%{root_load}
 
 %{content}

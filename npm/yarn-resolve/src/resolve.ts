@@ -2,8 +2,8 @@ import { JsonFormat } from "@rules-javascript/util-json";
 import { Locator, structUtils } from "@yarnpkg/core";
 import { patchUtils } from "@yarnpkg/plugin-patch";
 import { createHash } from "node:crypto";
-import { BzlDeps, BzlPackages } from "./bzl";
 import { Graph, stronglyConnectedComponents } from "./graph";
+import { BzlDeps, BzlPackages } from "./json";
 import { NpmRegistryClient } from "./npm";
 import { YarnDependencies, YarnPackageInfos } from "./yarn";
 
@@ -78,6 +78,7 @@ export async function resolvePackages(
         const deps = bzlDeps(yarnPackages, yarnPackage.dependencies);
         bzlPackages.set(id, {
           arch: yarnPackage.constraints.cpu,
+          binaries: yarnPackage.binaries,
           deps,
           extraDeps: new Map(),
           integrity: npmPackage.contentIntegrity,
@@ -88,7 +89,7 @@ export async function resolvePackages(
         });
         finished++;
       } else if (yarnPackage.locator.reference === "workspace:.") {
-        bzlRoots = bzlDeps(yarnPackages, yarnPackage.dependencies, new Set());
+        bzlRoots = bzlDeps(yarnPackages, yarnPackage.dependencies);
       }
       const now = process.hrtime.bigint();
       if (reported + BigInt(2 * 1e9) < now) {

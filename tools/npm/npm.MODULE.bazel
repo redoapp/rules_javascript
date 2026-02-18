@@ -4,7 +4,9 @@ yarn.workspace(
     data = "//tools/npm:npm.json",
     path = "/",
     plugins = [
+        "//bin:npm_plugin.bzl",
         "//commonjs:npm_plugin.bzl",
+        "//nodejs:npm_plugin.bzl",
         "//typescript:npm_plugin.bzl",
     ],
 )

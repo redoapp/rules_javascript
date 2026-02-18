@@ -37,4 +37,4 @@ build:ci --test_output=errors
 build --incompatible_compact_repo_mapping_manifest
 
 # User settings
-try-import %workspace%/user.bazelrc
+try-import %workspace%/.bazelrc.user

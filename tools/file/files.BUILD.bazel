@@ -26,7 +26,10 @@ filegroup(
         "files/**/*.mts",
         "files/**/*.ts",
         "files/**/*.yml",
-    ], ["files/**/dist/**"]),
+    ], [
+        "files/**/dist/**",
+        "files/**/npm.json",
+    ]),
     visibility = ["//visibility:public"],
 )
 

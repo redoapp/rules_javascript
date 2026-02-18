@@ -2,7 +2,13 @@ load("@bazel_skylib//lib:selects.bzl", "selects")
 load("@bazel_util//file:rules.bzl", "untar")
 load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
 
+def _cjs_npm_bin(repo, package_id, bin):
+    pass
+
 def _cjs_npm_hub(repo, root):
+    pass
+
+def _cjs_npm_package(repo, package):
     pass
 
 def _cjs_npm_spoke(repo, package, files):
@@ -37,6 +43,8 @@ def _cjs_npm_spoke(repo, package, files):
     )
 
 npm_plugin = struct(
+    bin = _cjs_npm_bin,
     hub = _cjs_npm_hub,
+    package = _cjs_npm_package,
     spoke = _cjs_npm_spoke,
 )

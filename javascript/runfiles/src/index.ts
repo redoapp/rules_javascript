@@ -31,7 +31,10 @@ export function executableRunfilesManifest(executable: Location): Location {
  * Repo mapping
  */
 export interface RepoMapping {
-  canonical(source: CanonicalRepo, dep: ApparentRepo): CanonicalRepo | undefined;
+  canonical(
+    source: CanonicalRepo,
+    dep: ApparentRepo,
+  ): CanonicalRepo | undefined;
 }
 
 export function repoMappingLocation(runfiles: Runfiles): Location | undefined {
@@ -45,7 +48,11 @@ export function repoMappingParse(content: string): RepoMapping {
   const repos = new Map<CanonicalRepo, Map<ApparentRepo, CanonicalRepo>>();
 
   for (const line of content.trim().split("\n")) {
-    let [repo, dep, canonical] = line.trim().split(",") as [CanonicalRepo | "", ApparentRepo, CanonicalRepo];
+    let [repo, dep, canonical] = line.trim().split(",") as [
+      CanonicalRepo | "",
+      ApparentRepo,
+      CanonicalRepo,
+    ];
     let deps: Map<ApparentRepo, CanonicalRepo> | undefined;
     if (repo.endsWith(WILDCARD)) {
       deps = prefixes.get(repo);
@@ -73,16 +80,19 @@ export function repoMappingParse(content: string): RepoMapping {
   };
 }
 
-export function runfileParse(runfile: Runfile): { repo: Repo, path: RepoPath } {
-const [repo, ...path] = runfile.split("/");
+export function runfileParse(runfile: Runfile): { repo: Repo; path: RepoPath } {
+  const [repo, ...path] = runfile.split("/");
   if (!repo) {
     throw new Error(`Invalid runfile: ${runfile}`);
   }
 
-  return { repo: repo  as Repo, path: path.join("/") as RepoPath };
+  return { repo: repo as Repo, path: path.join("/") as RepoPath };
 }
 
-export function runfileSerialize(runfile: { repo: Repo, path: RepoPath }): Runfile {
+export function runfileSerialize(runfile: {
+  repo: Repo;
+  path: RepoPath;
+}): Runfile {
   return `${runfile.repo}/${runfile.path}` as Runfile;
 }
 

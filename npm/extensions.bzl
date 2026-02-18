@@ -1,5 +1,5 @@
 load(":npm.bzl", "package_repo_name")
-load(":repositories.bzl", "npm", "npm_package")
+load(":repositories.bzl", "DEFAULT_PLUGINS", "npm", "npm_package")
 
 _workspace_tag = tag_class(
     attrs = {
@@ -21,6 +21,7 @@ _workspace_tag = tag_class(
             mandatory = True,
         ),
         "plugins": attr.label_list(
+            default = DEFAULT_PLUGINS,
             doc = "Plugins to use.",
         ),
     },

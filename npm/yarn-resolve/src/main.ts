@@ -4,7 +4,7 @@ import { structUtils } from "@yarnpkg/core";
 import { ArgumentParser } from "argparse";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import { toJsonFile } from "./bzl";
+import { toJsonFile } from "./json";
 import { NpmRegistryClient } from "./npm";
 import { getPackage, ResolvedNpmPackage, resolvePackages } from "./resolve";
 import { getPackageInfos, yarnProject } from "./yarn";
