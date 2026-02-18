@@ -331,8 +331,15 @@ def _ts_library_impl(ctx):
 
     # compile declarations
     if outputs:
+        trace_args = []
+        trace_outputs = []
+        if ctx.attr._trace[BuildSettingInfo].value:
+            trace_dir = actions.declare_directory("%s.trace" % ctx.attr.name)
+            trace_args = ["--generateTrace", trace_dir.path]
+            trace_outputs = [trace_dir]
+
         actions.run(
-            arguments = ["-p", tsconfig.path],
+            arguments = ["-p", tsconfig.path] + trace_args,
             env = {
                 "NODE_OPTIONS_APPEND": "-r ./%s/dist/bundle.js" % fs_linker_cjs.package.path,
                 "NODE_FS_PACKAGE_MANIFEST": package_manifest.path,
@@ -349,7 +356,7 @@ def _ts_library_impl(ctx):
             ),
             mnemonic = "TypeScriptCompile",
             progress_message = "Compiling %{label} TypeScript declarations",
-            outputs = outputs,
+            outputs = outputs + trace_outputs,
             tools = [compiler.bin.files_to_run],
         )
 
@@ -482,6 +489,10 @@ ts_library = rule(
         ),
         "_system_lib": attr.label(
             default = "//javascript:system_lib",
+            providers = [BuildSettingInfo],
+        ),
+        "_trace": attr.label(
+            default = "//typescript:trace",
             providers = [BuildSettingInfo],
         ),
     },

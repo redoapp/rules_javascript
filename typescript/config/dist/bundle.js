@@ -79,13 +79,17 @@ parser.add_argument("output");
         tsconfig.compilerOptions.module = args.module;
         // should allow choices, but it's so complicated
         switch (args.module.toLowerCase()) {
+            case "bundler":
             case "es2015":
             case "es2020":
             case "es2022": {
                 tsconfig.compilerOptions.moduleResolution = "bundler";
                 break;
             }
-            case "node20": {
+            case "node16":
+            case "node18":
+            case "node20":
+            case "nodenext": {
                 tsconfig.compilerOptions.moduleResolution = "nodenext";
                 break;
             }
