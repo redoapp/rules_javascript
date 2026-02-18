@@ -67,7 +67,7 @@ const runfiles = lazy((): Runfiles | undefined => {
  * @param source Canonical repository, or resolved path, or runfile path, or caller function.
  * @returns Resolved location, if found
  */
-export function rlocation(path: Runfile, source?: Function | string) {
+export function rlocation(path: string, source?: Function | string) {
   const repoMapping_ = repoMapping();
 
   if (repoMapping_) {
@@ -85,7 +85,7 @@ export function rlocation(path: Runfile, source?: Function | string) {
       sourceRepo = source as CanonicalRepo;
     }
 
-    const { repo, path: workspacePath } = runfileParse(path);
+    const { repo, path: workspacePath } = runfileParse(path as Runfile);
     const canonicalRepo = repoMapping_.canonical(
       sourceRepo,
       repo as ApparentRepo,
@@ -95,7 +95,7 @@ export function rlocation(path: Runfile, source?: Function | string) {
     }
   }
 
-  return runfiles()?.path(path);
+  return runfiles()?.path(path as Runfile);
 }
 
 const sepRegex = sep === "/" ? null : new RegExp(`\\${sep}`, "g");
