@@ -1,75 +1,110 @@
+import { removePrefix } from "@rules-javascript/util/string";
+import { sep } from "node:path";
 import {
+  RepoMapping,
   repoMappingParse,
+  runfilesDirRunfiles,
   runfilesManifestParse,
+  executableRunfilesDir,
+  executableRunfilesManifest,
+  Runfiles,
+  repoMappingLocation,
+  Runfile,
+  runfileParse,
+  runfileSerialize,
+  CanonicalRepo,
+  MAIN_REPO,
+  ApparentRepo,
+  Location,
 } from "@rules-javascript/runfiles";
 import { lazy } from "@rules-javascript/util/cache";
-import { readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { callSitePath } from "./stack";
 
-const repoMapping = lazy(() => {
-  let path: string;
-  if (process.env.RUNFILES_DIR !== undefined) {
-    path = join(process.env.RUNFILES_DIR, "_repo_mapping");
-  } else if (process.env.RUNFILES_MANIFEST_FILE === undefined) {
-    throw new Error("RUNFILES_DIR AND RUNFILES_MANIFEST_FILE are not set");
+const repoMapping = lazy((): RepoMapping | undefined => {
+  let path: string | undefined;
+  if (process.env.RUNFILES_REPO_MAPPING_MANIFEST === undefined) {
+    const runfiles_ = runfiles();
+    path = runfiles_ && repoMappingLocation(runfiles_);
+    if (path === undefined) {
+      return;
+    }
   } else {
-    path = join(dirname(process.env.RUNFILES_MANIFEST_FILE), "_repo_mapping");
+    path = process.env.RUNFILES_REPO_MAPPING_MANIFEST;
   }
+
   return repoMappingParse(readFileSync(path, "utf8"));
 });
 
-const runfilesManifest = lazy(() => {
-  if (process.env.RUNFILES_MANIFEST_FILE === undefined) {
-    throw new Error("RUNFILES_MANIFEST_FILE is not set");
+const runfiles = lazy((): Runfiles | undefined => {
+  if (process.env.RUNFILES_DIR !== undefined) {
+    return runfilesDirRunfiles(process.env.RUNFILES_DIR);
   }
-  return runfilesManifestParse(
-    readFileSync(process.env.RUNFILES_MANIFEST_FILE, "utf8"),
-  );
+
+  if (process.env.RUNFILES_MANIFEST_FILE !== undefined) {
+    return runfilesManifestParse(
+      readFileSync(process.env.RUNFILES_MANIFEST_FILE, "utf8"),
+    );
+  }
+
+  const runfilesDir = executableRunfilesDir(process.argv0 as Location);
+  if (existsSync(runfilesDir)) {
+    return runfilesDirRunfiles(runfilesDir);
+  }
+
+  const runfilesManifest = executableRunfilesManifest(process.argv0 as Location);
+  if (existsSync(runfilesManifest)) {
+    return runfilesManifestParse(readFileSync(runfilesManifest, "utf8"));
+  }
 });
 
 /**
  * Runfile location
  *
- * @param runfile Runfile name
- * @param source Canonical repository name, or path
- * @returns Path to the runfile
+ * @param path Runfile path
+ * @param source Canonical repository, or resolved path, or runfile path, or caller function.
+ * @returns Resolved location, if found
  */
-export function rlocation(runfile: string, source?: string) {
-  if (source !== undefined) {
-    const parts = runfile.split("/");
-    const repo = parts[0];
-    const path = parts.slice(1).join("/");
+export function rlocation(path: Runfile, source?: Function | string) {
+  const repoMapping_ = repoMapping();
 
-    let sourceRepo: string;
-    if (source.includes("/")) {
-      const requesterRunfile =
-        process.env.RUNFILES_DIR === undefined
-          ? source
-          : removePrefix(
-              resolve(source),
-              `${resolve(process.env.RUNFILES_DIR)}/`,
-            );
-
-      [sourceRepo] = requesterRunfile.split("/", 1);
-      if (!sourceRepo) {
-        throw new Error(`Invalid requester: ${source}`);
-      }
+  if (repoMapping_) {
+    let sourceRepo: CanonicalRepo;
+    if (typeof source !== "string") {
+      // caller
+      const path = callSitePath(source ?? rlocation);
+      sourceRepo = path === undefined ? MAIN_REPO : pathToRepo(path) as CanonicalRepo;
+    } else if (source.includes(sep)) {
+      // resolved path
+      sourceRepo = pathToRepo(source) as CanonicalRepo;
     } else {
-      sourceRepo = source;
+      // canonical repository
+      sourceRepo = source as CanonicalRepo;
     }
 
-    const canonicalRepo = repoMapping().canonical(sourceRepo, repo);
+    const { repo, path: workspacePath } = runfileParse(path);
+    const canonicalRepo = repoMapping_.canonical(sourceRepo, repo as ApparentRepo);
     if (canonicalRepo !== undefined) {
-      runfile = `${canonicalRepo}/${path}`;
+      path = runfileSerialize({ repo: canonicalRepo, path: workspacePath });
     }
   }
 
-  if (process.env.RUNFILES_DIR) {
-    return join(process.env.RUNFILES_DIR, runfile);
-  }
-  return runfilesManifest().path(runfile);
+  return runfiles()?.path(path);
 }
 
-function removePrefix(string: string, prefix: string) {
-  return string.startsWith(prefix) ? string.slice(prefix.length) : string;
+const sepRegex = sep === "/" ? null : new RegExp(`\\${sep}`, "g");
+
+function pathToRepo(path: string) {
+  if (process.env.RUNFILES_DIR !== undefined) {
+    path = removePrefix(
+      resolve(path),
+      `${resolve(process.env.RUNFILES_DIR)}${sep}`,
+    );
+    if (sepRegex) {
+      path = path.replace(sepRegex, "/");
+    }
+  }
+
+  return runfileParse(path as Runfile).repo;
 }

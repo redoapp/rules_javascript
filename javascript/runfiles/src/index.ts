@@ -1,11 +1,42 @@
-export type CanonicalRepo = string;
-export type ApparentRepo = string;
+import { sortedMap } from "@rules-javascript/util/sorted-map";
 
-export interface RepoMapping {
-  canonical(source: CanonicalRepo, dep: ApparentRepo): string | undefined;
-}
+export type ApparentRepo = string & { __brand: "ApparentRepo" };
+export type CanonicalRepo = string & { __brand: "CanonicalRepo" };
+export type Location = string & { __brand: "Location" };
+export type Repo = ApparentRepo | CanonicalRepo;
+export type RepoPath = string & { __brand: "RepoPath" };
+export type Runfile = string & { __brand: "Runfile" };
+
+export const MAIN_REPO = "_main" as CanonicalRepo;
+
+const REPO_MAPPING_RUNFILE = "_repo_mapping" as Runfile;
 
 const WILDCARD = "*";
+
+/**
+ * Get the runfiles directory location from the root executable
+ */
+export function executableRunfilesDir(executable: Location): Location {
+  return `${executable}.runfiles` as Location;
+}
+
+/**
+ * Get the runfiles manifest location from the root executable
+ */
+export function executableRunfilesManifest(executable: Location): Location {
+  return `${executable}.runfiles_manifest` as Location;
+}
+
+/**
+ * Repo mapping
+ */
+export interface RepoMapping {
+  canonical(source: CanonicalRepo, dep: ApparentRepo): CanonicalRepo | undefined;
+}
+
+export function repoMappingLocation(runfiles: Runfiles): Location | undefined {
+  return runfiles.path(REPO_MAPPING_RUNFILE);
+}
 
 export function repoMappingParse(content: string): RepoMapping {
   type Prefix = string;
@@ -14,8 +45,8 @@ export function repoMappingParse(content: string): RepoMapping {
   const repos = new Map<CanonicalRepo, Map<ApparentRepo, CanonicalRepo>>();
 
   for (const line of content.trim().split("\n")) {
-    const [repo, dep, canonical] = line.trim().split(",");
-    let deps: Map<string, string> | undefined;
+    let [repo, dep, canonical] = line.trim().split(",") as [CanonicalRepo | "", ApparentRepo, CanonicalRepo];
+    let deps: Map<ApparentRepo, CanonicalRepo> | undefined;
     if (repo.endsWith(WILDCARD)) {
       deps = prefixes.get(repo);
       if (!deps) {
@@ -23,49 +54,55 @@ export function repoMappingParse(content: string): RepoMapping {
         prefixes.set(repo.slice(0, -WILDCARD.length), deps);
       }
     } else {
-      deps = repos.get(repo);
+      repo ||= MAIN_REPO;
+      deps = repos.get(repo as CanonicalRepo);
       if (!deps) {
         deps = new Map();
-        repos.set(repo, deps);
+        repos.set(repo as CanonicalRepo, deps);
       }
     }
     deps.set(dep, canonical);
   }
 
-  const prefixList = [...prefixes.keys()];
-  prefixList.sort();
+  const sortedPrefixes = sortedMap(prefixes.entries());
 
   return {
     canonical(source, dep) {
-      const result = repos.get(source === "_main" ? "" : source)?.get(dep);
-      if (result !== undefined) {
-        return result;
-      }
-      for (let start = 0, end = prefixList.length; start < end; ) {
-        const index = Math.floor((start + end) / 2);
-        const prefix = prefixList[index];
-        if (source.startsWith(prefix)) {
-          return prefixes.get(prefix)?.get(dep);
-        }
-        if (source < prefix) {
-          end = index;
-        } else {
-          start = index + 1;
-        }
-      }
+      return (repos.get(source) ?? sortedPrefixes.get(source))?.get(dep);
     },
   };
 }
 
-export interface RunfilesManifest {
-  path(runfile: string): string | undefined;
+export function runfileParse(runfile: Runfile): { repo: Repo, path: RepoPath } {
+const [repo, ...path] = runfile.split("/");
+  if (!repo) {
+    throw new Error(`Invalid runfile: ${runfile}`);
+  }
+
+  return { repo: repo  as Repo, path: path.join("/") as RepoPath };
 }
 
-export function runfilesManifestParse(content: string): RunfilesManifest {
-  const runfiles = new Map<string, string>();
+export function runfileSerialize(runfile: { repo: Repo, path: RepoPath }): Runfile {
+  return `${runfile.repo}/${runfile.path}` as Runfile;
+}
+
+export interface Runfiles {
+  path(runfile: Runfile): Location | undefined;
+}
+
+export function runfilesDirRunfiles(dir: string): Runfiles {
+  return {
+    path(runfile) {
+      return `${dir}/${runfile}` as Location;
+    },
+  };
+}
+
+export function runfilesManifestParse(content: string): Runfiles {
+  const runfiles = new Map<Runfile, Location>();
 
   for (const line of content.trim().split("\n")) {
-    const [runfile, path] = line.trim().split(" ");
+    const [runfile, path] = line.trim().split(" ") as [Runfile, Location];
     runfiles.set(runfile, path);
   }
 
