@@ -4,7 +4,7 @@ import {
 } from "@rules-javascript/runfiles";
 import { lazy } from "@rules-javascript/util/cache";
 import { readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 const repoMapping = lazy(() => {
   let path: string;
@@ -31,27 +31,34 @@ const runfilesManifest = lazy(() => {
  * Runfile location
  *
  * @param runfile Runfile name
- * @param requester Canonical repository name, or path
+ * @param source Canonical repository name, or path
  * @returns Path to the runfile
  */
-export function rlocation(runfile: string, requester?: string) {
-  if (requester !== undefined) {
+export function rlocation(runfile: string, source?: string) {
+  if (source !== undefined) {
     const parts = runfile.split("/");
     const repo = parts[0];
     const path = parts.slice(1).join("/");
 
-    const requesterRunfile =
-      process.env.RUNFILES_DIR !== undefined &&
-      requester.startsWith(`${process.env.RUNFILES_DIR}/`)
-        ? requester.slice(`${process.env.RUNFILES_DIR}/`.length)
-        : requester;
+    let sourceRepo: string;
+    if (source.includes("/")) {
+      const requesterRunfile =
+        process.env.RUNFILES_DIR === undefined
+          ? source
+          : removePrefix(
+              resolve(source),
+              `${resolve(process.env.RUNFILES_DIR)}/`,
+            );
 
-    const requesterRepo = requesterRunfile.split("/", 1)[0];
-    if (!requesterRepo) {
-      throw new Error(`Invalid requester: ${requester}`);
+      [sourceRepo] = requesterRunfile.split("/", 1);
+      if (!sourceRepo) {
+        throw new Error(`Invalid requester: ${source}`);
+      }
+    } else {
+      sourceRepo = source;
     }
 
-    const canonicalRepo = repoMapping().canonical(requesterRepo, repo);
+    const canonicalRepo = repoMapping().canonical(sourceRepo, repo);
     if (canonicalRepo !== undefined) {
       runfile = `${canonicalRepo}/${path}`;
     }
@@ -61,4 +68,8 @@ export function rlocation(runfile: string, requester?: string) {
     return join(process.env.RUNFILES_DIR, runfile);
   }
   return runfilesManifest().path(runfile);
+}
+
+function removePrefix(string: string, prefix: string) {
+  return string.startsWith(prefix) ? string.slice(prefix.length) : string;
 }

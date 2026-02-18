@@ -29,5 +29,8 @@ build --test_output=streamed
 build --test_env=HOME
 build:ci --test_output=errors
 
+# Runfiles
+build --incompatible_compact_repo_mapping_manifest
+
 # User settings
 try-import %workspace%/user.bazelrc
