@@ -1,8 +1,13 @@
 module(name = "rules_javascript")
 
-# Bazel Util
+# Bazel
 
 bazel_dep(name = "bazel_util")
+
+single_version_override(
+    module_name = "aspect_bazel_lib",
+    version = "2.22.5",
+)
 
 BAZEL_UTIL_VERSION = "080694bcfa6d75771e6b72e4bcb66edd9e40fbfe"
 

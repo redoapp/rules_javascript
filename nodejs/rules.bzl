@@ -122,6 +122,7 @@ nodejs_toolchain = rule(
 
 def _nodejs_simple_binary_implementation(ctx):
     actions = ctx.actions
+    bash_runfiles_default = ctx.attr._bash_runfiles[DefaultInfo]
     node = ctx.attr.node[NodejsInfo]
     node_options = node.options + ctx.attr.node_options
     path = ctx.attr.path
@@ -144,8 +145,9 @@ def _nodejs_simple_binary_implementation(ctx):
         is_executable = True,
     )
 
-    runfiles = ctx.files._bash_runfiles + [ctx.file.src, node.bin]
-    default_info = DefaultInfo(executable = bin, runfiles = ctx.runfiles(runfiles))
+    runfiles = ctx.runfiles(files = [ctx.file.src, node.bin])
+    runfiles = runfiles.merge(bash_runfiles_default.default_runfiles)
+    default_info = DefaultInfo(executable = bin, runfiles = runfiles)
 
     return default_info
 

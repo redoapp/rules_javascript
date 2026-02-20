@@ -81,7 +81,7 @@ def _ts_eslint_format_impl(ctx):
     all_srcs = ctx.attr.all_srcs
     actions = ctx.actions
     args_default = ctx.attr._args[DefaultInfo]
-    bash_runfiles = ctx.files._bash_runfiles
+    bash_runfiles_default = ctx.attr._bash_runfiles[DefaultInfo]
     diff_default = ctx.attr._diff[DefaultInfo]
     label = ctx.label
     name = ctx.attr.name
@@ -127,7 +127,7 @@ def _ts_eslint_format_impl(ctx):
     default_info = create_runner(
         actions = actions,
         args_bin = args_default,
-        bash_runfiles = bash_runfiles,
+        bash_runfiles = bash_runfiles_default.default_runfiles,
         bin = executable,
         diff_bin = diff_default,
         dir_mode = "775",
