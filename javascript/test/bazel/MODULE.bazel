@@ -18,7 +18,7 @@ archive_override(
 bazel_dep(name = "rules_javascript")
 local_path_override(
     module_name = "rules_javascript",
-    path = "../../../../bazel_util++file+files/files",
+    path = "../../../../bazel_util++file+rules_javascript_files/files",
 )
 
 # Pkg
