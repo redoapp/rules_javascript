@@ -182,7 +182,7 @@ ts_eslint_format = rule(
         ),
         "_runner": attr.label(
             allow_single_file = True,
-            default = "@bazel_util//generate:runner.sh.tpl",
+            default = "@bazel_util//generate:runner",
         ),
     },
     doc = "TypeScript ESLint",
