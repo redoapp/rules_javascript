@@ -54,7 +54,6 @@ export NODE_OPTIONS="${NODE_OPTIONS-} --experimental-specifier-resolution=node"
   --preserve-symlinks-main \
   %{node_options} \
   "$(abspath "$RUNFILES_DIR"/%{main_module})" \
-  -i \
   --config="$RUNFILES_DIR"/%{config_loader} \
   --no-cache \
   --no-watchman \
