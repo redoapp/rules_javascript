@@ -7,6 +7,11 @@ exports_files(
 )
 
 alias(
+    name = "bazelrc",
+    actual = "//tools/bazel_:bazelrc",
+)
+
+alias(
     name = "doc",
     actual = "//tools/doc:gen",
 )

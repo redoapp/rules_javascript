@@ -1,0 +1,3 @@
+import %workspace%/tools/bazel_/preset/bazel_util+/bazelrc/preset.bazelrc
+import %workspace%/tools/bazel_/preset/bazel_util+/file/file.bazelrc
+import %workspace%/tools/bazel_/preset/r_tools+/bazel/bazelrc/preset.bazelrc

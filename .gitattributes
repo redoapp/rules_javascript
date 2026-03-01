@@ -3,4 +3,7 @@ browsers.json linguist-generated
 dist linguist-generated
 npm.json linguist-generated
 
+/test/test.bazelrc linguist-generated
+/tools/bazel_/bazelrc/ linguist-vendored
+/tools/bazel_/preset.bazelrc linguist-generated
 /tools/file/files.bazelrc linguist-generated

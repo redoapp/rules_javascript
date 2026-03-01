@@ -3,7 +3,8 @@ load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
 sh_binary(
     name = "refresh",
     data = [
-        "//tools/bazel:bazelrc",
+        "//tools/bazel_:bazelrc",
+        "//tools/bazel_:refresh",
         "//tools/javascript:js",
     ],
     main = "refresh.sh",
