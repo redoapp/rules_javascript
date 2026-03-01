@@ -8,7 +8,7 @@ load("//javascript:rules.bzl", "js_library")
 bazelrc_group(
     name = "bazelrc",
     srcs = ["typescript.bazelrc"],
-    visibility = ["//:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 bool_flag(
