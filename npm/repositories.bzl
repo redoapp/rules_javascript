@@ -170,6 +170,7 @@ def _npm_impl(ctx):
             "%{roots}": "[%s]" % ", ".join(["ROOT%s" % index for index, _ in enumerate(data["roots"])]),
         },
     )
+
     ctx.file("_roots/BUILD.bazel", "")
     for root in data["roots"]:
         ctx.template(
@@ -181,14 +182,42 @@ def _npm_impl(ctx):
             },
         )
 
-    bins = {name: root["id"] for root in data["roots"] for name in data["packages"][root["id"]].get("bins", {})}
-    roots = {root["name"]: root for root in data["roots"]}
+    for root in data["roots"]:
+        package = data["packages"][root["id"]]
+        root_load = 'load(%s, "ROOT")' % repr("//_roots:%s" % _root_path(root["name"])) if root != None else ""
+        for bin, path in package.get("bins", {}).items():
+            content = ""
+            for index, plugin in enumerate(plugins):
+                content += """
+    load({label}, {var} = "npm_plugin")
+                """.strip().format(
+                    label = repr(str(plugin)),
+                    var = "plugin%s" % (index + 1),
+                )
+                content += "\n"
+                content += """
+    {var}.bin(
+    repo = repository_name(),
+    package_id = {package_id},
+    bin = {bin},
+    )
+                """.strip().format(
+                    bin = repr(bin),
+                    package_id = repr(root["id"]),
+                    var = "plugin%s" % (index + 1),
+                )
+                content += "\n"
+            ctx.template(
+                ".bin/%s/BUILD.bazel" % root["name"],
+                Label("hub.BUILD.bazel.tpl"),
+                substitutions = {
+                    "%{content}": content,
+                    "%{root_load}": root_load,
+                },
+            )
 
-    for key in set(bins.keys() + roots.keys()):
-        bin_package_id = bins.get(key)
-        root = roots.get(key)
-        root_load = 'load(%s, "ROOT")' % repr("//_roots:%s" % _root_path(key)) if root != None else ""
-
+    for root in data["roots"]:
+        root_load = 'load(%s, "ROOT")' % repr("//_roots:%s" % _root_path(root["name"])) if root != None else ""
         content = ""
         for index, plugin in enumerate(plugins):
             content += """
@@ -198,35 +227,18 @@ load({label}, {var} = "npm_plugin")
                 var = "plugin%s" % (index + 1),
             )
             content += "\n"
-            if bin_package_id != None:
-                content += """
-{var}.bin(
-    repo = repository_name(),
-    package_id = {package_id},
-    bin = {bin},
-)
-                """.strip().format(
-                    bin = repr(key),
-                    package_id = repr(bin_package_id),
-                    label = repr(str(plugin)),
-                    var = "plugin%s" % (index + 1),
-                )
-                content += "\n"
-            if root:
-                content += """
+            content += """
 {var}.hub(
-    repo = repository_name(),
-    root = ROOT,
+repo = repository_name(),
+root = ROOT,
 )
-                """.strip().format(
-                    label = repr(str(plugin)),
-                    var = "plugin%s" % (index + 1),
-                )
-                content += "\n"
+            """.strip().format(
+                label = repr(str(plugin)),
+                var = "plugin%s" % (index + 1),
+            )
             content += "\n"
-
         ctx.template(
-            "%s/BUILD.bazel" % key,
+            "%s/BUILD.bazel" % root["name"],
             Label("hub.BUILD.bazel.tpl"),
             substitutions = {
                 "%{content}": content,
