@@ -285,7 +285,7 @@ nodejs_modules_binary(<a href="#nodejs_modules_binary-name">name</a>, <a href="#
 <pre>
 load("@rules_javascript//nodejs:rules.bzl", "nodejs_modules_package")
 
-nodejs_modules_package(<a href="#nodejs_modules_package-name">name</a>, <a href="#nodejs_modules_package-deps">deps</a>, <a href="#nodejs_modules_package-links">links</a>)
+nodejs_modules_package(<a href="#nodejs_modules_package-name">name</a>, <a href="#nodejs_modules_package-deps">deps</a>, <a href="#nodejs_modules_package-bins">bins</a>, <a href="#nodejs_modules_package-links">links</a>)
 </pre>
 
 **ATTRIBUTES**
@@ -294,6 +294,7 @@ nodejs_modules_package(<a href="#nodejs_modules_package-name">name</a>, <a href=
 | :--------------------------------------------- | :----------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
 | <a id="nodejs_modules_package-name"></a>name   | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
 | <a id="nodejs_modules_package-deps"></a>deps   | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
+| <a id="nodejs_modules_package-bins"></a>bins   | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
 | <a id="nodejs_modules_package-links"></a>links | -                              | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
 
 <a id="nodejs_repl"></a>

@@ -1,3 +1,4 @@
+load("@rules_proto//proto:defs.bzl", "ProtoInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "create_link")
 load("//javascript:providers.bzl", "JsInfo")
 load("//util:path.bzl", "output_name")

@@ -1,4 +1,5 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
+load("@rules_proto//proto:defs.bzl", "ProtoInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "package_path")
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//nodejs:rules.bzl", "nodejs_binary")
