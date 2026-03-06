@@ -1,7 +1,5 @@
 import { PackageTree } from "@rules-javascript/commonjs-package";
-import { AppendAction } from "@rules-javascript/util-argparse/actions";
 import { JsonFormat } from "@rules-javascript/util-json";
-import { ArgumentParser } from "argparse";
 import * as fs from "node:fs";
 import {
   DepArg,
@@ -28,40 +26,26 @@ function packageArg(value: string): PackageArg {
 
 export class ManifestWorkerError extends Error {}
 
-class WorkerArgumentParser extends ArgumentParser {
-  exit(status: number, message: string) {
-    throw new ManifestWorkerError(message);
-  }
-}
-
 export class ManifestWorker {
-  constructor() {
-    this.parser.add_argument("--package", {
-      // https://github.com/nodeca/argparse/issues/184
-      action: AppendAction,
-      default: [],
-      dest: "packages",
-      help: "Package",
-      type: packageArg,
-    });
-    this.parser.add_argument("--dep", {
-      // https://github.com/nodeca/argparse/issues/184
-      action: AppendAction,
-      default: [],
-      dest: "deps",
-      help: "Dependency",
-      type: depArg,
-    });
-    this.parser.add_argument("output", { help: "Output" });
-  }
-
-  private readonly parser = new WorkerArgumentParser({
-    description: "Create package manifest.",
-    prog: "package-manifest",
-  });
-
   async run(a: string[]) {
-    const args: Args = this.parser.parse_args(a);
+    const args: Args = {
+      deps: [],
+      packages: [],
+      output: "",
+    };
+    // argparse seems to be slow for very long argument lists
+    for (let index = 0; index < a.length; index++) {
+      switch (a[index]) {
+        case "--dep":
+          args.deps.push(depArg(a[index + 1]));
+          break;
+        case "--package":
+          args.packages.push(packageArg(a[index + 1]));
+          break;
+        default:
+          args.output = a[index];
+      }
+    }
 
     const packages = getPackages(args.packages);
     const globals: DetailedDeps = new Map();

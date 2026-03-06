@@ -62,11 +62,8 @@ ts_library(
     deps = [
         "//commonjs/package:lib",
         "//nodejs/worker:lib",
-        "//util/argparse:lib",
         "//util/json:lib",
-        "@npm//@types/argparse:lib",
         "@npm//@types/node:lib",
-        "@npm//argparse:lib",
     ],
 )
 
