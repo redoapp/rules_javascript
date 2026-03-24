@@ -34,6 +34,7 @@ def _pkg_install_impl(ctx):
         arguments = [args],
         executable = install_manifest_gen,
         execution_requirements = {
+            "supports-path-mapping": "1",
             "requires-worker-protocol": "json",
             "supports-workers": "1",
         },
@@ -59,6 +60,7 @@ def _pkg_install_impl(ctx):
         executable = install_manifest_gen,
         execution_requirements = {
             "requires-worker-protocol": "json",
+            "supports-path-mapping": "1",
             "supports-workers": "1",
         },
         outputs = [manifest],
@@ -75,7 +77,7 @@ def _pkg_install_impl(ctx):
             args.add("--origin")
             args.add("--file")
             args.add(dest)
-            args.add(src.path)
+            args.add_all([src], expand_directories = False)
             args.add(runfile_path(workspace_name, src))
             args.add(json.encode(executable))
             args.add(origin)
@@ -87,6 +89,7 @@ def _pkg_install_impl(ctx):
                 executable = install_manifest_gen,
                 execution_requirements = {
                     "requires-worker-protocol": "json",
+                    "supports-path-mapping": "1",
                     "supports-workers": "1",
                 },
                 inputs = [src],
@@ -106,6 +109,7 @@ def _pkg_install_impl(ctx):
         executable = install_manifest_gen,
         execution_requirements = {
             "requires-worker-protocol": "json",
+            "supports-path-mapping": "1",
             "supports-workers": "1",
         },
         inputs = manifests,

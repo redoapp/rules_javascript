@@ -27,7 +27,7 @@ def _js_proto_impl(target, ctx):
         js.append(js_)
 
     args = actions.args()
-    args.add(protoc.protoc_executable.path)
+    args.add(protoc.protoc_executable)
     args.add_joined(
         proto.transitive_descriptor_sets,
         join_with = ctx.configuration.host_path_separator,

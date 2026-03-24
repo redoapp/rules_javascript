@@ -5,11 +5,10 @@ module(name = "rules_javascript")
 bazel_dep(name = "bazel_lib", version = "3.2.1")
 bazel_dep(name = "bazel_util")
 
-BAZEL_UTIL_VERSION = "f43c160c4f8849daa97ad417d32d01714135187d"
-
+BAZEL_UTIL_VERSION = "908a3a58e421fe87e292b7dba8c32a31191f092e"
 archive_override(
     module_name = "bazel_util",
-    integrity = "sha256-o8gR3s9s5iWyJYCK44+4/5WHzC6H5u3zo4uGkXkgX18=",
+    integrity = "sha256-qP30CTh9ZxkStEVs9LAe49VVrZD02OTHgRJnCe79X24=",
     strip_prefix = "bazel-util-%s" % BAZEL_UTIL_VERSION,
     url = "https://github.com/redoapp/bazel-util/archive/%s.tar.gz" % BAZEL_UTIL_VERSION,
 )

@@ -58,4 +58,4 @@ export NODE_OPTIONS="${NODE_OPTIONS-} --experimental-specifier-resolution=node"
   --config="$RUNFILES_DIR"/%{config_loader} \
   --no-cache \
   --no-watchman \
-  "${args[@]}"
+  ${args[@]+"${args[@]}"}

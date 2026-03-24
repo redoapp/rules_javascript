@@ -50,6 +50,7 @@ def _prettier_format(ctx, name, src, out, bin, config):
         tools = [bin],
         execution_requirements = {
             "requires-worker-protocol": "json",
+            "supports-path-mapping": "1",
             "supports-workers": "1",
         },
     )

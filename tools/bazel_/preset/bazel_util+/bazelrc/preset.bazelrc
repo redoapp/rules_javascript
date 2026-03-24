@@ -7,6 +7,7 @@ build -k
 build --guard_against_concurrent_changes
 build --incompatible_auto_exec_groups
 build --incompatible_strip_executable_safely
+build --experimental_output_paths strip
 
 ## Cache
 build --noexperimental_check_output_files
@@ -14,6 +15,7 @@ common --experimental_repository_cache_hardlinks
 common --noexperimental_check_external_repository_files
 common:linux --disk_cache ~/.cache/bazel-disk
 common:macos --disk_cache ~/Library/Caches/bazel-disk
+startup --experimental_remote_repo_contents_cache
 
 ## Config
 common --enable_platform_specific_config

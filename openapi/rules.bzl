@@ -18,6 +18,9 @@ def _openapi_ts_impl(ctx):
     actions.run(
         arguments = [args],
         executable = openapi_typescript,
+        execution_requirements = {
+            "supports-path-mapping": "1",
+        },
         mnemonic = "OpenapiTypescript",
         inputs = [src],
         outputs = [output],
