@@ -32,8 +32,11 @@ def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:
         visibility = visibility,
     )
 
-def _eslint_format(ctx, name, src, out, bin, config):
+def _eslint_format(ctx, name, src, out, bin, config_path):
     actions = ctx.actions
+
+    worker_args = actions.args()
+    worker_args.add("--config", bin.executable, format = "%%s.runfiles/%s" % config_path)
 
     args = actions.args()
     args.add(src)
@@ -42,7 +45,7 @@ def _eslint_format(ctx, name, src, out, bin, config):
     args.use_param_file("@%s", use_always = True)
 
     actions.run(
-        arguments = ["--config", config, args],
+        arguments = [worker_args, args],
         executable = bin.executable,
         mnemonic = "EslintLint",
         inputs = [src],
@@ -51,7 +54,7 @@ def _eslint_format(ctx, name, src, out, bin, config):
         tools = [bin],
         execution_requirements = {
             "requires-worker-protocol": "json",
-            "supports-path-mapping": "1",
+            # "supports-path-mapping": "1",
             "supports-workers": "1",
         },
     )
@@ -64,10 +67,9 @@ def _eslint_impl(ctx):
     workspace_name = ctx.workspace_name
 
     config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package), config)
-    config = "./%s.runfiles/%s" % (bin.files_to_run.executable.path, config_path)
 
     def format(ctx, name, src, out):
-        _eslint_format(ctx, name, src, out, bin.files_to_run, config)
+        _eslint_format(ctx, name, src, out, bin.files_to_run, config_path)
 
     format_info = FormatterInfo(fn = format)
 

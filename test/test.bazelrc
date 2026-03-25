@@ -12,3 +12,4 @@ build --incompatible_no_implicit_file_export
 build --incompatible_resolve_select_keys_eagerly
 build --incompatible_stop_exporting_build_file_path
 build --incompatible_use_cc_configure_from_rules_cc
+build --worker_sandboxing

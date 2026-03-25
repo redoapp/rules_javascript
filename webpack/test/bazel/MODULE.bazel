@@ -5,6 +5,7 @@ module(name = "rules_javascript_test")
 bazel_dep(name = "bazel_util")
 
 BAZEL_UTIL_VERSION = "908a3a58e421fe87e292b7dba8c32a31191f092e"
+
 archive_override(
     module_name = "bazel_util",
     integrity = "sha256-qP30CTh9ZxkStEVs9LAe49VVrZD02OTHgRJnCe79X24=",

@@ -4,11 +4,11 @@ load("@rules_shell_extra//shell:rules.bzl", "sh_binary")
 bazelrc_gen(
     name = "bazelrc",
     path = "preset",
-    deps = [
-        "@r_tools//bazel/bazelrc:preset",
-        "//typescript:bazelrc",
-    ],
     visibility = ["//:__subpackages__"],
+    deps = [
+        "//typescript:bazelrc",
+        "@r_tools//bazel/bazelrc:preset",
+    ],
 )
 
 sh_binary(

@@ -9,11 +9,11 @@ exports_files(
 
 sh_binary(
     name = "gen",
-    main = "gen.sh",
     data = [
         ":doctoc",
         ":gen_docs_data",
     ],
+    main = "gen.sh",
     visibility = ["//:__subpackages__"],
 )
 

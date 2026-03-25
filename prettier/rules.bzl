@@ -31,8 +31,11 @@ def configure_prettier(name, config, config_dep, dep = Label("//prettier:prettie
         visibility = visibility,
     )
 
-def _prettier_format(ctx, name, src, out, bin, config):
+def _prettier_format(ctx, name, src, out, bin, config_path):
     actions = ctx.actions
+
+    worker_args = actions.args()
+    worker_args.add("--config", bin.executable, format = "%%s.runfiles/%s" % config_path)
 
     args = actions.args()
     args.add(src)
@@ -41,7 +44,7 @@ def _prettier_format(ctx, name, src, out, bin, config):
     args.use_param_file("@%s", use_always = True)
 
     actions.run(
-        arguments = ["--config", config, args],
+        arguments = [worker_args, args],
         executable = bin.executable,
         mnemonic = "PrettierFormat",
         inputs = [src],
@@ -63,7 +66,6 @@ def _prettier_impl(ctx):
     workspace_name = ctx.workspace_name
 
     config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package), config)
-    config = "./%s.runfiles/%s" % (bin.files_to_run.executable.path, config_path)
 
     def format(ctx, name, src, out):
         return _prettier_format(
@@ -72,7 +74,7 @@ def _prettier_impl(ctx):
             src,
             out,
             bin.files_to_run,
-            config,
+            config_path,
         )
 
     format_info = FormatterInfo(fn = format)

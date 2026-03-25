@@ -35,8 +35,8 @@ js_gen(
 js_library(
     name = "dist_lib",
     srcs = glob(["dist/**/*.js"]),
-    deps = ["@npm//argparse:lib"],
     root = ":root",
+    deps = ["@npm//argparse:lib"],
 )
 
 ts_library(
