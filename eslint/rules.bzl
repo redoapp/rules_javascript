@@ -36,7 +36,7 @@ def _eslint_format(ctx, name, src, out, bin, config_path):
     actions = ctx.actions
 
     worker_args = actions.args()
-    worker_args.add("--config", bin.executable, format = "%%s.runfiles/%s" % config_path)
+    worker_args.add("--config", bin.executable, format = "./%%s.runfiles/%s" % config_path)
 
     args = actions.args()
     args.add(src)
@@ -54,7 +54,7 @@ def _eslint_format(ctx, name, src, out, bin, config_path):
         tools = [bin],
         execution_requirements = {
             "requires-worker-protocol": "json",
-            # "supports-path-mapping": "1",
+            "supports-path-mapping": "1",
             "supports-workers": "1",
         },
     )

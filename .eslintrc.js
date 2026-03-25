@@ -1,3 +1,9 @@
+// for unicorn loadRules()
+const { Dirent } = require("node:fs");
+Dirent.prototype.isFile = function () {
+  return !this.isDirectory();
+};
+
 module.exports = {
   root: true,
   plugins: ["@typescript-eslint", "unicorn"],

@@ -94,7 +94,6 @@ def gen_manifest(actions, manifest_bin, manifest, packages, deps, package_path):
         executable = manifest_bin.files_to_run.executable,
         execution_requirements = {
             "requires-worker-protocol": "json",
-            "supports-path-mapping": "1",
             "supports-workers": "1",
         },
         outputs = [manifest],

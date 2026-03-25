@@ -3,7 +3,7 @@ import { Configuration, Locator, Project, structUtils } from "@yarnpkg/core";
 import { npath } from "@yarnpkg/fslib";
 
 export async function yarnProject(dir: string) {
-  const yarnPath = npath.toPortablePath(dir.replace(/\/$/g, ""));
+  const yarnPath = npath.toPortablePath(dir.replaceAll(/\/$/g, ""));
   const configuration = await Configuration.find(
     yarnPath,
     getPluginConfiguration(),

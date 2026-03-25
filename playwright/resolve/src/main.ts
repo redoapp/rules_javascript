@@ -138,7 +138,7 @@ function versionResolve(
   urlPath = urlPath.replace("%s", revision);
   return {
     name: `${urlPath.split("/").at(-1)!.replace(/\..*$/, "")}-${revision}`,
-    path: `${browser.name.replace(/-/g, "_")}-${revision}`,
+    path: `${browser.name.replaceAll('-', "_")}-${revision}`,
     urlPath,
   };
 }
