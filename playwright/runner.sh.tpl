@@ -18,7 +18,7 @@ args=()
 
 # sharding
 if [ ! -z "${TEST_SHARD_INDEX-}" ] && [ ! -z "${TEST_TOTAL_SHARDS-}" ]; then
-  args+=(--shard="$(("$TEST_SHARD_INDEX"+1))"/"$TEST_TOTAL_SHARDS")
+  args+=(--shard="$(($TEST_SHARD_INDEX+1))"/"$TEST_TOTAL_SHARDS")
   > "$TEST_SHARD_STATUS_FILE"
 fi
 

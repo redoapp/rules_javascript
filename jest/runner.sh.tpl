@@ -23,7 +23,7 @@ args=()
 # sharding
 if [ ! -z "${TEST_SHARD_INDEX-}" ] && [ ! -z "${TEST_TOTAL_SHARDS-}" ]; then
   # use --passWithNoTests in case there are no tests in the shard
-  args+=(--passWithNoTests --shard="$(("$TEST_SHARD_INDEX"+1))"/"$TEST_TOTAL_SHARDS")
+  args+=(--passWithNoTests --shard="$((TEST_SHARD_INDEX+1))"/"$TEST_TOTAL_SHARDS")
 fi
 
 %{preamble}
