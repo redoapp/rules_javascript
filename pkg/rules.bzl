@@ -75,12 +75,13 @@ def _pkg_install_impl(ctx):
             manifest = actions.declare_file("%s.pkg/%s.manifest.json" % (name, dest))
             args = actions.args()
             args.add("--origin")
-            args.add("--file")
-            args.add(dest)
-            args.add_all([src], expand_directories = False)
-            args.add(runfile_path(workspace_name, src))
-            args.add(json.encode(executable))
-            args.add(origin)
+            args.add_all([struct(
+                dest = dest,
+                src = src,
+                runfile = runfile_path(workspace_name, src),
+                executable = executable,
+                origin = origin,
+            )], map_each = _file_arg)
             args.add(manifest)
             args.set_param_file_format("multiline")
             args.use_param_file("@%s", use_always = True)
@@ -163,3 +164,14 @@ pkg_install = rule(
     executable = True,
     implementation = _pkg_install_impl,
 )
+
+def _file_arg(info, dir_expander):
+    args = []
+    for file in dir_expander.expand(info.src):
+        args.append("--file")
+        args.append("%s/%s" % (info.dest, file.tree_relative_path))
+        args.append(file.path)
+        args.append("%s/%s" % (info.runfile, file.tree_relative_path))
+        args.append("preserve" if file.tree_relative_path else "true" if info.executable else "false")
+        args.append(str(info.origin))
+    return args

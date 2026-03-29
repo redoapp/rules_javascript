@@ -10,8 +10,6 @@ import { createHash } from "node:crypto";
 import {
   open,
   readFile,
-  readdir,
-  readlink,
   stat,
   writeFile,
 } from "node:fs/promises";
@@ -56,7 +54,7 @@ export class InstallManifestGenWorker {
   async run(a: string[]) {
     const args = this.parser.parse_args(a) as {
       dir: [string, string][];
-      file: [string, string, string, string, string][];
+      file: [string, string, string, "false" | "true" | "preserve", string][];
       manifest: string[];
       origin: boolean;
       output: string;
@@ -125,13 +123,24 @@ export class InstallManifestGenWorker {
     }
 
     await Promise.all([
-      ...args.file.map(async ([name, src, runfile, executable, origin]) => {
-        const stats = await stat(src);
-        const entry = stats.isDirectory()
-          ? await fileDirEntry(src, runfile, origin)
-          : stats.isSymbolicLink()
-            ? await fileSymlinkEntry(src, origin)
-            : await fileEntry(src, runfile, JSON.parse(executable), origin);
+      ...args.file.map(async ([name, src, runfile, executableStr, origin]) => {
+        let executable: boolean;
+        switch (executableStr) {
+          case "false": {
+            executable = false;
+            break;
+          }
+          case "preserve": {
+            const stats = await stat(src);
+            executable = !!(stats.mode & 0b111);
+            break;
+          }
+          case "true": {
+            executable = true;
+            break;
+          }
+        }
+        const entry = await fileEntry(src, runfile, executable, origin);
         add(name, entry, origin);
       }),
       ...args.manifest.map(async (path) => {
@@ -196,55 +205,6 @@ function symlinkEntry(
     origin,
     target,
   };
-}
-
-async function fileDirEntry(
-  path: string,
-  runfile: string,
-  origin: string,
-): Promise<InstallEntry.Dir> {
-  const entries = new Map<string, InstallEntry>();
-  const dir = await readdir(path, { withFileTypes: true });
-  await Promise.all(
-    dir.map(async (child) => {
-      if (child.isDirectory()) {
-        entries.set(
-          child.name,
-          await fileDirEntry(
-            join(path, child.name),
-            join(runfile, child.name),
-            origin,
-          ),
-        );
-      } else if (child.isSymbolicLink()) {
-        entries.set(child.name, symlinkEntry(join(path, child.name), origin));
-      } else if (child.isFile()) {
-        const stats = await stat(join(path, child.name));
-        entries.set(
-          child.name,
-          await fileEntry(
-            join(path, child.name),
-            join(runfile, child.name),
-            Boolean(stats.mode & 0b1),
-            origin,
-          ),
-        );
-      }
-    }),
-  );
-
-  return {
-    type: InstallEntry.DIR,
-    entries,
-  };
-}
-
-async function fileSymlinkEntry(
-  src: string,
-  origin: string,
-): Promise<InstallEntry.Symlink> {
-  const target = await readlink(src);
-  return symlinkEntry(target, origin);
 }
 
 class ConflictError extends Error {
