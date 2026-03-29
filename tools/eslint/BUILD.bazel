@@ -2,13 +2,7 @@ load("//eslint:rules.bzl", "configure_eslint")
 
 configure_eslint(
     name = "eslint",
-    config = ".eslintrc.js",
+    config = "eslint.config.mjs",
     config_dep = "//:eslint_config",
-    plugins = [
-        "@npm//eslint-plugin-unicorn:lib",
-        "@npm//typescript:lib",
-        "@npm//@typescript-eslint/eslint-plugin:lib",
-        "@npm//@typescript-eslint/parser:lib",
-    ],
     visibility = ["//:__subpackages__"],
 )

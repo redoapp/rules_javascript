@@ -299,7 +299,7 @@ async function* lines(stream) {
         let i = 0;
         while (true) {
             const j = data.indexOf("\n", i);
-            if (j < 0) {
+            if (j === -1) {
                 break;
             }
             yield data.slice(i, j + 1);
@@ -531,14 +531,17 @@ class ManifestWorker {
         // argparse seems to be slow for very long argument lists
         for (let index = 0; index < a.length; index++) {
             switch (a[index]) {
-                case "--dep":
+                case "--dep": {
                     args.deps.push(depArg(a[index + 1]));
                     break;
-                case "--package":
+                }
+                case "--package": {
                     args.packages.push(packageArg(a[index + 1]));
                     break;
-                default:
+                }
+                default: {
                     args.output = a[index];
+                }
             }
         }
         const packages = getPackages(args.packages);

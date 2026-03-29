@@ -6,7 +6,7 @@ Object.defineProperty(process.versions, "pnp", {
     if (new Error().stack!.includes("checkPackageExists")) {
       return "bazel";
     }
-    // eslint-disable-next-line getter-return
+     
     return;
   },
 });

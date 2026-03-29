@@ -5,7 +5,9 @@ TypeScript helpers
 TsInfo = provider(
     doc = "TypeScript",
     fields = {
+        "modules_file": "File with list of required modules",
         "transitive_files": "Depset of files (descriptors, declarations)",
+        "type_modules_file": "File with list of required type modules",
     },
 )
 

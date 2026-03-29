@@ -5,13 +5,12 @@ load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//util:path.bzl", "runfile_path")
 
-def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:eslint_lib", plugins = [], visibility = None):
+def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:eslint_lib", visibility = None):
     js_export(
         name = "%s.main" % name,
         dep = Label("//eslint/linter:lib"),
         deps = [dep],
         extra_deps = [config_dep],
-        global_deps = plugins,
         visibility = ["//visibility:private"],
     )
 
@@ -66,7 +65,7 @@ def _eslint_impl(ctx):
     config_cjs = ctx.attr.config_dep[CjsInfo]
     workspace_name = ctx.workspace_name
 
-    config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package), config)
+    config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package).removesuffix("/"), config)
 
     def format(ctx, name, src, out):
         _eslint_format(ctx, name, src, out, bin.files_to_run, config_path)

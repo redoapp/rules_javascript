@@ -70,7 +70,7 @@ const args: { browsers: string; tools: string[] } = parser.parse_args();
                 },
               ];
             } catch (error) {
-              throw new Error(`Failed to fetch ${url}: ${error}`);
+              throw new Error(`Failed to fetch ${url}: ${error}`, { cause: error });
             }
           }),
         ),

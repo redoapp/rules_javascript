@@ -1352,7 +1352,7 @@ function createVfs(packageTree, base) {
                 if (!(error instanceof DependencyConflictError)) {
                     throw error;
                 }
-                throw new Error(`Dependency "${name}" of "${path}" conflicts with another`);
+                throw new Error(`Dependency "${name}" of "${path}" conflicts with another`, { cause: error });
             }
         }
         for (const [name, dep] of packageTree.globals.entries()) {

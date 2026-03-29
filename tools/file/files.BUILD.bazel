@@ -7,7 +7,6 @@ filegroup(
 filegroup(
     name = "eslint_files",
     srcs = glob([
-        "files/**/.*.js",
         "files/**/*.js",
         "files/**/*.mts",
         "files/**/*.ts",
@@ -18,7 +17,6 @@ filegroup(
 filegroup(
     name = "prettier_files",
     srcs = glob([
-        "files/**/.*.js",
         "files/**/*.html",
         "files/**/*.js",
         "files/**/*.json",

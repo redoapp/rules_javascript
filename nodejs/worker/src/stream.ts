@@ -7,7 +7,7 @@ export async function* lines(
     let i = 0;
     while (true) {
       const j = data.indexOf("\n", i);
-      if (j < 0) {
+      if (j === -1) {
         break;
       }
       yield data.slice(i, j + 1);

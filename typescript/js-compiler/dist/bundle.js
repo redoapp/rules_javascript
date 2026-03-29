@@ -1335,7 +1335,7 @@ async function* lines(stream) {
         let i = 0;
         while (true) {
             const j = data.indexOf("\n", i);
-            if (j < 0) {
+            if (j === -1) {
                 break;
             }
             yield data.slice(i, j + 1);
@@ -1550,7 +1550,7 @@ function createVfs(packageTree, base) {
                 if (!(error instanceof DependencyConflictError)) {
                     throw error;
                 }
-                throw new Error(`Dependency "${name}" of "${path}" conflicts with another`);
+                throw new Error(`Dependency "${name}" of "${path}" conflicts with another`, { cause: error });
             }
         }
         for (const [name, dep] of packageTree.globals.entries()) {

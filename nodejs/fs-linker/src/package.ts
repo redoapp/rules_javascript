@@ -76,6 +76,7 @@ export function createVfs(packageTree: PackageTree, base?: string): VfsImpl {
         }
         throw new Error(
           `Dependency "${name}" of "${path}" conflicts with another`,
+          { cause: error },
         );
       }
     }

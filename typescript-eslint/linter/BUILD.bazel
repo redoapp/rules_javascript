@@ -16,7 +16,6 @@ ts_library(
         "//nodejs/fs-linker:lib",
         "//util/json:lib",
         "@npm//@types/argparse:lib",
-        "@npm//@types/eslint:lib",
         "@npm//@types/node:lib",
         "@npm//argparse:lib",
     ],

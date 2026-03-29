@@ -1,13 +1,16 @@
+import { resolve } from "node:path";
 import { workerMain } from "@rules-javascript/nodejs-worker";
 import { ArgumentParser } from "argparse";
 import { ESLint } from "eslint";
 import { EslintWorker } from "./worker";
 
 async function createEslint(file: string) {
+  const configModule = await import(resolve(file));
   return new ESLint({
     fix: true,
-    overrideConfigFile: file,
-    useEslintrc: false,
+    globInputPaths: false,
+    overrideConfig: configModule.default,
+    overrideConfigFile: true,
   });
 }
 
