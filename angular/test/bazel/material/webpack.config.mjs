@@ -1,5 +1,5 @@
 import linkerPlugin from '@angular/compiler-cli/linker/babel';
-import { createRequire } from "module";
+import { createRequire } from "node:module";
 import webpack from "webpack";
 
 const compilationMode = process.env.COMPILATION_MODE;

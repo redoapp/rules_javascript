@@ -4,56 +4,55 @@ Dirent.prototype.isFile = function () {
   return !this.isDirectory();
 };
 
-import js from "@eslint/js"
+import js from "@eslint/js";
+import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import { defineConfig } from "eslint/config";
 import globals from "globals";
-import eslintPluginUnicorn from "eslint-plugin-unicorn";
 import tseslint from "typescript-eslint";
 
-export default defineConfig([{
-  plugins: { js, tseslint, eslintPluginUnicorn },
-  extends: [
-    js.configs.recommended,
-    eslintPluginUnicorn.configs.unopinionated,
-  ],
-  rules: {
-    // can be useful to have await inside Promise callback
-    "no-async-promise-executor": "off",
-    // https://github.com/typescript-eslint/typescript-eslint/issues/2818
-    "no-redeclare": "off",
-    // control characters (escaped) are legitimate in regexes
-    "no-control-regex": "off",
-    // only err if all variables can be constant
-    "prefer-const": ["error", { destructuring: "all" }],
-    // while(true) is legitimate
-    "no-constant-condition": ["error", { checkLoops: false }],
-    // catch {} is legitimate
-    "no-empty": ["error", { allowEmptyCatch: true }],
-    // legitimate inside TS namespaces
-    "no-inner-declarations": "off",
-    // prettier causes this
-    "no-unexpected-multiline": "off",
-    // https://gqqithub.com/typescript-eslint/typescript-eslint/issues/291
-    "no-dupe-class-members": "off",
-    "unicorn/import-style": "off",
-    "unicorn/no-array-method-this-argument": "off",
-    "unicorn/no-array-sort": "off",
-    "unicorn/no-process-exit": "off",
-    "unicorn/prefer-module": "off",
-    "unicorn/prefer-top-level-await": "off",
-  },
-  languageOptions: {
-    globals: {
-      ...globals.browser,
-      ...globals.jest,
-      ...globals.node,
+export default defineConfig([
+  {
+    plugins: { js, tseslint, eslintPluginUnicorn },
+    extends: [
+      js.configs.recommended,
+      eslintPluginUnicorn.configs.unopinionated,
+    ],
+    rules: {
+      // can be useful to have await inside Promise callback
+      "no-async-promise-executor": "off",
+      // https://github.com/typescript-eslint/typescript-eslint/issues/2818
+      "no-redeclare": "off",
+      // control characters (escaped) are legitimate in regexes
+      "no-control-regex": "off",
+      // only err if all variables can be constant
+      "prefer-const": ["error", { destructuring: "all" }],
+      // while(true) is legitimate
+      "no-constant-condition": ["error", { checkLoops: false }],
+      // catch {} is legitimate
+      "no-empty": ["error", { allowEmptyCatch: true }],
+      // legitimate inside TS namespaces
+      "no-inner-declarations": "off",
+      // prettier causes this
+      "no-unexpected-multiline": "off",
+      // https://gqqithub.com/typescript-eslint/typescript-eslint/issues/291
+      "no-dupe-class-members": "off",
+      "unicorn/import-style": "off",
+      "unicorn/no-array-method-this-argument": "off",
+      "unicorn/no-array-sort": "off",
+      "unicorn/no-process-exit": "off",
+      "unicorn/prefer-module": "off",
+      "unicorn/prefer-top-level-await": "off",
+    },
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.jest,
+        ...globals.node,
+      },
     },
   },
-},
   {
-    extends: [
-      tseslint.configs.recommended,
-    ],
+    extends: [tseslint.configs.recommended],
     files: ["**/*.ts"],
     rules: {
       // useful

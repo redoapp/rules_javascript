@@ -1,4 +1,4 @@
-load("@bazel_util//generate:rules.bzl", "format", "generate_test", "multi_generate")
+load("@bazel_util//generate:rules.bzl", "format", "formatter_composite", "generate_test", "multi_generate")
 
 format(
     name = "buildifier_format",
@@ -22,10 +22,18 @@ generate_test(
     visibility = ["//:__subpackages__"],
 )
 
+formatter_composite(
+    name = "eslint",
+    formatters = [
+        "//tools/eslint",
+        "//tools/prettier",
+    ],
+)
+
 format(
     name = "eslint_lint",
     srcs = ["@files//:eslint_files"],
-    formatter = "//tools/eslint",
+    formatter = ":eslint",
     strip_prefix = "/files",
 )
 

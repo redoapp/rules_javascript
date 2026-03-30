@@ -8,6 +8,7 @@ filegroup(
     name = "eslint_files",
     srcs = glob([
         "files/**/*.js",
+        "files/**/*.mjs",
         "files/**/*.mts",
         "files/**/*.ts",
     ], ["files/**/dist/**", "files/webpack/load-config/src/index.mts"]),
@@ -18,11 +19,8 @@ filegroup(
     name = "prettier_files",
     srcs = glob([
         "files/**/*.html",
-        "files/**/*.js",
         "files/**/*.json",
         "files/**/*.md",
-        "files/**/*.mts",
-        "files/**/*.ts",
         "files/**/*.yml",
     ], [
         "files/**/dist/**",

@@ -1,11 +1,12 @@
-import { resolve } from "node:path";
 import { workerMain } from "@rules-javascript/nodejs-worker";
 import { ArgumentParser } from "argparse";
 import { ESLint } from "eslint";
+import { resolve } from "node:path";
+import { importModule } from "./import";
 import { EslintWorker } from "./worker";
 
 async function createEslint(file: string) {
-  const configModule = await import(resolve(file));
+  const configModule = await importModule(resolve(file));
   return new ESLint({
     fix: true,
     globInputPaths: false,
