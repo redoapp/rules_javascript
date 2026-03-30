@@ -70,7 +70,9 @@ const args: { browsers: string; tools: string[] } = parser.parse_args();
                 },
               ];
             } catch (error) {
-              throw new Error(`Failed to fetch ${url}: ${error}`, { cause: error });
+              throw new Error(`Failed to fetch ${url}: ${error}`, {
+                cause: error,
+              });
             }
           }),
         ),
@@ -138,7 +140,7 @@ function versionResolve(
   urlPath = urlPath.replace("%s", revision);
   return {
     name: `${urlPath.split("/").at(-1)!.replace(/\..*$/, "")}-${revision}`,
-    path: `${browser.name.replaceAll('-', "_")}-${revision}`,
+    path: `${browser.name.replaceAll("-", "_")}-${revision}`,
     urlPath,
   };
 }

@@ -116,6 +116,6 @@ class LinkModuleResolver {
 
   static packageName(path_: string) {
     const relative_ = relative(process.env.RUNFILES_DIR!, path_);
-    return `_${relative_.replaceAll('/', "_")}`;
+    return `_${relative_.replaceAll("/", "_")}`;
   }
 }

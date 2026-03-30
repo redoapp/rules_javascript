@@ -7,12 +7,7 @@ import { AppendAction } from "@rules-javascript/util-argparse/actions";
 import { JsonFormat } from "@rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import { createHash } from "node:crypto";
-import {
-  open,
-  readFile,
-  stat,
-  writeFile,
-} from "node:fs/promises";
+import { open, readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
 export class InstallManifestGenWorker {
