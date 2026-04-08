@@ -22,13 +22,14 @@ js_library(
     root = ":root",
     visibility = [":__subpackages__"],
     deps = [
-        "@npm//typescript-eslint:lib",
-        "@npm//eslint-plugin-unicorn:lib",
-        "@npm//eslint:lib",
         "@npm//@eslint/js:lib",
+        "@npm//eslint:lib",
+        "@npm//eslint-plugin-unicorn:lib",
         "@npm//globals:lib",
+        "@npm//typescript-eslint:lib",
     ],
 )
+
 alias(
     name = "format",
     actual = "//tools/lint:format",
