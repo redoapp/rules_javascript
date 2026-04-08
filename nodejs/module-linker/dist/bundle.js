@@ -447,7 +447,7 @@ class LinkModuleResolver {
     }
     static packageName(path_) {
         const relative_ = path.relative(process.env.RUNFILES_DIR, path_);
-        return `_${relative_.replaceAll('/', "_")}`;
+        return `_${relative_.replaceAll("/", "_")}`;
     }
 }
 class RequireModuleResolver {

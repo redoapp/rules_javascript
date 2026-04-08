@@ -169,9 +169,13 @@ def _file_arg(info, dir_expander):
     args = []
     for file in dir_expander.expand(info.src):
         args.append("--file")
-        args.append("%s/%s" % (info.dest, file.tree_relative_path))
+        args.append(
+            "%s/%s" % (info.dest, file.tree_relative_path) if info.src.is_directory else info.dest,
+        )
         args.append(file.path)
-        args.append("%s/%s" % (info.runfile, file.tree_relative_path))
-        args.append("preserve" if file.tree_relative_path else "true" if info.executable else "false")
+        args.append(
+            "%s/%s" % (info.runfile, file.tree_relative_path) if info.src.is_directory else info.runfile,
+        )
+        args.append("preserve" if info.src.is_directory and file.tree_relative_path else "true" if info.executable else "false")
         args.append(str(info.origin))
     return args
