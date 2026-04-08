@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+
 export function callSitePath(func: Function): string | undefined {
   let callSite: NodeJS.CallSite;
   const { prepareStackTrace, stackTraceLimit } = Error;
@@ -14,7 +16,14 @@ export function callSitePath(func: Function): string | undefined {
     Error.prepareStackTrace = prepareStackTrace;
     Error.stackTraceLimit = stackTraceLimit;
   }
-  return callSite!.getFileName() ?? undefined;
+  const fileName = callSite!.getFileName();
+  if (fileName === null) {
+    return undefined;
+  }
+  if (fileName.startsWith("file://")) {
+    return fileURLToPath(fileName);
+  }
+  return fileName;
 }
 
 const firstCallSite: typeof Error.prepareStackTrace = (_, stack) => stack[0];
