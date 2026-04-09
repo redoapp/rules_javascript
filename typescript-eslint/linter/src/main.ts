@@ -6,6 +6,8 @@ import { JsonFormat } from "@rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import { ESLint, Linter } from "eslint";
 import { readFile, writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { importModule } from "./import";
 
 async function main() {
   const parser = new ArgumentParser();
@@ -23,11 +25,12 @@ async function main() {
   patchFs(vfs, require("node:fs"));
   patchFsPromises(vfs, require("node:fs").promises);
 
+  const configModule = await importModule(resolve(args.config));
   const eslint = new ESLint({
     fix: true,
     globInputPaths: false,
-    overrideConfigFile: args.config,
-    useEslintrc: false,
+    overrideConfig: configModule.default,
+    overrideConfigFile: true,
   });
 
   for (const spec of args.srcs) {
