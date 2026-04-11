@@ -2,15 +2,24 @@ import { PackageTree } from "@rules-javascript/commonjs-package";
 import { patchFs } from "@rules-javascript/nodejs-fs-linker/fs";
 import { patchFsPromises } from "@rules-javascript/nodejs-fs-linker/fs-promises";
 import { createVfs } from "@rules-javascript/nodejs-fs-linker/package";
+import { AppendAction } from "@rules-javascript/util-argparse/actions";
 import { JsonFormat } from "@rules-javascript/util-json";
 import { ArgumentParser } from "argparse";
 import { ESLint, Linter } from "eslint";
 import { readFile, writeFile } from "node:fs/promises";
-import { resolve } from "node:path";
-import { importModule } from "./import";
+import { createRequire } from "node:module";
+
+const eslintRequire = createRequire(require.resolve("eslint"));
+const createCLIOptions = eslintRequire("./options");
+const translateOptions = eslintRequire("./shared/translate-cli-options");
 
 async function main() {
   const parser = new ArgumentParser();
+  parser.add_argument("--arg", {
+    action: AppendAction,
+    default: [],
+    dest: "args",
+  });
   parser.add_argument("--config", { required: true });
   parser.add_argument("--manifest", { required: true });
   parser.add_argument("srcs", { nargs: "*" });
@@ -25,12 +34,16 @@ async function main() {
   patchFs(vfs, require("node:fs"));
   patchFsPromises(vfs, require("node:fs").promises);
 
-  const configModule = await importModule(resolve(args.config));
+  const cliOptions = createCLIOptions();
+  const options = await translateOptions(
+    cliOptions.parseArgv([...process.argv.slice(0, 2), ...args.args]),
+  );
+
   const eslint = new ESLint({
+    ...options,
     fix: true,
     globInputPaths: false,
-    overrideConfig: configModule.default,
-    overrideConfigFile: true,
+    overrideConfigFile: args.config,
   });
 
   for (const spec of args.srcs) {

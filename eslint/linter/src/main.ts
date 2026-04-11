@@ -1,26 +1,36 @@
 import { workerMain } from "@rules-javascript/nodejs-worker";
+import { AppendAction } from "@rules-javascript/util-argparse/actions";
 import { ArgumentParser } from "argparse";
 import { ESLint } from "eslint";
-import { resolve } from "node:path";
-import { importModule } from "./import";
+import { createRequire } from "node:module";
 import { EslintWorker } from "./worker";
 
-async function createEslint(file: string) {
-  const configModule = await importModule(resolve(file));
+const eslintRequire = createRequire(require.resolve("eslint"));
+const createCLIOptions = eslintRequire("./options");
+const translateOptions = eslintRequire("./shared/translate-cli-options");
+
+function createEslint(file: string, args: string[]) {
+  const cliOptions = createCLIOptions();
+  cliOptions.parse(args);
   return new ESLint({
+    ...translateOptions(cliOptions),
     fix: true,
     globInputPaths: false,
-    overrideConfig: configModule.default,
-    overrideConfigFile: true,
+    overrideConfigFile: file,
   });
 }
 
 workerMain(async (a) => {
   const parser = new ArgumentParser();
+  parser.add_argument("--arg", {
+    action: AppendAction,
+    default: [],
+    dest: "args",
+  });
   parser.add_argument("--config", { required: true });
   const args = parser.parse_args(a);
 
-  const eslint = await createEslint(args.config);
+  const eslint = createEslint(args.config, args.args);
   const worker = new EslintWorker(eslint);
 
   return async (a) => {

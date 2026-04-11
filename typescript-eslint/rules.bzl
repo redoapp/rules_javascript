@@ -7,7 +7,7 @@ load("//typescript:providers.bzl", "TsCompileInfo")
 load("//util:path.bzl", "runfile_path")
 load(":providers.bzl", "TsEslintInfo")
 
-def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_lib"), node_options = [], visibility = None):
+def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_lib"), node_options = [], options = None, visibility = None):
     js_export(
         name = "%s.main" % name,
         dep = Label("//typescript-eslint/linter:lib"),
@@ -21,7 +21,7 @@ def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_l
         dep = ":%s.main" % name,
         main = "src/main.js",
         node = Label("//nodejs"),
-        node_options = ["--title=eslint"] + node_options,
+        node_options = ["--experimental-import-meta-resolve", "--title=eslint"] + node_options,
         visibility = ["//visibility:private"],
     )
 
@@ -30,6 +30,7 @@ def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_l
         config = config,
         config_dep = config_dep,
         bin = ":%s.bin" % name,
+        options = options,
         visibility = visibility,
     )
 
@@ -38,6 +39,7 @@ def _ts_eslint_impl(ctx):
     config = ctx.attr.config
     config_js = ctx.attr.config_dep[JsInfo]
     config_cjs = ctx.attr.config_dep[CjsInfo]
+    options = ctx.attr.options
     workspace_name = ctx.workspace_name
 
     config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package), config)
@@ -46,6 +48,7 @@ def _ts_eslint_impl(ctx):
     ts_eslint_info = TsEslintInfo(
         bin = bin_default.files_to_run,
         config_path = config,
+        options = options,
     )
 
     return [ts_eslint_info]
@@ -65,6 +68,9 @@ ts_eslint = rule(
             doc = "Configuration file",
             mandatory = True,
             providers = [CjsInfo, JsInfo],
+        ),
+        "options": attr.string_list(
+            doc = "ESLint options",
         ),
     },
     implementation = _ts_eslint_impl,
@@ -105,6 +111,7 @@ def _ts_eslint_format_impl(ctx):
     }
 
     args = actions.args()
+    args.add_all(ts_eslint.options, format_each = "--arg=%s")
     args.add("--config", ts_eslint.config_path)
     args.add("--manifest", ts_compile.manifest)
     for file_def in file_defs.values():

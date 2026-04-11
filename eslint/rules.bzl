@@ -5,7 +5,7 @@ load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//util:path.bzl", "runfile_path")
 
-def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:eslint_lib", visibility = None):
+def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:eslint_lib", options = None, visibility = None):
     js_export(
         name = "%s.main" % name,
         dep = Label("//eslint/linter:lib"),
@@ -19,7 +19,7 @@ def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:
         dep = ":%s.main" % name,
         main = "src/main.js",
         node = Label("//nodejs"),
-        node_options = ["--title=eslint"],
+        node_options = ["--experimental-import-meta-resolve", "--title=eslint"],
         visibility = ["//visibility:private"],
     )
 
@@ -28,13 +28,15 @@ def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:
         config = config,
         config_dep = config_dep,
         bin = ":%s.bin" % name,
+        options = options,
         visibility = visibility,
     )
 
-def _eslint_format(ctx, name, src, out, bin, config_path):
+def _eslint_format(ctx, name, src, out, bin, config_path, options):
     actions = ctx.actions
 
     worker_args = actions.args()
+    worker_args.add_all(options, format_each = "--arg=%s")
     worker_args.add("--config", bin.executable, format = "./%%s.runfiles/%s" % config_path)
 
     args = actions.args()
@@ -63,12 +65,13 @@ def _eslint_impl(ctx):
     config = ctx.attr.config
     config_js = ctx.attr.config_dep[JsInfo]
     config_cjs = ctx.attr.config_dep[CjsInfo]
+    options = ctx.attr.options
     workspace_name = ctx.workspace_name
 
     config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package).removesuffix("/"), config)
 
     def format(ctx, name, src, out):
-        _eslint_format(ctx, name, src, out, bin.files_to_run, config_path)
+        _eslint_format(ctx, name, src, out, bin.files_to_run, config_path, options)
 
     format_info = FormatterInfo(fn = format)
 
@@ -92,6 +95,9 @@ eslint = rule(
             doc = "Configuration file",
             mandatory = True,
             providers = [CjsInfo, JsInfo],
+        ),
+        "options": attr.string_list(
+            doc = "ESLint options",
         ),
     },
     provides = [FormatterInfo],

@@ -2,11 +2,6 @@ load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:rules.bzl", "js_library")
 load("//typescript:rules.bzl", "ts_library")
 
-js_library(
-    name = "js_lib",
-    srcs = glob(["src/**/*.js"]),
-)
-
 ts_library(
     name = "lib",
     srcs = glob(["src/**/*.ts"]),
@@ -17,9 +12,9 @@ ts_library(
     root = ":root",
     visibility = ["//visibility:public"],
     deps = [
-        ":js_lib",
         "//commonjs/package:lib",
         "//nodejs/fs-linker:lib",
+        "//util/argparse:lib",
         "//util/json:lib",
         "@npm//@types/argparse:lib",
         "@npm//@types/node:lib",
