@@ -1,0 +1,4 @@
+exports_files(
+    ["stage-nm.js"],
+    visibility = ["//visibility:public"],
+)
