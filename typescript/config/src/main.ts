@@ -29,6 +29,7 @@ parser.add_argument("--type-root", {
   dest: "typeRoots",
   default: [],
 });
+parser.add_argument("--package-manifest", { dest: "packageManifest" });
 parser.add_argument("output");
 
 interface Args {
@@ -43,6 +44,7 @@ interface Args {
   sourceMap: "true" | "false";
   target?: string;
   typeRoots: string[];
+  packageManifest?: string;
   output: string;
 }
 
@@ -63,13 +65,23 @@ interface Args {
     compilerOptions: {
       composite: true,
       declaration: !!args.declarationDir,
-      typeRoots: args.typeRoots.map(relativePath),
       rootDir: relativePath(args.rootDir),
       sourceMap: args.sourceMap === "true",
       inlineSources: args.sourceMap === "true",
     },
     files: args.files.map(relativePath),
   };
+  if (args.typeRoots.length > 0) {
+    tsconfig.compilerOptions.typeRoots = args.typeRoots.map(relativePath);
+  }
+  // preserveSymlinks is critical in native mode (--package-manifest): the
+  // runtime stager creates real node_modules/ symlinks from the manifest;
+  // without preserveSymlinks, tsc/tsgo may resolve through symlinks to
+  // duplicate nominal type identities and emit TS2322 errors where none
+  // exist.
+  if (args.packageManifest) {
+    tsconfig.compilerOptions.preserveSymlinks = true;
+  }
   if (args.rootDirs) {
     tsconfig.compilerOptions.rootDirs = args.rootDirs.map(relativePath);
   }
@@ -116,6 +128,17 @@ interface Args {
   if (args.target) {
     tsconfig.compilerOptions.target = args.target;
   }
+
+  // NOTE: --package-manifest is passed by rules.bzl in native mode as a
+  // signal that tsc/tsgo will see a real node_modules/ tree staged by
+  // the _STAGE_NM_JS runtime stager. We intentionally do NOT emit
+  // compilerOptions.paths or explicit ambient files here — doing so
+  // would give tsc a second way to reach the same dep file and produce
+  // "type X is not assignable to type X" errors from duplicate nominal
+  // identities. The manifest path is intentionally unused by this tool;
+  // it's declared as an input to the config action so the action cache
+  // key depends on the dep graph.
+  void args.packageManifest;
 
   const content = JSON.stringify(tsconfig);
   await writeFile(args.output, content, "utf8");
