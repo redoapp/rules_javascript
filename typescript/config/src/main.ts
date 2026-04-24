@@ -1,6 +1,6 @@
 import { AppendAction } from "@rules-javascript/util-argparse/actions";
 import { ArgumentParser } from "argparse";
-import { writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { dirname, relative } from "node:path";
 
 const parser = new ArgumentParser(<any>{
@@ -29,6 +29,7 @@ parser.add_argument("--type-root", {
   dest: "typeRoots",
   default: [],
 });
+parser.add_argument("--package-manifest", { dest: "packageManifest" });
 parser.add_argument("output");
 
 interface Args {
@@ -43,7 +44,13 @@ interface Args {
   sourceMap: "true" | "false";
   target?: string;
   typeRoots: string[];
+  packageManifest?: string;
   output: string;
+}
+
+interface PackageTreeJson {
+  globals: Record<string, string>;
+  packages: Record<string, { name: string; deps: Record<string, string> }>;
 }
 
 (async () => {
@@ -115,6 +122,34 @@ interface Args {
 
   if (args.target) {
     tsconfig.compilerOptions.target = args.target;
+  }
+
+  if (args.packageManifest) {
+    const manifestJson = JSON.parse(
+      await readFile(args.packageManifest, "utf8"),
+    ) as PackageTreeJson;
+    const paths: Record<string, string[]> = {};
+    for (const pkg of Object.values(manifestJson.packages)) {
+      if (!pkg.name) continue;
+      for (const [depName, depPath] of Object.entries(pkg.deps)) {
+        const rel = relativePath(depPath);
+        if (!paths[depName]) {
+          paths[depName] = [rel];
+          paths[`${depName}/*`] = [`${rel}/*`];
+        }
+      }
+    }
+    for (const [globalName, globalPath] of Object.entries(manifestJson.globals)) {
+      const rel = relativePath(globalPath);
+      if (!paths[globalName]) {
+        paths[globalName] = [rel];
+        paths[`${globalName}/*`] = [`${rel}/*`];
+      }
+    }
+    if (Object.keys(paths).length > 0) {
+      tsconfig.compilerOptions.baseUrl = ".";
+      tsconfig.compilerOptions.paths = paths;
+    }
   }
 
   const content = JSON.stringify(tsconfig);

@@ -8,9 +8,80 @@ load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "
 load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//javascript:rules.bzl", "js_export")
+load("//nodejs:nodejs.bzl", "NodejsInfo")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//util:path.bzl", "link_file", "output", "output_name", "runfile_path")
 load(":providers.bzl", "TsCompileInfo", "TsCompilerInfo", "TsInfo", "create_ts_info", "declaration_path", "is_declaration", "is_json", "js_path", "map_path", "module", "target")
+
+# Preload shim that materializes a real node_modules/ tree at process cwd
+# (= Bazel execroot) before tsc starts. Replaces the fs-linker runtime patching.
+# Reads the package manifest, walks the reachable dep closure from the current
+# package, and creates symlinks for each visible dep name (first-seen wins on
+# name collisions, same as Node's flat-install model).
+_STAGE_NM_JS = r"""
+"use strict";
+const fs = require("node:fs");
+const path = require("node:path");
+
+const manifestPath = process.env.NODE_FS_PACKAGE_MANIFEST;
+const currentPkgPath = process.env.STAGE_NM_CURRENT_PKG;
+if (!manifestPath || !currentPkgPath) return;
+
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+// Stage node_modules at the sandbox root (= execroot). tsc walks up from any
+// source file or extended tsconfig and finds it. Single location prevents
+// duplicate nominal types from preserveSymlinks=true.
+const nmRoot = path.join(process.cwd(), "node_modules");
+
+function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
+function ensureSymlink(target, link) {
+  ensureDir(path.dirname(link));
+  try { fs.symlinkSync(target, link); }
+  catch (e) { if (e.code !== "EEXIST") throw e; }
+}
+function stagePkg(name, pkgPath) {
+  if (!name) return;
+  const link = path.join(nmRoot, name);
+  if (fs.existsSync(link)) return;
+  ensureSymlink(path.resolve(pkgPath), link);
+}
+
+// BFS closure from current pkg, deduping by name (first-seen wins).
+const seenName = new Set();
+const queue = [currentPkgPath];
+const visited = new Set();
+while (queue.length) {
+  const p = queue.shift();
+  if (visited.has(p)) continue;
+  visited.add(p);
+  const pkg = manifest.packages[p];
+  if (!pkg) continue;
+  for (const [depName, depPath] of Object.entries(pkg.deps)) {
+    if (!seenName.has(depName)) {
+      seenName.add(depName);
+      stagePkg(depName, depPath);
+    }
+    queue.push(depPath);
+  }
+}
+// Globals win over regular deps (they match fs-linker's precedence model).
+for (const [name, p] of Object.entries(manifest.globals || {})) {
+  const link = path.join(nmRoot, name);
+  try { fs.unlinkSync(link); } catch {}
+  ensureSymlink(path.resolve(p), link);
+}
+if (process.env.STAGE_NM_DEBUG === "1") {
+  const dump = (dir, prefix = "") => {
+    for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, e.name);
+      if (e.isSymbolicLink()) process.stderr.write(`${prefix}${e.name} -> ${fs.readlinkSync(p)}\n`);
+      else if (e.isDirectory()) dump(p, prefix + e.name + "/");
+    }
+  };
+  process.stderr.write("[stage-nm] node_modules contents:\n");
+  dump(nmRoot);
+}
+"""
 
 def configure_ts_compiler(name, ts, tslib = None, visibility = None):
     """Configure TypeScript compiler.
@@ -98,6 +169,7 @@ def _ts_compiler_impl(ctx):
 
     ts_compiler_info = TsCompilerInfo(
         bin = bin,
+        native = ctx.attr.native,
         runtime_cjs = [cjs_runtime] if cjs_runtime else [],
         runtime_js = [js_runtime] if js_runtime else [],
         transpile_bin = transpile_bin,
@@ -113,6 +185,10 @@ ts_compiler = rule(
             doc = "Declaration compiler executable.",
             executable = True,
             mandatory = True,
+        ),
+        "native": attr.bool(
+            default = False,
+            doc = "True if bin is a native binary (tsgo) rather than a node-based tsc wrapper. Changes how staging is run.",
         ),
         "transpile_bin": attr.label(
             cfg = "exec",
@@ -302,16 +378,8 @@ def _ts_library_impl(ctx):
     args_file = actions.args()
     args_file.use_param_file("@%s")
     args_file.add_all(inputs, before_each = "--file")
-    if cjs_root:
+    if cjs_root and not compiler.native:
         args.add("--type-root", "%s/node_modules/@types" % cjs_root.package.path)
-    args.add(tsconfig)
-    actions.run(
-        arguments = [args, args_file],
-        executable = config.files_to_run.executable,
-        inputs = [file for file in inputs if file.is_directory],
-        tools = [config.files_to_run],
-        outputs = [tsconfig],
-    )
 
     package_manifest = actions.declare_file("%s.package-manifest.json" % ctx.attr.name)
     compile_cjs_info = cjs_root and create_cjs_info(
@@ -329,6 +397,21 @@ def _ts_library_impl(ctx):
         packages = compile_cjs_info.transitive_packages if compile_cjs_info else depset(),
     )
 
+    # Native path also emits paths mapping into the tsconfig from the package
+    # manifest, since tsgo can't run the fs-linker preload.
+    tsconfig_inputs = [file for file in inputs if file.is_directory]
+    if compiler.native:
+        args.add("--package-manifest", package_manifest.path)
+        tsconfig_inputs = [package_manifest] + tsconfig_inputs
+    args.add(tsconfig)
+    actions.run(
+        arguments = [args, args_file],
+        executable = config.files_to_run.executable,
+        inputs = tsconfig_inputs,
+        tools = [config.files_to_run],
+        outputs = [tsconfig],
+    )
+
     # compile declarations
     if outputs:
         trace_args = []
@@ -338,27 +421,60 @@ def _ts_library_impl(ctx):
             trace_args = ["--generateTrace", trace_dir.path]
             trace_outputs = [trace_dir]
 
-        actions.run(
-            arguments = ["-p", tsconfig.path] + trace_args,
-            env = {
-                "NODE_OPTIONS_APPEND": "-r ./%s/dist/bundle.js" % fs_linker_cjs.package.path,
-                "NODE_FS_PACKAGE_MANIFEST": package_manifest.path,
-            },
-            executable = compiler.bin.files_to_run.executable,
-            inputs = depset(
-                [package_manifest, tsconfig] + inputs,
-                transitive =
-                    ([cjs_root.transitive_files] if cjs_root else []) +
-                    [fs_linker_js.transitive_files] +
-                    ([tsconfig_js.transitive_files] if tsconfig_js else []) +
-                    [js_info.transitive_files for js_info in compiler.runtime_js] +
-                    [dep.transitive_files for dep in ts_deps],
-            ),
-            mnemonic = "TypeScriptCompile",
-            progress_message = "Compiling %{label} TypeScript declarations",
-            outputs = outputs + trace_outputs,
-            tools = [compiler.bin.files_to_run],
-        )
+        if compiler.native:
+            # Native binary (tsgo) can't run the fs-linker Node preload.
+            # Materialize a real node_modules/ tree via the stager, then exec
+            # the native binary. Kept entirely separate from the non-native
+            # path so existing consumers see no behavior change.
+            stager = actions.declare_file("%s.stage-nm.js" % ctx.attr.name)
+            actions.write(output = stager, content = _STAGE_NM_JS)
+            node_bin = ctx.attr._node[NodejsInfo].bin
+            actions.run_shell(
+                arguments = ["-p", tsconfig.path] + trace_args,
+                command = '"{node}" "{stager}" && exec "{tsgo}" "$@"'.format(
+                    node = node_bin.path,
+                    stager = stager.path,
+                    tsgo = compiler.bin.files_to_run.executable.path,
+                ),
+                env = {
+                    "NODE_FS_PACKAGE_MANIFEST": package_manifest.path,
+                    "STAGE_NM_CURRENT_PKG": cjs_root.package.path if cjs_root else output_.path,
+                },
+                inputs = depset(
+                    [package_manifest, tsconfig, stager, node_bin] + inputs,
+                    transitive =
+                        ([cjs_root.transitive_files] if cjs_root else []) +
+                        ([tsconfig_js.transitive_files] if tsconfig_js else []) +
+                        [js_info.transitive_files for js_info in compiler.runtime_js] +
+                        [dep.transitive_files for dep in ts_deps],
+                ),
+                mnemonic = "TypeScriptCompile",
+                progress_message = "Compiling %{label} TypeScript declarations",
+                outputs = outputs + trace_outputs,
+                tools = [compiler.bin.files_to_run],
+            )
+        else:
+            actions.run(
+                arguments = ["-p", tsconfig.path] + trace_args,
+                env = {
+                    "NODE_OPTIONS_APPEND": "-r ./%s/dist/bundle.js" % fs_linker_cjs.package.path,
+                    "NODE_FS_PACKAGE_MANIFEST": package_manifest.path,
+                },
+                executable = compiler.bin.files_to_run.executable,
+                inputs = depset(
+                    [package_manifest, tsconfig] + inputs,
+                    transitive =
+                        ([cjs_root.transitive_files] if cjs_root else []) +
+                        [fs_linker_js.transitive_files] +
+                        ([tsconfig_js.transitive_files] if tsconfig_js else []) +
+                        [js_info.transitive_files for js_info in compiler.runtime_js] +
+                        [dep.transitive_files for dep in ts_deps],
+                ),
+                mnemonic = "TypeScriptCompile",
+                progress_message = "Compiling %{label} TypeScript declarations",
+                outputs = outputs + trace_outputs,
+                tools = [compiler.bin.files_to_run],
+            )
 
     default_info = DefaultInfo(
         files = depset(js),
@@ -482,6 +598,12 @@ ts_library = rule(
         "_module": attr.label(
             default = "//javascript:module",
             providers = [BuildSettingInfo],
+        ),
+        "_node": attr.label(
+            cfg = "exec",
+            default = "//nodejs",
+            doc = "Node binary used to run the stage-nm script when the compiler is a native binary (tsgo).",
+            providers = [NodejsInfo],
         ),
         "_source_map": attr.label(
             default = "//javascript:source_map",
