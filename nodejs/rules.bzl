@@ -717,7 +717,16 @@ def _nodejs_binary_package_impl(ctx):
         is_executable = True,
     )
 
-    files_map = {runfile_path(workspace, file): file for file in transitive_files.to_list()}
+    # Exclude orphaned lockfiles from third-party packages. These are leftover
+    # dev manifests shipped by upstream maintainers and are never read at runtime.
+    # Their presence causes container vulnerability scanners to flag CVEs for
+    # packages that are not actually installed.
+    _EXCLUDED_BASENAMES = ("yarn.lock", "package-lock.json", "Gemfile.lock")
+    files_map = {
+        runfile_path(workspace, file): file
+        for file in transitive_files.to_list()
+        if file.basename not in _EXCLUDED_BASENAMES
+    }
     files_map["bin"] = bin
     if type(node.bin) != "string":
         files_map["node"] = node.bin
