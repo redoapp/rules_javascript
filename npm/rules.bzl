@@ -172,3 +172,60 @@ yarn_resolve = rule(
     executable = True,
     implementation = _yarn_resolve_impl,
 )
+
+def _yarn_install_impl(ctx):
+    actions = ctx.actions
+    label = ctx.label
+    name = ctx.attr.name
+    path = ctx.attr.path
+    runner = ctx.file._runner
+    workspace = ctx.workspace_name
+    yarn = ctx.executable._yarn
+    yarn_default = ctx.attr._yarn[DefaultInfo]
+
+    bin = actions.declare_file(name)
+    # Handle absolute paths (starting with /) as workspace-relative
+    # Handle relative paths as package-relative
+    if path.startswith("/"):
+        path = path[len("/"):]
+    elif path:
+        path = "/".join([part for part in [label.package, path] if part])
+    else:
+        path = label.package
+
+    actions.expand_template(
+        template = runner,
+        output = bin,
+        substitutions = {
+            "%{path}": shell.quote(path) if path else "",
+            "%{yarn}": shell.quote(runfile_path(workspace, yarn)),
+        },
+        is_executable = True,
+    )
+
+    runfiles = ctx.runfiles()
+    runfiles = runfiles.merge(yarn_default.default_runfiles)
+    default_info = DefaultInfo(executable = bin, runfiles = runfiles)
+
+    return [default_info]
+
+yarn_install = rule(
+    attrs = {
+        "path": attr.string(
+            doc = "Package-relative path to package.json and yarn.lock directory",
+            default = "",
+        ),
+        "_runner": attr.label(
+            allow_single_file = True,
+            default = ":yarn-install-runner.sh.tpl",
+        ),
+        "_yarn": attr.label(
+            cfg = "target",
+            default = "//npm:yarn",
+            executable = True,
+        ),
+    },
+    doc = "Run yarn install to populate node_modules",
+    executable = True,
+    implementation = _yarn_install_impl,
+)
