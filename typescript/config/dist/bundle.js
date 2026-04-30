@@ -3,7 +3,6 @@
 var argparse = require('argparse');
 var promises = require('node:fs/promises');
 var node_path = require('node:path');
-var node_fs = require('node:fs');
 
 /**
  * Faster version of "append" action.
@@ -51,6 +50,11 @@ parser.add_argument("--type-root", {
     default: [],
 });
 parser.add_argument("--package-manifest", { dest: "packageManifest" });
+parser.add_argument("--no-preserve-symlinks", {
+    action: "store_true",
+    default: false,
+    dest: "noPreserveSymlinks",
+});
 parser.add_argument("output");
 (async () => {
     const args = parser.parse_args();
@@ -76,12 +80,18 @@ parser.add_argument("output");
     if (args.typeRoots.length > 0) {
         tsconfig.compilerOptions.typeRoots = args.typeRoots.map(relativePath);
     }
-    // preserveSymlinks is critical in native mode (--package-manifest):
-    // the runtime stager creates real node_modules/ symlinks from the
-    // manifest; without preserveSymlinks, tsc/tsgo may resolve through
-    // symlinks to duplicate nominal type identities and emit TS2322
-    // errors where none exist.
-    if (args.packageManifest) {
+    // preserveSymlinks is critical for the native (tsgo) compile path
+    // (--package-manifest): the runtime stager creates real node_modules/
+    // symlinks from the manifest; without preserveSymlinks, tsc/tsgo may
+    // resolve through symlinks to duplicate nominal type identities and
+    // emit TS2322 errors where none exist.
+    //
+    // It is NOT safe for the lint path. The lint binary uses the
+    // fs-linker per-package nested VFS; with preserveSymlinks=true, the
+    // resolver walks every nested-symlink chain and accumulates a
+    // quadratic miss-cache that exhausts the heap on large packages.
+    // Callers that emit a lint-specific tsconfig pass --no-preserve-symlinks.
+    if (args.packageManifest && !args.noPreserveSymlinks) {
         tsconfig.compilerOptions.preserveSymlinks = true;
     }
     if (args.rootDirs) {
@@ -125,13 +135,15 @@ parser.add_argument("output");
     if (args.target) {
         tsconfig.compilerOptions.target = args.target;
     }
-    // With the preload stager producing a real node_modules/ tree at the Bazel
-    // sandbox root, tsc's own module resolution handles everything: imports via
-    // package "exports", ambient /// <reference types>, tsconfig "extends", and
-    // @types/X -> X pairing. We intentionally do NOT emit compilerOptions.paths
-    // or explicit ambient files here, because that would give tsc a second way
-    // to reach the same dep file and produce "type X is not assignable to type
-    // X" errors from duplicate nominal identities.
+    // NOTE: --package-manifest is passed by rules.bzl in native mode as a
+    // signal that tsc/tsgo will see a real node_modules/ tree staged by
+    // the _STAGE_NM_JS runtime stager. We intentionally do NOT emit
+    // compilerOptions.paths or explicit ambient files here — doing so
+    // would give tsc a second way to reach the same dep file and produce
+    // "type X is not assignable to type X" errors from duplicate nominal
+    // identities. The manifest path is intentionally unused by this tool;
+    // it's declared as an input to the config action so the action cache
+    // key depends on the dep graph.
     void args.packageManifest;
     const content = JSON.stringify(tsconfig);
     await promises.writeFile(args.output, content, "utf8");

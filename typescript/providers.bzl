@@ -29,6 +29,7 @@ TsCompileInfo = provider(
         "config_path": "Configuration path",
         "configs": "Depset of config files",
         "declarations": "Depset of upstream declarations",
+        "lint_config_path": "Lint-only configuration path. Set in native (--package-manifest) mode to a tsconfig variant without preserveSymlinks=true so typescript-eslint, running inside the fs-linker per-package VFS, does not OOM walking nested-symlink resolver chains. Falls back to config_path when unset.",
         "manifest": "Manifest file",
         "srcs": "Depset of sources",
         "runtime_js": "Runtime files",

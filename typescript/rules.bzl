@@ -342,6 +342,34 @@ def _ts_library_impl(ctx):
         outputs = [tsconfig],
     )
 
+    # In native (tsgo) mode, also emit a lint-only tsconfig variant
+    # without preserveSymlinks=true. tsgo compile needs preserveSymlinks
+    # to keep nominal type identities stable through stage-nm symlinks,
+    # but typescript-eslint inside the fs-linker per-package VFS OOMs
+    # with that flag set (resolver walks nested-symlink chains).
+    lint_tsconfig = None
+    if compiler.native:
+        lint_tsconfig = actions.declare_file("%s.lint-tsconfig.json" % ctx.attr.name)
+        lint_args = actions.args()
+        if tsconfig_path:
+            lint_args.add("--config", "%s/%s" % (tsconfig_dep.package.path, tsconfig_path))
+        lint_args.add("--declaration-dir", "%s/%s" % (output_.path, declaration_prefix) if declaration_prefix else output_.path)
+        lint_args.add("--module", module_)
+        lint_args.add("--root-dir", "%s/%s" % (output_.path, strip_prefix) if strip_prefix else output_.path)
+        lint_args.add("--root-dirs", "%s/%s" % (output_.path, strip_prefix) if strip_prefix else output_.path)
+        lint_args.add("--root-dirs", "%s/%s" % (output_.path, declaration_prefix) if declaration_prefix else output_.path)
+        lint_args.add("--target", target_)
+        lint_args.add("--package-manifest", package_manifest.path)
+        lint_args.add("--no-preserve-symlinks")
+        lint_args.add(lint_tsconfig)
+        actions.run(
+            arguments = [lint_args, args_file],
+            executable = config.files_to_run.executable,
+            inputs = tsconfig_inputs,
+            tools = [config.files_to_run],
+            outputs = [lint_tsconfig],
+        )
+
     # compile declarations
     if outputs:
         trace_args = []
@@ -427,11 +455,13 @@ def _ts_library_impl(ctx):
         files = js,
     )
 
+    config_files = [tsconfig] + ([lint_tsconfig] if lint_tsconfig else [])
     ts_compile_info = TsCompileInfo(
         compiler = compiler.bin,
         config_path = tsconfig.path,
-        configs = depset([tsconfig], transitive = tsconfig_js and [tsconfig_js.transitive_files]),
+        configs = depset(config_files, transitive = tsconfig_js and [tsconfig_js.transitive_files]),
         declarations = depset(transitive = [dep.transitive_files for dep in ts_deps]),
+        lint_config_path = lint_tsconfig.path if lint_tsconfig else None,
         manifest = package_manifest,
         runtime_js = depset(transitive = [js_info.transitive_files for js_info in compiler.runtime_js]),
         srcs = depset(inputs),
