@@ -116,9 +116,13 @@ def _ts_eslint_format_impl(ctx):
     args.add("--manifest", ts_compile.manifest)
     for file_def in file_defs.values():
         args.add("%s=%s" % (file_def.src.path, file_def.generated.path))
+    # Prefer the lint-only tsconfig (no preserveSymlinks=true) when the
+    # compile rule emitted one. Falls back to the compile tsconfig for
+    # legacy (non-native) consumers that don't set lint_config_path.
+    ts_config_path = ts_compile.lint_config_path if hasattr(ts_compile, "lint_config_path") and ts_compile.lint_config_path else ts_compile.config_path
     actions.run(
         arguments = [args],
-        env = {"TSESTREE_SINGLE_RUN": "true", "TS_CONFIG": ts_compile.config_path},
+        env = {"TSESTREE_SINGLE_RUN": "true", "TS_CONFIG": ts_config_path},
         executable = ts_eslint.bin.executable,
         inputs = depset(
             [ts_compile.manifest],

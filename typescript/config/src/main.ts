@@ -30,6 +30,11 @@ parser.add_argument("--type-root", {
   default: [],
 });
 parser.add_argument("--package-manifest", { dest: "packageManifest" });
+parser.add_argument("--no-preserve-symlinks", {
+  action: "store_true",
+  default: false,
+  dest: "noPreserveSymlinks",
+});
 parser.add_argument("output");
 
 interface Args {
@@ -45,6 +50,7 @@ interface Args {
   target?: string;
   typeRoots: string[];
   packageManifest?: string;
+  noPreserveSymlinks: boolean;
   output: string;
 }
 
@@ -74,12 +80,18 @@ interface Args {
   if (args.typeRoots.length > 0) {
     tsconfig.compilerOptions.typeRoots = args.typeRoots.map(relativePath);
   }
-  // preserveSymlinks is critical in native mode (--package-manifest): the
-  // runtime stager creates real node_modules/ symlinks from the manifest;
-  // without preserveSymlinks, tsc/tsgo may resolve through symlinks to
-  // duplicate nominal type identities and emit TS2322 errors where none
-  // exist.
-  if (args.packageManifest) {
+  // preserveSymlinks is critical for the native (tsgo) compile path
+  // (--package-manifest): the runtime stager creates real node_modules/
+  // symlinks from the manifest; without preserveSymlinks, tsc/tsgo may
+  // resolve through symlinks to duplicate nominal type identities and
+  // emit TS2322 errors where none exist.
+  //
+  // It is NOT safe for the lint path. The lint binary uses the
+  // fs-linker per-package nested VFS; with preserveSymlinks=true, the
+  // resolver walks every nested-symlink chain and accumulates a
+  // quadratic miss-cache that exhausts the heap on large packages.
+  // Callers that emit a lint-specific tsconfig pass --no-preserve-symlinks.
+  if (args.packageManifest && !args.noPreserveSymlinks) {
     tsconfig.compilerOptions.preserveSymlinks = true;
   }
   if (args.rootDirs) {
