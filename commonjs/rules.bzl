@@ -1,4 +1,3 @@
-load("@bazel_util//util:path.bzl", "runfile_path")
 load("//util:path.bzl", "output", "output_name")
 load(":providers.bzl", "CjsInfo", "create_package")
 
@@ -61,7 +60,6 @@ def _cjs_root_impl(ctx):
     prefix = ctx.attr.prefix
     strip_prefix = ctx.attr.strip_prefix
     output_ = output(ctx.label, actions)
-    workspace_name = ctx.workspace_name
 
     if ctx.attr.path:
         root = struct(

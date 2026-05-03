@@ -1,10 +1,11 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "gen_manifest", "package_path")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary")
-load("//util:path.bzl", "output_name", "runfile_path")
+load("//util:path.bzl", "output_name")
 load(":providers.bzl", "RollupInfo")
 
 def _rollup_transition_impl(settings, attrs):
@@ -28,11 +29,10 @@ _rollup_config_transition = transition(
 def _rollup_impl(ctx):
     config = ctx.attr.config
     config_dep = ctx.attr.config_dep[0][CjsInfo]
-    workspace_name = ctx.workspace_name
 
     rollup_info = RollupInfo(
         bin = ctx.attr.bin[DefaultInfo].files_to_run,
-        config_path = "%s/%s" % (runfile_path(workspace_name, config_dep.package), config),
+        config_path = "%s/%s" % (to_rlocation_path(ctx, config_dep.package), config),
     )
 
     return [rollup_info]

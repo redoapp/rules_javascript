@@ -1,6 +1,6 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("//commonjs:providers.bzl", "CjsInfo")
-load("//util:path.bzl", "runfile_path")
 load(":bin.bzl", "BinInfo")
 
 def _binary_impl(ctx):
@@ -11,12 +11,11 @@ def _binary_impl(ctx):
     path = ctx.attr.path
     root_cjs = ctx.attr.root[CjsInfo]
     runner = ctx.file._runner
-    workspace = ctx.workspace_name
 
     executable = actions.declare_file(name)
     actions.expand_template(
         substitutions = {
-            "%{bin}": shell.quote("%s/%s" % (runfile_path(workspace, root_cjs.package), path)),
+            "%{bin}": shell.quote("%s/%s" % (to_rlocation_path(ctx, root_cjs.package), path)),
             "%{name}": shell.quote(bin_name),
         },
         is_executable = True,

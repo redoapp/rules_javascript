@@ -1,7 +1,7 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@rules_pkg//pkg:providers.bzl", "PackageFilegroupInfo")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
-load("//util:path.bzl", "runfile_path")
 
 def _pkg_install_impl(ctx):
     actions = ctx.actions
@@ -13,7 +13,6 @@ def _pkg_install_impl(ctx):
     path = ctx.attr.path
     pkg_filegroup = ctx.attr.pkg[PackageFilegroupInfo]
     runner = ctx.file._runner
-    workspace_name = ctx.workspace_name
 
     merge_args = actions.args()
     manifests = []
@@ -78,7 +77,7 @@ def _pkg_install_impl(ctx):
             args.add_all([struct(
                 dest = dest,
                 src = src,
-                runfile = runfile_path(workspace_name, src),
+                runfile = to_rlocation_path(ctx, src),
                 executable = executable,
                 origin = origin,
             )], map_each = _file_arg)
@@ -123,8 +122,8 @@ def _pkg_install_impl(ctx):
         template = runner,
         output = executable,
         substitutions = {
-            "%{install}": shell.quote(runfile_path(workspace_name, install)),
-            "%{manifest}": shell.quote(runfile_path(workspace_name, manifest)),
+            "%{install}": shell.quote(to_rlocation_path(ctx, install)),
+            "%{manifest}": shell.quote(to_rlocation_path(ctx, manifest)),
             "%{path}": shell.quote(path),
         },
         is_executable = True,

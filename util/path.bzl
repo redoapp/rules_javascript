@@ -48,14 +48,6 @@ def relativize(path, start):
 
     return "/".join(result_parts)
 
-def runfile_path(workspace, file):
-    path = file.short_path
-    if path.startswith("../"):
-        path = path[len("../"):]
-    else:
-        path = "%s/%s" % (workspace, path)
-    return path
-
 def output(label, actions, dir = ""):
     """
     Returns the output paths

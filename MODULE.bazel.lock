@@ -220,6 +220,28 @@
         }
       }
     },
+    "@@pybind11_bazel+//:internal_configure.bzl%internal_configure_extension": {
+      "general": {
+        "bzlTransitiveDigest": "06cynZ1bCvvy8zHPrrDlXq+Z68xmjctHpfFxi+zEpJY=",
+        "usagesDigest": "D1r3lfzMuUBFxgG8V6o0bQTLMk3GkaGOaPzw53wrwyw=",
+        "recordedInputs": [
+          "REPO_MAPPING:pybind11_bazel+,bazel_tools bazel_tools",
+          "FILE:@@pybind11_bazel+//MODULE.bazel e6f4c20442eaa7c90d7190d8dc539d0ab422f95c65a57cc59562170c58ae3d34"
+        ],
+        "generatedRepoSpecs": {
+          "pybind11": {
+            "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
+            "attributes": {
+              "build_file": "@@pybind11_bazel+//:pybind11-BUILD.bazel",
+              "strip_prefix": "pybind11-2.12.0",
+              "urls": [
+                "https://github.com/pybind/pybind11/archive/v2.12.0.zip"
+              ]
+            }
+          }
+        }
+      }
+    },
     "@@rules_kotlin+//src/main/starlark/core/repositories:bzlmod_setup.bzl%rules_kotlin_extensions": {
       "general": {
         "bzlTransitiveDigest": "ABI1D/sbS1ovwaW/kHDoj8nnXjQ0oKU9fzmzEG4iT8o=",
@@ -505,6 +527,46 @@
           "buildifier-linux-riscv64": "5101795c6b90e3aca6d8dc4efe15fd818a8b6053f34284551f6ba7fa57ad8415",
           "buildifier-linux-s390x": "89cb42099db8c6ce1db2faf63305fcf14f45fd9537e512134ae8b55ddeb909d9",
           "buildifier-windows-amd64.exe": "802104da0bcda0424a397ac5be0004c372665a70289a6d5146e652ee497c0dc6"
+        }
+      }
+    },
+    "@@bazel_util+//ibazel:extensions.bzl%ibazel": {
+      "_": {
+        "sha256s": {
+          "ibazel_darwin_amd64": "b762472c09725ed1ef749102bef6ccb3cafbe91f78028694994c9e4bcc84ebca",
+          "ibazel_darwin_arm64": "d9986f5beb09562489e21cd96bc065e598f29c671aba7c9944a063d70b8a4ea8",
+          "ibazel_linux_amd64": "e621a3bf5d3a0f3cccfd8a6fbd72707398ba37e39897dc8762f3eebf5b08fd9d",
+          "ibazel_linux_arm64": "f7fd7ebd8a604614f2e1a3b2476fe9c055ea88d165da86d3f303d7d6903fb332",
+          "ibazel_windows_amd64.exe": "a5c9020ccfe3285033fb4bffdfe3c04f3eb56de2e90ad2075b12b2010b1f186b"
+        }
+      }
+    },
+    "@@bazel_util+//jsonschema:extensions.bzl%jsonschema": {
+      "_": {
+        "sha256s": {
+          "CHECKSUMS.txt": "41b2033ea331c953a063dbdb31a5c72ab0aed74b486b89d96d2fd87705a55414",
+          "CHECKSUMS.txt.asc": "fe8d5b0dd5328c1b9b911f73370df9c71499d73cd7d92aa763f15adedb343fab",
+          "jsonschema-12.10.1-darwin-arm64.zip": "1a5abb171b78db19173ef1c70b443a5f289fd1bff5fc536909e585bf3a3b3c5d",
+          "jsonschema-12.10.1-darwin-x86_64.zip": "0515e7f9062534ddc1a2168415e8875f27dac8d519de9bb3b3d944e68f7e8bee",
+          "jsonschema-12.10.1-linux-arm64.zip": "194aa5aa99deeaa2c4211d30e24adb002e5b3b69972a2c28c6e4e9d160703124",
+          "jsonschema-12.10.1-linux-x86_64.zip": "e119043eb27c835b1b640f73924e7126733f17e85efc4c2e59ae19342acb8a6a",
+          "jsonschema-12.10.1-windows-x86_64.zip": "208fb78688652c46cdde3d582c9e088d56ac03ede2ef6f2e716e26d9d123e66c",
+          "jsonschema_12.10.1_amd64.snap": "6903385a9e46fdabd17f8858a155c3c8d3b2ddca44a59fb7fe5655cbbbbbe175",
+          "jsonschema_12.10.1_arm64.snap": "b8950b2050724f9c40a7ab359b31efe4b20a161d58074fd5be9e82337bfe22ce"
+        }
+      }
+    },
+    "@@rules_shell_extra+//shfmt:extensions.bzl%shfmt": {
+      "_": {
+        "sha256s": {
+          "shfmt_v3.12.0_darwin_amd64": "c31548693de6584e6164b7ed5fbb7b4a083f2d937ca94b4e0ddf59aa461a85e4",
+          "shfmt_v3.12.0_darwin_arm64": "d903802e0ce3ecbc82b98512f55ba370b0d37a93f3f78de394f5b657052b33dd",
+          "shfmt_v3.12.0_linux_386": "6b67da16834a215cc8c565bfbcfaa0303809456d8cafad28cb2eeea35a88904d",
+          "shfmt_v3.12.0_linux_amd64": "d9fbb2a9c33d13f47e7618cf362a914d029d02a6df124064fff04fd688a745ea",
+          "shfmt_v3.12.0_linux_arm": "a93c1ed5be25ce9dd0fd62c4cf0af7453740d234725877b973e6c6a8c7598500",
+          "shfmt_v3.12.0_linux_arm64": "5f3fe3fa6a9f766e6a182ba79a94bef8afedafc57db0b1ad32b0f67fae971ba4",
+          "shfmt_v3.12.0_windows_386.exe": "92c1ef0af344a10f2cefe3ce4bc6793ae8b3719ac08fc01802bbd8eae105e534",
+          "shfmt_v3.12.0_windows_amd64.exe": "c8bda517ba1c640ce4a715c0fa665439ddbe4357ba5e9b77b0e51e70e2b9c94b"
         }
       }
     }

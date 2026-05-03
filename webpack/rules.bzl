@@ -1,3 +1,4 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("@bazel_util//bazel:providers.bzl", "create_digest")
@@ -5,7 +6,6 @@ load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary", "nodejs_transition")
-load("//util:path.bzl", "runfile_path")
 load(":providers.bzl", "WebpackInfo")
 
 def _webpack_tool_transition_impl(settings, attrs):
@@ -39,13 +39,12 @@ def _webpack_impl(ctx):
     config = ctx.attr.config
     config_dep = ctx.attr.config_dep[CjsInfo]
     server = ctx.attr.server[DefaultInfo]
-    workspace_name = ctx.workspace_name
 
     webpack_info = WebpackInfo(
         bin = bin,
         client_cjs = client_cjs,
         client_js = client_js,
-        config_path = "%s/%s" % (runfile_path(workspace_name, config_dep.package), config),
+        config_path = "%s/%s" % (to_rlocation_path(ctx, config_dep.package), config),
         server = server,
     )
 
@@ -164,7 +163,6 @@ def _webpack_bundle_impl(ctx):
     label = ctx.label
     webpack = ctx.attr.webpack[WebpackInfo]
     output_name = ctx.attr.output or ctx.attr.name
-    workspace_name = ctx.workspace_name
 
     package_manifest = actions.declare_file("%s.packages.json" % ctx.label.name)
     gen_manifest(
@@ -180,7 +178,7 @@ def _webpack_bundle_impl(ctx):
 
     args = []
     args.append("--config")
-    args.append("./%s.runfiles/%s/src/index.mjs" % (webpack.bin.files_to_run.executable.path, runfile_path(workspace_name, config.package)))
+    args.append("./%s.runfiles/%s/src/index.mjs" % (webpack.bin.files_to_run.executable.path, to_rlocation_path(ctx, config.package)))
 
     actions.run(
         env = {
@@ -275,7 +273,6 @@ def _webpack_server_impl(ctx):
     dep_js = ctx.attr.dep[0][JsInfo]
     dep_cjs = ctx.attr.dep[0][CjsInfo]
     name = ctx.attr.name
-    workspace_name = ctx.workspace_name
 
     bin = actions.declare_file(name)
 
@@ -285,10 +282,10 @@ def _webpack_server_impl(ctx):
     )
     transitive_packages = depset(transitive = [dep_cjs.transitive_packages] + [cjs_info.transitive_packages for cjs_info in webpack_client.client_cjs])
 
-    prefix = "%s.webpack" % runfile_path(workspace_name, bin)
+    prefix = "%s.webpack" % to_rlocation_path(ctx, bin)
 
     def package_path(package):
-        return "%s/%s" % (prefix, runfile_path(workspace_name, package))
+        return "%s/%s" % (prefix, to_rlocation_path(ctx, package))
 
     package_manifest = actions.declare_file("%s-packages.json" % name)
     gen_manifest(
@@ -315,16 +312,16 @@ def _webpack_server_impl(ctx):
         template = ctx.file._runner,
         output = bin,
         substitutions = {
-            "%{bin}": shell.quote(runfile_path(workspace_name, webpack.server.files_to_run.executable)),
+            "%{bin}": shell.quote(to_rlocation_path(ctx, webpack.server.files_to_run.executable)),
             "%{compilation_mode}": shell.quote(compilation_mode),
             "%{config}": webpack.config_path,
-            "%{digest}": shell.quote(runfile_path(workspace_name, src_digest)),
+            "%{digest}": shell.quote(to_rlocation_path(ctx, src_digest)),
             "%{input_root}": shell.quote(package_path(dep_cjs.package)),
             "%{js_source_map}": shell.quote(json.encode(source_map)),
-            "%{package_manifest}": shell.quote(runfile_path(workspace_name, package_manifest)),
-            "%{runtime}": shell.quote(runfile_path(workspace_name, runtime)),
-            "%{shim}": shell.quote(runfile_path(workspace_name, shim)),
-            "%{webpack_config}": shell.quote(runfile_path(workspace_name, config.package) + "/src/index.mjs"),
+            "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
+            "%{runtime}": shell.quote(to_rlocation_path(ctx, runtime)),
+            "%{shim}": shell.quote(to_rlocation_path(ctx, shim)),
+            "%{webpack_config}": shell.quote(to_rlocation_path(ctx, config.package) + "/src/index.mjs"),
         },
         is_executable = True,
     )

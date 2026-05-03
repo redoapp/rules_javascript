@@ -1,10 +1,10 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_util//generate:runner.bzl", "create_runner")
 load("//commonjs:providers.bzl", "CjsInfo")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//typescript:providers.bzl", "TsCompileInfo")
-load("//util:path.bzl", "runfile_path")
 load(":providers.bzl", "TsEslintInfo")
 
 def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_lib"), node_options = [], options = None, visibility = None):
@@ -40,9 +40,8 @@ def _ts_eslint_impl(ctx):
     config_js = ctx.attr.config_dep[JsInfo]
     config_cjs = ctx.attr.config_dep[CjsInfo]
     options = ctx.attr.options
-    workspace_name = ctx.workspace_name
 
-    config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package), config)
+    config_path = "%s/%s" % (to_rlocation_path(ctx, config_cjs.package), config)
     config = "./%s.runfiles/%s" % (bin_default.files_to_run.executable.path, config_path)
 
     ts_eslint_info = TsEslintInfo(
@@ -95,7 +94,6 @@ def _ts_eslint_format_impl(ctx):
     srcs = depset(ctx.files.srcs)
     ts_eslint = ctx.attr.ts_eslint[TsEslintInfo]
     ts_compile = ctx.attr.ts[TsCompileInfo]
-    workspace = ctx.workspace_name
 
     executable = actions.declare_file(name)
 
@@ -148,7 +146,7 @@ def _ts_eslint_format_impl(ctx):
         run_bin = run_default,
         runfiles_fn = ctx.runfiles,
         runner_template = runner,
-        workspace_name = workspace,
+        workspace_name = ctx.workspace_name,
     )
 
     return [default_info]

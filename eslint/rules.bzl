@@ -1,9 +1,9 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_util//generate:providers.bzl", "FormatterInfo")
 load("//commonjs:providers.bzl", "CjsInfo")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_export")
 load("//nodejs:rules.bzl", "nodejs_binary")
-load("//util:path.bzl", "runfile_path")
 
 def configure_eslint(name, config, config_dep, dep = "@rules_javascript//eslint:eslint_lib", options = None, visibility = None):
     js_export(
@@ -66,9 +66,8 @@ def _eslint_impl(ctx):
     config_js = ctx.attr.config_dep[JsInfo]
     config_cjs = ctx.attr.config_dep[CjsInfo]
     options = ctx.attr.options
-    workspace_name = ctx.workspace_name
 
-    config_path = "%s/%s" % (runfile_path(workspace_name, config_cjs.package).removesuffix("/"), config)
+    config_path = "%s/%s" % (to_rlocation_path(ctx, config_cjs.package).removesuffix("/"), config)
 
     def format(ctx, name, src, out):
         _eslint_format(ctx, name, src, out, bin.files_to_run, config_path, options)

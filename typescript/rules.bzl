@@ -10,7 +10,7 @@ load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//javascript:rules.bzl", "js_export")
 load("//nodejs:nodejs.bzl", "NodejsInfo")
 load("//nodejs:rules.bzl", "nodejs_binary")
-load("//util:path.bzl", "link_file", "output", "output_name", "runfile_path")
+load("//util:path.bzl", "link_file", "output", "output_name")
 load(":providers.bzl", "TsCompileInfo", "TsCompilerInfo", "TsInfo", "create_ts_info", "declaration_path", "is_declaration", "is_json", "js_path", "map_path", "module", "target")
 
 def configure_ts_compiler(name, ts, tslib = None, visibility = None):
@@ -157,7 +157,6 @@ def _ts_library_impl(ctx):
     tsconfig_js = ctx.attr.config_dep and ctx.attr.config_dep[JsInfo]
     tsconfig_path = ctx.attr.config
     tsconfig_dep = ctx.attr.config_dep and (ctx.attr.config_dep[CjsInfo] if CjsInfo in ctx.attr.config_dep else None)
-    workspace_name = ctx.workspace_name
 
     if tsconfig_path and not tsconfig_dep:
         fail("config attribute requires non-empty config_dep attribute")
@@ -594,8 +593,6 @@ def _ts_import_impl(ctx):
     label = ctx.label
     output_ = output(label = ctx.label, actions = actions)
     ts_deps = [target[TsInfo] for target in ctx.attr.compile_deps + ctx.attr.deps if TsInfo in target]
-    workspace_name = ctx.workspace_name
-
     declarations = [
         link_file(
             actions = actions,

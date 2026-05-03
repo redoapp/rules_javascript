@@ -1,5 +1,3 @@
-load("//util:path.bzl", "runfile_path")
-
 NodejsRuntimeInfo = provider(
     doc = "Node.js runtime.",
     fields = {

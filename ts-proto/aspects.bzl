@@ -13,7 +13,6 @@ def _ts_proto_impl(target, ctx):
     deps = [dep[TsProtoInfo] for dep in ctx.rule.attr.deps]
     output_name = "%s.ts_proto" % target.label.name
     output_ = output(ctx.label, actions, output_name)
-    workspace_name = ctx.workspace_name
 
     # generate TS
     ts = []

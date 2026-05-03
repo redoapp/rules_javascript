@@ -28,7 +28,6 @@ def _js_proto_libraries_impl(ctx):
     cjs_info = ctx.attr.root[CjsInfo]
     label = ctx.label
     prefix = ctx.attr.prefix
-    workspace_name = ctx.workspace_name
 
     libs = depset(
         order = "postorder",

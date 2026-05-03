@@ -1,6 +1,6 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load("@bazel_util//util:path.bzl", "runfile_path")
 load("@rules_pkg//pkg:mappings.bzl", "pkg_filegroup", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
@@ -21,15 +21,14 @@ def _npm_publish_impl(ctx):
     npm_default = ctx.attr._npm
     src = ctx.file.src
     runner = ctx.file._runner
-    workspace = ctx.workspace_name
 
     executable = actions.declare_file(name)
     actions.expand_template(
         is_executable = True,
         output = executable,
         substitutions = {
-            "%{npm}": shell.quote(runfile_path(workspace, npm)),
-            "%{package}": shell.quote(runfile_path(workspace, src)),
+            "%{npm}": shell.quote(to_rlocation_path(ctx, npm)),
+            "%{package}": shell.quote(to_rlocation_path(ctx, src)),
         },
         template = runner,
     )
@@ -72,7 +71,7 @@ def _yarn_audit_test_impl(ctx):
         is_executable = True,
         substitutions = {
             "%{path}": shell.quote(path),
-            "%{yarn}": shell.quote(runfile_path(workspace, yarn)),
+            "%{yarn}": shell.quote(to_rlocation_path(ctx, yarn)),
         },
         template = runner,
         output = executable,
@@ -110,7 +109,6 @@ def _yarn_resolve_impl(ctx):
     refresh = ctx.attr.refresh
     runner = ctx.file._runner
     output = ctx.attr.output
-    workspace = ctx.workspace_name
     yarn = ctx.executable._yarn
     yarn_default = ctx.attr._yarn[DefaultInfo]
     yarn_resolve = ctx.executable._yarn_resolve
@@ -127,8 +125,8 @@ def _yarn_resolve_impl(ctx):
             "%{refresh}": shell.quote("true" if refresh else "false"),
             "%{path}": shell.quote(path),
             "%{output}": shell.quote(output),
-            "%{yarn}": shell.quote(runfile_path(workspace, yarn)),
-            "%{yarn_resolve}": shell.quote(runfile_path(workspace, yarn_resolve)),
+            "%{yarn}": shell.quote(to_rlocation_path(ctx, yarn)),
+            "%{yarn_resolve}": shell.quote(to_rlocation_path(ctx, yarn_resolve)),
         },
         is_executable = True,
     )

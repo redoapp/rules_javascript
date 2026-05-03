@@ -4,7 +4,7 @@ load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//typescript:providers.bzl", "TsCompilerInfo", "TsInfo", "create_ts_info", "declaration_path", "js_path", "map_path", "module", "target")
-load("//util:path.bzl", "output", "output_name", "runfile_path")
+load("//util:path.bzl", "output", "output_name")
 load(":aspects.bzl", _ts_proto_aspect = "ts_proto_aspect")
 load(":providers.bzl", "TsProtoInfo", "TsProtobuf", "TsProtosInfo")
 
@@ -89,7 +89,6 @@ def _ts_proto_libraries_impl(ctx):
     src_prefix = ctx.attr.src_prefix
     ts_proto = ctx.attr._ts_protoc[TsProtobuf]
     tsconfig_proto = ctx.file._tsconfig
-    workspace_name = ctx.workspace_name
     target_ = ctx.attr.target or target(ctx.attr._language[BuildSettingInfo].value)
 
     # transpile to JS

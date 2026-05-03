@@ -51,7 +51,6 @@ def _js_proto_library_impl(ctx):
     js_proto = ctx.attr.js_proto[JsProtobuf]
     output_ = output(ctx.label, ctx.actions)
     runtime_package = js_proto.runtime
-    workspace_name = ctx.workspace_name
 
     output = ctx.outputs.output
 

@@ -1,3 +1,4 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_util//file:rules.bzl", "untar")
@@ -7,7 +8,7 @@ load("//bin:bin.bzl", "BinInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "create_links", "create_package", "gen_manifest", "package_path")
 load("//javascript:providers.bzl", "JsInfo")
 load("//pkg:rules.bzl", "pkg_install")
-load("//util:path.bzl", "nearest", "relativize", "runfile_path")
+load("//util:path.bzl", "nearest", "relativize")
 load(":nodejs.bzl", "NodejsInfo", "NodejsRuntimeInfo", "nodejs_runtime_rule")
 
 def nodejs_toolchains(name, repo_name, toolchain_type, visibility = None):
@@ -128,7 +129,7 @@ def _nodejs_simple_binary_implementation(ctx):
     path = ctx.attr.path
     src = ctx.file.src
 
-    module = runfile_path(ctx.workspace_name, src)
+    module = to_rlocation_path(ctx, src)
     if path:
         module = "%s/%s" % (module, path)
 
@@ -139,7 +140,7 @@ def _nodejs_simple_binary_implementation(ctx):
         substitutions = {
             "%{example}": ctx.file.src.short_path,
             "%{module}": shell.quote(module),
-            "%{node}": shell.quote(runfile_path(ctx.workspace_name, node.bin)),
+            "%{node}": shell.quote(to_rlocation_path(ctx, node.bin)),
             "%{node_options}": " ".join([shell.quote(option) for option in node_options]),
         },
         is_executable = True,
@@ -198,7 +199,7 @@ def _nodejs_binary_impl(ctx):
     workspace_name = ctx.workspace_name
 
     preload_modules = [
-        "%s/%s" % (runfile_path(workspace_name, target[CjsInfo].package), target[CjsPath].path)
+        "%s/%s" % (to_rlocation_path(ctx, target[CjsInfo].package), target[CjsPath].path)
         for target in ctx.attr.preload
     ]
 
@@ -215,7 +216,7 @@ def _nodejs_binary_impl(ctx):
     )
 
     def package_path(package):
-        return runfile_path(workspace_name, package)
+        return to_rlocation_path(struct(workspace_name = workspace_name), package)
 
     package_manifest = actions.declare_file("%s.packages.json" % name)
     gen_manifest(
@@ -227,7 +228,7 @@ def _nodejs_binary_impl(ctx):
         package_path = package_path,
     )
 
-    main_module = "%s/%s" % (runfile_path(workspace_name, cjs_dep.package), main) if cjs_dep else main
+    main_module = "%s/%s" % (to_rlocation_path(ctx, cjs_dep.package), main) if cjs_dep else main
 
     bin = actions.declare_file(name)
     actions.expand_template(
@@ -235,16 +236,16 @@ def _nodejs_binary_impl(ctx):
         output = bin,
         substitutions = {
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
-            "%{esm_loader}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, esm_linker_cjs.package)),
+            "%{esm_loader}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, esm_linker_cjs.package)),
             "%{main_module}": shell.quote(main_module),
-            "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(runfile_path(workspace_name, node.bin)),
+            "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(to_rlocation_path(ctx, node.bin)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
             ),
-            "%{package_manifest}": shell.quote(runfile_path(workspace_name, package_manifest)),
-            "%{module_linker}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, module_linker_cjs.package)),
-            "%{runtime}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, runtime_cjs.package)),
+            "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
+            "%{module_linker}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, module_linker_cjs.package)),
+            "%{runtime}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, runtime_cjs.package)),
         },
         is_executable = True,
     )
@@ -347,9 +348,8 @@ def _nodejs_modules_binary_impl(ctx):
     node = ctx.attr.node[NodejsInfo]
     node_options = ctx.attr.node_options
     runner = ctx.file._runner
-    workspace = ctx.workspace_name
 
-    main_module = "/".join([part for part in [runfile_path(workspace, modules), main_package, main] if part])
+    main_module = "/".join([part for part in [to_rlocation_path(ctx, modules), main_package, main] if part])
 
     executable = actions.declare_file(name)
     actions.expand_template(
@@ -358,7 +358,7 @@ def _nodejs_modules_binary_impl(ctx):
         substitutions = {
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
             "%{main_module}": shell.quote(main_module),
-            "%{node}": shell.quote(runfile_path(workspace, node.bin)),
+            "%{node}": shell.quote(to_rlocation_path(ctx, node.bin)),
             "%{node_options}": " ".join([shell.quote(option) for option in node_options]),
         },
         template = runner,
@@ -411,14 +411,13 @@ def _nodejs_modules_package_impl(ctx):
     deps_js = [target[JsInfo] for target in ctx.attr.deps]
     label = ctx.label
     links_cjs = [target[CjsInfo] for target in ctx.attr.links]
-    workspace = ctx.workspace_name
 
     transitive_packages = depset(
         [cjs.package for cjs in links_cjs],
         transitive = [cjs_info.transitive_packages for cjs_info in deps_cjs],
     )
     package_paths = {
-        package.path: ".content/%s" % runfile_path(workspace, package)
+        package.path: ".content/%s" % to_rlocation_path(ctx, package)
         for package in transitive_packages.to_list()
     } | {
         cjs.package.path: "../%s" % cjs.package.short_path
@@ -436,7 +435,7 @@ def _nodejs_modules_package_impl(ctx):
             if package_paths[package_path].startswith("../"):
                 continue
             package_paths_nonempty[package_path] = None
-        files_map[".content/%s" % runfile_path(workspace, file)] = file
+        files_map[".content/%s" % to_rlocation_path(ctx, file)] = file
     files = PackageFilesInfo(attributes = {}, dest_src_map = files_map)
 
     package_bins = {}
@@ -517,10 +516,9 @@ def _nodejs_repl_impl(ctx):
     runner = ctx.file._runner
     runtime_cjs = ctx.attr._runtime[CjsInfo]
     runtime_js = ctx.attr._runtime[JsInfo]
-    workspace_name = ctx.workspace_name
 
     preload_modules = [
-        "%s/%s" % (runfile_path(workspace_name, target[CjsInfo].package), target[CjsPath].path)
+        "%s/%s" % (to_rlocation_path(ctx, target[CjsInfo].package), target[CjsPath].path)
         for target in ctx.attr.preload
     ]
 
@@ -545,7 +543,7 @@ def _nodejs_repl_impl(ctx):
     )
 
     def package_path(package):
-        return runfile_path(workspace_name, package)
+        return to_rlocation_path(ctx, package)
 
     package_manifest = actions.declare_file("%s.packages.json" % name)
     gen_manifest(
@@ -563,15 +561,15 @@ def _nodejs_repl_impl(ctx):
         output = bin,
         substitutions = {
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
-            "%{esm_loader}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, esm_linker_cjs.package)),
-            "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(runfile_path(workspace_name, node.bin)),
+            "%{esm_loader}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, esm_linker_cjs.package)),
+            "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(to_rlocation_path(ctx, node.bin)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
             ),
-            "%{package_manifest}": shell.quote(runfile_path(workspace_name, package_manifest)),
-            "%{module_linker}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, module_linker_cjs.package)),
-            "%{runtime}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace_name, runtime_cjs.package)),
+            "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
+            "%{module_linker}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, module_linker_cjs.package)),
+            "%{runtime}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, runtime_cjs.package)),
         },
         is_executable = True,
     )
@@ -671,7 +669,6 @@ def _nodejs_binary_package_impl(ctx):
     dep_js = ctx.attr.dep[0][JsInfo]
     preload_cjs = [target[CjsInfo] for target in ctx.attr.preload]
     preload_js = [target[JsInfo] for target in ctx.attr.preload]
-    workspace = ctx.workspace_name
 
     transitive_files = depset(
         transitive =
@@ -692,7 +689,7 @@ def _nodejs_binary_package_impl(ctx):
     )
 
     package_paths = {
-        package.path: runfile_path(workspace, package)
+        package.path: to_rlocation_path(ctx, package)
         for package in transitive_packages.to_list()
     }
 
@@ -717,7 +714,7 @@ def _nodejs_binary_package_impl(ctx):
         is_executable = True,
     )
 
-    files_map = {runfile_path(workspace, file): file for file in transitive_files.to_list()}
+    files_map = {to_rlocation_path(ctx, file): file for file in transitive_files.to_list()}
     files_map["bin"] = bin
     if type(node.bin) != "string":
         files_map["node"] = node.bin

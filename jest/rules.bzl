@@ -1,8 +1,9 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "gen_manifest")
 load("//javascript:providers.bzl", "JsInfo")
 load("//nodejs:nodejs.bzl", "NodejsInfo")
-load("//util:path.bzl", "output", "runfile_path")
+load("//util:path.bzl", "output")
 
 def _jest_transition_impl(settings, attrs):
     return {"//javascript:module": "node"}
@@ -44,12 +45,12 @@ def _jest_test_impl(ctx):
     workspace = ctx.workspace_name
 
     preload_modules = [
-        "%s/%s" % (runfile_path(workspace, target[CjsInfo].package), target[CjsPath].path)
+        "%s/%s" % (to_rlocation_path(ctx, target[CjsInfo].package), target[CjsPath].path)
         for target in ctx.attr.preload
     ]
 
     def package_path(package):
-        return runfile_path(workspace, package)
+        return to_rlocation_path(ctx, package)
 
     package_manifest = actions.declare_file("%s.packages.json" % name)
     gen_manifest(
@@ -65,27 +66,27 @@ def _jest_test_impl(ctx):
         package_path = package_path,
     )
 
-    main_module = "%s/bin/jest.js" % runfile_path(workspace, cjs_info.package)
+    main_module = "%s/bin/jest.js" % to_rlocation_path(ctx, cjs_info.package)
 
     bin = actions.declare_file(name)
     actions.expand_template(
         output = bin,
         is_executable = True,
         substitutions = {
-            "%{config_loader}": shell.quote("%s/src/index.js" % runfile_path(workspace, config_loader_cjs.package)),
-            "%{config}": shell.quote("%s/%s" % (runfile_path(workspace, config_cjs.package), config)),
+            "%{config_loader}": shell.quote("%s/src/index.js" % to_rlocation_path(ctx, config_loader_cjs.package)),
+            "%{config}": shell.quote("%s/%s" % (to_rlocation_path(ctx, config_cjs.package), config)),
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
-            "%{fs_linker}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace, fs_linker_cjs.package)),
+            "%{fs_linker}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, fs_linker_cjs.package)),
             "%{main_module}": shell.quote(main_module),
-            "%{module_linker}": shell.quote("%s/dist/bundle.js" % runfile_path(workspace, module_linker_cjs.package)),
+            "%{module_linker}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, module_linker_cjs.package)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
             ),
-            "%{node}": shell.quote(runfile_path(workspace, node.bin)),
-            "%{package_manifest}": shell.quote(runfile_path(workspace, package_manifest)),
+            "%{node}": shell.quote(to_rlocation_path(ctx, node.bin)),
+            "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
             "%{preamble}": bash_preamble,
-            "%{root}": shell.quote(runfile_path(workspace, cjs_dep.package)),
+            "%{root}": shell.quote(to_rlocation_path(ctx, cjs_dep.package)),
             "%{workspace}": shell.quote(workspace),
         },
         template = ctx.file._runner,

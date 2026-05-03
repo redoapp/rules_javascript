@@ -79,7 +79,6 @@ def _angular_library(ctx):
     tsconfig_js = ctx.attr.config_dep and ctx.attr.config_dep[JsInfo]
     tsconfig_path = ctx.attr.config
     tsconfig_dep = ctx.attr.config_dep[CjsInfo] if ctx.attr.config_dep else None
-    workspace_name = ctx.workspace_name
 
     if tsconfig_path and not tsconfig_dep:
         fail("tsconfig attribute requires non-empty tsconfig_dep attribute")
