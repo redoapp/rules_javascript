@@ -42,15 +42,16 @@ def _jest_test_impl(ctx):
     cjs_deps = [config_loader_cjs, config_cjs, cjs_info, fs_linker_cjs, module_linker_cjs] + [ctx.attr.dep[0][CjsInfo]] + preload_cjs
     js_deps = [config_loader_js, config_js, js_info, fs_linker_js, module_linker_js] + [ctx.attr.dep[0][JsInfo]] + preload_js
     output_ = output(label = ctx.label, actions = actions)
-    workspace = ctx.workspace_name
 
     preload_modules = [
         "%s/%s" % (to_rlocation_path(ctx, target[CjsInfo].package), target[CjsPath].path)
         for target in ctx.attr.preload
     ]
 
+    rlocation_ctx = struct(workspace_name = ctx.workspace_name)
+
     def package_path(package):
-        return to_rlocation_path(ctx, package)
+        return to_rlocation_path(rlocation_ctx, package)
 
     package_manifest = actions.declare_file("%s.packages.json" % name)
     gen_manifest(
@@ -87,7 +88,6 @@ def _jest_test_impl(ctx):
             "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
             "%{preamble}": bash_preamble,
             "%{root}": shell.quote(to_rlocation_path(ctx, cjs_dep.package)),
-            "%{workspace}": shell.quote(workspace),
         },
         template = ctx.file._runner,
     )

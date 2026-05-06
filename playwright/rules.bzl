@@ -102,15 +102,16 @@ def _playwright_test_impl(ctx):
     js_deps = [config_js, playwright_js, esm_linker_js, module_linker_js] + [ctx.attr.dep[0][JsInfo]] + preload_js + extra_deps_js
     output_ = output(label = ctx.label, actions = actions)
     playwright_tools = [target[PlaywrightToolInfo] for target in ctx.attr.tools]
-    workspace = ctx.workspace_name
 
     preload_modules = [
         "%s/%s" % (to_rlocation_path(ctx, target[CjsInfo].package), target[CjsPath].path)
         for target in ctx.attr.preload
     ]
 
+    rlocation_ctx = struct(workspace_name = ctx.workspace_name)
+
     def package_path(package):
-        return to_rlocation_path(ctx, package)
+        return to_rlocation_path(rlocation_ctx, package)
 
     package_manifest = actions.declare_file("%s.packages.json" % name)
     gen_manifest(
@@ -149,7 +150,6 @@ def _playwright_test_impl(ctx):
             "%{preamble}": bash_preamble,
             "%{root}": shell.quote(to_rlocation_path(ctx, cjs_dep.package)),
             "%{runtime}": shell.quote(to_rlocation_path(ctx, runtime)),
-            "%{workspace}": shell.quote(workspace),
         },
         template = ctx.file._runner,
     )
