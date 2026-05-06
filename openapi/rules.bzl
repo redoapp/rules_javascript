@@ -2,7 +2,6 @@ def _openapi_ts_impl(ctx):
     actions = ctx.actions
     name = ctx.attr.name
     openapi_typescript = ctx.executable._openapi_typescript
-    openapi_typescript_default = ctx.attr._openapi_typescript[DefaultInfo]
     options = ctx.attr.options
     output = ctx.outputs.output
     src = ctx.file.src
@@ -11,13 +10,20 @@ def _openapi_ts_impl(ctx):
         output = actions.declare_file("%s.d.ts" % name)
 
     args = actions.args()
-    args.add("-o", output)
+    args.add(openapi_typescript)
+    args.add(output)
     for option in options:
         args.add(option)
     args.add(src)
-    actions.run(
+    actions.run_shell(
         arguments = [args],
-        executable = openapi_typescript,
+        # when printing to stdout, will remove the unwanted preamble
+        command = """
+openapi_typescript="$1"
+output="$2"
+shift 2
+"$openapi_typescript" "$@" > "$output"
+        """.strip(),
         execution_requirements = {
             "supports-path-mapping": "1",
         },
@@ -25,6 +31,7 @@ def _openapi_ts_impl(ctx):
         inputs = [src],
         outputs = [output],
         progress_message = "Generating %{label} OpenAPI TypeScript",
+        tools = [openapi_typescript],
     )
 
     default_info = DefaultInfo(files = depset([output]))
