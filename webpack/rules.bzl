@@ -284,8 +284,10 @@ def _webpack_server_impl(ctx):
 
     prefix = "%s.webpack" % to_rlocation_path(ctx, bin)
 
+    rlocation_ctx = struct(workspace_name = ctx.workspace_name)
+
     def package_path(package):
-        return "%s/%s" % (prefix, to_rlocation_path(ctx, package))
+        return "%s/%s" % (prefix, to_rlocation_path(rlocation_ctx, package))
 
     package_manifest = actions.declare_file("%s-packages.json" % name)
     gen_manifest(

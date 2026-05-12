@@ -542,8 +542,10 @@ def _nodejs_repl_impl(ctx):
             [cjs_info.transitive_links for cjs_info in cjs_deps + preload_cjs],
     )
 
+    rlocation_ctx = struct(workspace_name = ctx.workspace_name)
+
     def package_path(package):
-        return to_rlocation_path(ctx, package)
+        return to_rlocation_path(rlocation_ctx, package)
 
     package_manifest = actions.declare_file("%s.packages.json" % name)
     gen_manifest(
