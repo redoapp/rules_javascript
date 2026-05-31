@@ -5499,6 +5499,7 @@
       "os": [
         "darwin"
       ],
+      "patch": "compat-fsevents-df0bf1.patch",
       "url": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
     },
     "fsevents@2.3.3-6b674948": {
@@ -5512,6 +5513,7 @@
       "os": [
         "darwin"
       ],
+      "patch": "compat-fsevents-df0bf1.patch",
       "url": "https://registry.npmjs.org/fsevents/-/fsevents-2.3.3.tgz"
     },
     "function-bind@1.1.2": {
@@ -7868,6 +7870,7 @@
       ],
       "integrity": "sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==",
       "name": "resolve",
+      "patch": "compat-resolve-c3c19d.patch",
       "url": "https://registry.npmjs.org/resolve/-/resolve-1.22.11.tgz"
     },
     "retry@0.12.0": {
@@ -8362,6 +8365,7 @@
       },
       "integrity": "sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==",
       "name": "typescript",
+      "patch": "compat-typescript-b5f058.patch",
       "url": "https://registry.npmjs.org/typescript/-/typescript-5.0.4.tgz"
     },
     "undici-types@6.21.0": {
@@ -8704,6 +8708,11 @@
       "url": "https://registry.npmjs.org/zone.js/-/zone.js-0.11.8.tgz"
     }
   },
+  "patches": [
+    "compat-fsevents-df0bf1.patch",
+    "compat-resolve-c3c19d.patch",
+    "compat-typescript-b5f058.patch"
+  ],
   "roots": [
     {
       "id": "@angular/animations@16.2.12-dc3fc578",

@@ -2,6 +2,7 @@
 browsers.json linguist-generated
 dist linguist-generated
 npm.json linguist-generated
+npm-patches/ linguist-generated
 
 /test/test.bazelrc linguist-generated
 /tools/bazel_/bazelrc/ linguist-vendored

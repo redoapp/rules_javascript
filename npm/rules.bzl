@@ -1,7 +1,6 @@
 load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//lib:shell.bzl", "shell")
-load("@rules_pkg//pkg:mappings.bzl", "pkg_filegroup", "pkg_files")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 
 def npm_package(name, srcs, visibility = None, **kwargs):
@@ -109,6 +108,7 @@ def _yarn_resolve_impl(ctx):
     refresh = ctx.attr.refresh
     runner = ctx.file._runner
     output = ctx.attr.output
+    patches = ctx.attr.patches
     yarn = ctx.executable._yarn
     yarn_default = ctx.attr._yarn[DefaultInfo]
     yarn_resolve = ctx.executable._yarn_resolve
@@ -125,6 +125,7 @@ def _yarn_resolve_impl(ctx):
             "%{refresh}": shell.quote("true" if refresh else "false"),
             "%{path}": shell.quote(path),
             "%{output}": shell.quote(output),
+            "%{patches}": shell.quote(patches),
             "%{yarn}": shell.quote(to_rlocation_path(ctx, yarn)),
             "%{yarn_resolve}": shell.quote(to_rlocation_path(ctx, yarn_resolve)),
         },
@@ -140,12 +141,16 @@ def _yarn_resolve_impl(ctx):
 
 yarn_resolve = rule(
     attrs = {
+        "output": attr.string(
+            doc = "Output path",
+            mandatory = True,
+        ),
         "path": attr.string(
             doc = "Package-relative path to package.json and yarn.lock directory",
             default = "",
         ),
-        "output": attr.string(
-            doc = "Output path",
+        "patches": attr.string(
+            doc = "Output path to patches",
             mandatory = True,
         ),
         "refresh": attr.bool(

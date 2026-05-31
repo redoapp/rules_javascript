@@ -1,3 +1,5 @@
+load("@bazel_skylib//lib:paths.bzl", "paths")
+
 ARCHES = [
     "arm",
     "arm64",
@@ -30,33 +32,102 @@ DEFAULT_PLUGINS = [
     Label("//nodejs:npm_plugin.bzl"),
 ]
 
+def _hunk_size(header):
+    """Body-line budget for a `@@ -a,b +c,d @@` header: the old + new line counts.
+
+    A context line spans both sides and so costs 2; an added or deleted line
+    costs 1. The budget is exhausted exactly at the end of the hunk body.
+    """
+
+    fields = header[len("@@ "):].split(" ")
+    return _hunk_length(fields[0]) + _hunk_length(fields[1])
+
+def _hunk_length(field):
+    counts = field[1:].split(",")  # drop leading -/+
+    return int(counts[1]) if len(counts) > 1 else 1
+
+def _reanchor(field, dir):
+    """Reanchors a `--- `/`+++ ` path under `dir` (exact, repo-root relative).
+
+    Splits off a trailing tab-separated timestamp, drops a leading `a/`/`b/`
+    strip segment if present, and prepends the package directory. `/dev/null`
+    is left untouched so file creations and deletions keep working.
+    """
+
+    tab = field.find("\t")
+    path = field if tab == -1 else field[:tab]
+    rest = "" if tab == -1 else field[tab:]
+    if path == "/dev/null":
+        return field
+    if path.startswith("a/") or path.startswith("b/"):
+        path = path[len("a/"):]
+    return dir + "/" + path + rest
+
+def _reanchor_patch(patch, dir):
+    """Reanchors a unified diff's file paths under the package's extraction dir.
+
+    `ctx.patch` applies relative to the repository root, where the package is
+    extracted under `dir`. Only the `--- `/`+++ ` headers are rewritten -- to
+    exact paths applied with strip=0 -- so no git-specific headers (`diff --git`,
+    `rename`, mode lines) or `a/`/`b/` conventions are assumed. Hunk bodies are
+    tracked by line count so header-looking content is left untouched.
+    """
+
+    out = []
+    remaining = 0
+    for line in patch.split("\n"):
+        if remaining > 0:
+            marker = line[:1]
+            if marker == "\\":
+                pass
+            elif marker == "+" or marker == "-":
+                remaining -= 1
+            else:
+                remaining -= 2
+        elif line.startswith("@@ "):
+            remaining = _hunk_size(line)
+        elif line.startswith("--- "):
+            line = "--- " + _reanchor(line[len("--- "):], dir)
+        elif line.startswith("+++ "):
+            line = "+++ " + _reanchor(line[len("+++ "):], dir)
+        out.append(line)
+    return "\n".join(out)
+
 def _npm_package_impl(ctx):
     id = ctx.attr.id
     integrity = ctx.attr.integrity
+    patch = ctx.attr.patch and ctx.read(ctx.attr.patch)
     plugins = ctx.attr.plugins
     repo = ctx.attr.repo
     url = ctx.attr.url
 
-    ctx.download(
+    ctx.download_and_extract(
         integrity = integrity,
-        output = "package.tar.gz",
+        output = "tmp",
         url = url,
     )
-
-    # stripe bundleDependencies (challenging, unnecessary, and Yarn doesn't support either)
-    result = ctx.execute(["tar", "tzf", "package.tar.gz", "--exclude=node_modules"])
+    # strip top-level directory
+    # TODO: Use download_and_extract(strip_components = 1) once supported
+    result = ctx.execute(["sh", "-c", "mv tmp/* src"])
     if result.return_code:
-        fail("Failed to list package:\n%s" % result.stderr)
-    files = [
-        path.removeprefix("./")
-        for path in result.stdout.strip().split("\n")
-    ]
+        fail("Failed to move package:\n%s" % result.stderr)
+
+    # patch
+    if patch:
+        ctx.file("package.patch", _reanchor_patch(patch, "src"))
+        ctx.patch("package.patch")
+        ctx.delete("package.patch")
+
+    # strip bundleDependencies (challenging, unnecessary, and Yarn doesn't support either)
+    result = ctx.execute(["find", "src", "-name", "node_modules", "-type", "d", "-prune", "-exec", "rm", "-rf", "{}", "+"])
+    if result.return_code:
+        fail("Failed to strip node_modules:\n%s" % result.stderr)
 
     content = ""
     for index, plugin in enumerate(plugins):
         content += """
 load({label}, {var} = "npm_plugin")
-{var}.spoke(repo = REPO, package = PACKAGE, files = FILES)
+{var}.spoke(repo = REPO, package = PACKAGE)
         """.strip().format(
             label = repr(str(plugin)),
             var = "plugin%s" % (index + 1),
@@ -70,7 +141,6 @@ load({label}, {var} = "npm_plugin")
         substitutions = {
             "%{content}": content,
             "%{data}": repr("@%s//_packages:%s" % (repo, _package_path(id))),
-            "%{files}": repr(files),
             "%{repo}": repr(repo),
         },
     )
@@ -84,13 +154,19 @@ npm_package = repository_rule(
     attrs = {
         "id": attr.string(mandatory = True),
         "repo": attr.string(mandatory = True),
-        "plugins": attr.label_list(),
+        "plugins": attr.label_list(
+            default = DEFAULT_PLUGINS,
+            doc = "Plugins.",
+        ),
         "integrity": attr.string(
             doc = "Integrity.",
             mandatory = True,
         ),
+        "patch": attr.label(
+            doc = "Patch to apply after extraction.",
+        ),
         "url": attr.string(
-            doc = "URL",
+            doc = "URL.",
             mandatory = True,
         ),
     },
@@ -99,6 +175,7 @@ npm_package = repository_rule(
 def _npm_impl(ctx):
     data = ctx.attr.data
     data_output = ctx.attr.data_output or ctx.attr.data
+    patches_output = ctx.attr.patches_output
     path = ctx.attr.path
     plugins = ctx.attr.plugins
 
@@ -107,6 +184,7 @@ def _npm_impl(ctx):
         Label("npm.BUILD.bazel.tpl"),
         substitutions = {
             "%{output}": repr("/%s" % "/".join([part for part in [data_output.package, data_output.name] if part])),
+            "%{patches}": repr("/%s" % "/".join([part for part in [patches_output.package, patches_output.name] if part])),
             "%{path}": repr(path),
             "%{rules}": repr(str(Label("rules.bzl"))),
         },
@@ -256,7 +334,11 @@ npm = repository_rule(
         "data": attr.label(allow_single_file = [".json"], mandatory = True),
         "data_output": attr.label(allow_single_file = [".json"]),
         "path": attr.string(mandatory = True),
-        "plugins": attr.label_list(),
+        "patches_output": attr.label(mandatory = True),
+        "plugins": attr.label_list(
+            default = DEFAULT_PLUGINS,
+            doc = "Plugins."
+        ),
     },
 )
 

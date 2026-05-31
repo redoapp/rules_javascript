@@ -1,0 +1,13 @@
+load("@bazel_skylib//rules:common_settings.bzl", "string_setting")
+
+string_setting(
+    name = "empty",
+    build_setting_default = "",
+)
+
+# replace with @bazel_skylib//lib:always_true once released
+config_setting(
+    name = "always_true",
+    flag_values = {":empty": ""},
+    visibility = ["//visibility:public"],
+)

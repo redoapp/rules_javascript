@@ -5,6 +5,7 @@ import { createHash } from "node:crypto";
 import { Graph, stronglyConnectedComponents } from "./graph";
 import { BzlDeps, BzlPackages } from "./json";
 import { NpmRegistryClient } from "./npm";
+import { EffectivePatch } from "./patch";
 import { YarnDependencies, YarnPackageInfos } from "./yarn";
 
 export interface ResolvedNpmPackage {
@@ -54,6 +55,7 @@ export async function getPackage(
 export async function resolvePackages(
   yarnPackages: YarnPackageInfos,
   getPackage: (npmSpecifier: Locator) => Promise<ResolvedNpmPackage>,
+  getPatch: (locator: Locator) => Promise<EffectivePatch | undefined>,
   progress: (message: string) => void,
 ): Promise<{ packages: BzlPackages; roots: BzlDeps }> {
   const bzlPackages: BzlPackages = new Map();
@@ -74,7 +76,10 @@ export async function resolvePackages(
       const id = bzlId(yarnPackage.locator);
       const specifier = npmLocator(yarnPackage.locator);
       if (id && specifier) {
-        const npmPackage = await getPackage(specifier);
+        const [npmPackage, patch] = await Promise.all([
+          getPackage(specifier),
+          getPatch(yarnPackage.locator),
+        ]);
         const deps = bzlDeps(yarnPackages, yarnPackage.dependencies);
         bzlPackages.set(id, {
           arch: yarnPackage.constraints.cpu,
@@ -85,6 +90,7 @@ export async function resolvePackages(
           libc: yarnPackage.constraints.libc,
           name: structUtils.stringifyIdent(yarnPackage.locator),
           os: yarnPackage.constraints.os,
+          patch,
           url: npmPackage.contentUrl,
         });
         finished++;

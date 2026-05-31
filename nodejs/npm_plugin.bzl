@@ -12,7 +12,7 @@ def _nodejs_npm_bin(repo, package_id, bin):
 def _nodejs_npm_hub(repo, root):
     pass
 
-def _nodejs_npm_spoke(repo, package, files):
+def _nodejs_npm_spoke(repo, package):
     for bin, path in package.bins.items():
         nodejs_binary(
             name = "node/%s" % bin,

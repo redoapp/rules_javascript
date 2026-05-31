@@ -1,5 +1,6 @@
+load("@bazel_skylib//lib:paths.bzl", "paths")
 load(":npm.bzl", "package_repo_name")
-load(":repositories.bzl", "DEFAULT_PLUGINS", "npm", "npm_package")
+load(":repositories.bzl", "npm", "npm_package")
 
 _workspace_tag = tag_class(
     attrs = {
@@ -21,8 +22,7 @@ _workspace_tag = tag_class(
             mandatory = True,
         ),
         "plugins": attr.label_list(
-            default = DEFAULT_PLUGINS,
-            doc = "Plugins to use.",
+            doc = "Plugins.",
         ),
     },
 )
@@ -35,12 +35,15 @@ def _yarn_impl(ctx):
             else:
                 data = {"packages": {}, "roots": []}
 
+            patches_output = paths.replace_extension(str(workspace.data_output or workspace.data), "-patches")
+
             npm(
                 name = workspace.name,
                 plugins = workspace.plugins,
                 data = workspace.data,
                 data_output = workspace.data_output,
                 path = workspace.path,
+                patches_output = patches_output,
             )
 
             for package_id, package in data["packages"].items():
@@ -48,6 +51,7 @@ def _yarn_impl(ctx):
                     name = package_repo_name(workspace.name, package_id),
                     id = package_id,
                     integrity = package["integrity"],
+                    patch = "%s/%s" % (patches_output, package["patch"]) if package.get("patch") else None,
                     url = package["url"],
                     repo = workspace.name,
                     plugins = workspace.plugins,

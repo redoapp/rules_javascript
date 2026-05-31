@@ -30,14 +30,9 @@ def _ts_npm_hub(repo, root):
             visibility = ["//visibility:public"],
         )
 
-def _ts_npm_spoke(repo, package, files):
-    has_ts = False
-    for file in files:
-        if file.endswith(".d.ts"):
-            has_ts = True
-            break
-    if not has_ts:
-        js_npm_plugin.spoke(repo, package, files)
+def _ts_npm_spoke(repo, package):
+    if not native.glob(["src/**/*.d.ts"], allow_empty = True):
+        js_npm_plugin.spoke(repo, package)
         return
 
     deps = []

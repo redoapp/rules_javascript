@@ -20,7 +20,7 @@ def _bin_npm_package(repo, package):
             visibility = ["//visibility:public"],
         )
 
-def _bin_npm_spoke(repo, package, files):
+def _bin_npm_spoke(repo, package):
     for bin, path in package.bins.items():
         binary(
             name = "bin/%s" % bin,

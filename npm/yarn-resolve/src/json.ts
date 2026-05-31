@@ -1,3 +1,5 @@
+import { EffectivePatch } from "./patch";
+
 export interface BzlPackage {
   arch: string[] | undefined;
   binaries: Map<string, string>;
@@ -7,6 +9,7 @@ export interface BzlPackage {
   libc: string[] | undefined;
   name: string;
   os: string[] | undefined;
+  patch: EffectivePatch | undefined;
   url: string;
 }
 
@@ -33,6 +36,7 @@ export namespace BzlPackage {
       libc: value.libc,
       name: value.name,
       os: value.os,
+      patch: value.patch?.file,
       url: value.url,
     };
   }
@@ -76,8 +80,16 @@ export namespace BzlDeps {
 }
 
 export function toJsonFile(packages: BzlPackages, roots: BzlDeps) {
+  const patches = [
+    ...new Set(
+      [...packages.values()].flatMap((pkg) =>
+        pkg.patch === undefined ? [] : [pkg.patch.file],
+      ),
+    ),
+  ].sort();
   return {
     packages: BzlPackages.toJson(packages),
+    patches,
     roots: BzlDeps.toJson(roots),
   };
 }

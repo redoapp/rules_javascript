@@ -14,7 +14,7 @@ def _js_npm_hub(repo, root):
         visibility = ["//visibility:public"],
     )
 
-def _js_npm_spoke(repo, package, files):
+def _js_npm_spoke(repo, package):
     deps = []
     exports = []
     for i, dep in enumerate(package.deps):
