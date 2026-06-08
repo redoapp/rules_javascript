@@ -286,7 +286,7 @@ def _npm_impl(ctx):
                 )
                 content += "\n"
             ctx.template(
-                ".bin/%s/BUILD.bazel" % root["name"],
+                ".bin/%s/BUILD.bazel" % bin,
                 Label("hub.BUILD.bazel.tpl"),
                 substitutions = {
                     "%{content}": content,
