@@ -21,7 +21,7 @@
 <pre>
 load("@rules_javascript//typescript-eslint:rules.bzl", "ts_eslint")
 
-ts_eslint(<a href="#ts_eslint-name">name</a>, <a href="#ts_eslint-bin">bin</a>, <a href="#ts_eslint-config">config</a>, <a href="#ts_eslint-config_dep">config_dep</a>)
+ts_eslint(<a href="#ts_eslint-name">name</a>, <a href="#ts_eslint-bin">bin</a>, <a href="#ts_eslint-config">config</a>, <a href="#ts_eslint-config_dep">config_dep</a>, <a href="#ts_eslint-options">options</a>)
 </pre>
 
 **ATTRIBUTES**
@@ -32,6 +32,7 @@ ts_eslint(<a href="#ts_eslint-name">name</a>, <a href="#ts_eslint-bin">bin</a>, 
 | <a id="ts_eslint-bin"></a>bin               | eslint                         | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
 | <a id="ts_eslint-config"></a>config         | -                              | String                                                              | required  |         |
 | <a id="ts_eslint-config_dep"></a>config_dep | Configuration file             | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| <a id="ts_eslint-options"></a>options       | ESLint options                 | List of strings                                                     | optional  | `[]`    |
 
 <a id="ts_eslint_format"></a>
 
@@ -62,7 +63,7 @@ TypeScript ESLint
 <pre>
 load("@rules_javascript//typescript-eslint:rules.bzl", "configure_ts_eslint")
 
-configure_ts_eslint(<a href="#configure_ts_eslint-name">name</a>, <a href="#configure_ts_eslint-config">config</a>, <a href="#configure_ts_eslint-config_dep">config_dep</a>, <a href="#configure_ts_eslint-dep">dep</a>, <a href="#configure_ts_eslint-plugins">plugins</a>, <a href="#configure_ts_eslint-node_options">node_options</a>, <a href="#configure_ts_eslint-visibility">visibility</a>)
+configure_ts_eslint(<a href="#configure_ts_eslint-name">name</a>, <a href="#configure_ts_eslint-config">config</a>, <a href="#configure_ts_eslint-config_dep">config_dep</a>, <a href="#configure_ts_eslint-dep">dep</a>, <a href="#configure_ts_eslint-node_options">node_options</a>, <a href="#configure_ts_eslint-options">options</a>, <a href="#configure_ts_eslint-visibility">visibility</a>)
 </pre>
 
 **PARAMETERS**
@@ -73,6 +74,6 @@ configure_ts_eslint(<a href="#configure_ts_eslint-name">name</a>, <a href="#conf
 | <a id="configure_ts_eslint-config"></a>config             | <p align="center"> - </p> | none                                            |
 | <a id="configure_ts_eslint-config_dep"></a>config_dep     | <p align="center"> - </p> | none                                            |
 | <a id="configure_ts_eslint-dep"></a>dep                   | <p align="center"> - </p> | `Label("@rules_javascript//eslint:eslint_lib")` |
-| <a id="configure_ts_eslint-plugins"></a>plugins           | <p align="center"> - </p> | `[]`                                            |
 | <a id="configure_ts_eslint-node_options"></a>node_options | <p align="center"> - </p> | `[]`                                            |
+| <a id="configure_ts_eslint-options"></a>options           | <p align="center"> - </p> | `None`                                          |
 | <a id="configure_ts_eslint-visibility"></a>visibility     | <p align="center"> - </p> | `None`                                          |

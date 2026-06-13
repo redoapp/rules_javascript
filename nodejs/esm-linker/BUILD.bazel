@@ -1,14 +1,14 @@
 load("@bazel_util//generate:rules.bzl", "generate")
 load("//commonjs:rules.bzl", "cjs_root")
-load("//javascript:rules.bzl", "js_library")
-load("//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
+load("//javascript:rules.bzl", "js_file", "js_library")
+load("//rollup:rules.bzl", "rollup_bundle")
 load("//tools/javascript:rules.bzl", "js_gen")
 load("//typescript:rules.bzl", "ts_library")
 
 rollup_bundle(
     name = "bundle",
+    config = ":rollup_config",
     dep = ":lib",
-    rollup = ":rollup",
 )
 
 js_library(
@@ -47,16 +47,9 @@ ts_library(
     ],
 )
 
-configure_rollup(
-    name = "rollup",
-    config = "rollup.config.js",
-    config_dep = ":rollup_config",
-    dep = "@npm//rollup:lib",
-)
-
-js_library(
+js_file(
     name = "rollup_config",
-    srcs = ["rollup.config.js"],
+    src = "rollup.config.js",
     root = ":root",
     deps = [
         "@npm//@rollup/plugin-node-resolve:lib",

@@ -168,7 +168,7 @@ yarn_audit_test(<a href="#yarn_audit_test-name">name</a>, <a href="#yarn_audit_t
 <pre>
 load("@rules_javascript//npm:rules.bzl", "yarn_resolve")
 
-yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-output">output</a>, <a href="#yarn_resolve-path">path</a>, <a href="#yarn_resolve-refresh">refresh</a>)
+yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-output">output</a>, <a href="#yarn_resolve-patches">patches</a>, <a href="#yarn_resolve-path">path</a>, <a href="#yarn_resolve-refresh">refresh</a>)
 </pre>
 
 **ATTRIBUTES**
@@ -177,6 +177,7 @@ yarn_resolve(<a href="#yarn_resolve-name">name</a>, <a href="#yarn_resolve-outpu
 | :--------------------------------------- | :------------------------------------------------------------ | :------------------------------------------------------------------ | :-------- | :------ |
 | <a id="yarn_resolve-name"></a>name       | A unique name for this target.                                | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
 | <a id="yarn_resolve-output"></a>output   | Output path                                                   | String                                                              | required  |         |
+| <a id="yarn_resolve-patches"></a>patches | Output path to patches                                        | String                                                              | required  |         |
 | <a id="yarn_resolve-path"></a>path       | Package-relative path to package.json and yarn.lock directory | String                                                              | optional  | `""`    |
 | <a id="yarn_resolve-refresh"></a>refresh | Whether to refresh                                            | Boolean                                                             | optional  | `True`  |
 

@@ -22,6 +22,7 @@ bzl_library(
         "//javascript:bzl",
         "//nodejs:bzl",
         "//typescript:bzl",
+        "@bazel_lib//lib:paths",
         "@bazel_util//bazel:bzl",
         "@rules_proto//proto:defs",
     ],

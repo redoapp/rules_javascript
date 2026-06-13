@@ -28,6 +28,7 @@ pkg_tar(
         "//angular/doc",
         "//commonjs/doc",
         "//eslint/doc",
+        "//file/doc",
         "//javascript/doc",
         "//jest/doc",
         "//nodejs/doc",

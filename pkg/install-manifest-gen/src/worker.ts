@@ -9,6 +9,7 @@ import { ArgumentParser } from "argparse";
 import { createHash } from "node:crypto";
 import { open, readFile, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { pipeline } from "node:stream/promises";
 
 export class InstallManifestGenWorker {
   constructor() {
@@ -170,18 +171,7 @@ async function fileEntry(
 ): Promise<InstallEntry.File> {
   const hash = createHash("sha1");
   const input = await open(src);
-  try {
-    await new Promise<void>((resolve, reject) =>
-      input
-        .createReadStream()
-        .on("end", resolve)
-        .on("error", reject)
-        .pipe(hash),
-    );
-  } finally {
-    await input.close();
-  }
-
+  await pipeline(input.createReadStream(), hash);
   return {
     type: InstallEntry.FILE,
     digest: hash.digest(),

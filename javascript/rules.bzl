@@ -1,7 +1,143 @@
+load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_cjs_info")
+load("//file:file.bzl", "FileInfo")
 load("//util:path.bzl", "output", "output_name")
 load(":providers.bzl", "JsInfo", "create_js_info")
+
+def _js_dep_file_impl(ctx):
+    dep_cjs = ctx.attr.dep[CjsInfo]
+    dep_js = ctx.attr.dep[JsInfo]
+    label = ctx.label
+    path = ctx.attr.path
+
+    if path.startswith("/"):
+        path = path.removeprefix("/")
+    else:
+        if label.package:
+            path = label.package + "/" + path
+        path = (label.repo_name or "_main") + "/" + path
+
+    js_file = [file for file in dep_js.transitive_files.to_list() if path.startswith(to_rlocation_path(ctx, file))][0]
+
+    cjs_info = dep_cjs
+
+    default_info = DefaultInfo(files = depset([js_file]))
+
+    js_info = JsInfo(
+        transitive_files = dep_js.transitive_files,
+    )
+
+    file_info = FileInfo(
+        path = path.removeprefix(to_rlocation_path(ctx, js_file)).removeprefix("/"),
+    )
+
+    return [default_info, cjs_info, file_info, js_info]
+
+js_dep_file = rule(
+    attrs = {
+        "dep": attr.label(
+            mandatory = True,
+            providers = [CjsInfo, JsInfo],
+        ),
+        "path": attr.string(
+            mandatory = True,
+        ),
+    },
+    provides = [CjsInfo, JsInfo],
+    implementation = _js_dep_file_impl,
+)
+
+def _js_file_impl(ctx):
+    actions = ctx.actions
+    cjs_root = ctx.attr.root and ctx.attr.root[CjsInfo]
+    cjs_deps = [dep[CjsInfo] for dep in ctx.attr.deps if CjsInfo in dep]
+    cjs_globals = [dep[CjsInfo] for dep in ctx.attr.global_deps]
+    js_deps = [dep[JsInfo] for dep in ctx.attr.deps + ctx.attr.global_deps if str(dep.label) not in ctx.attr._system_lib[BuildSettingInfo].value]
+    default_deps = [target[DefaultInfo] for target in ctx.attr.deps + ctx.attr.data]
+    file = ctx.file.src
+    output_ = output(label = ctx.label, actions = actions)
+    prefix = ctx.attr.prefix
+    strip_prefix = ctx.attr.strip_prefix
+    label = ctx.label
+
+    path = output_name(
+        file = file,
+        label = label,
+        prefix = prefix,
+        strip_prefix = strip_prefix,
+    )
+    if file.path == "%s/%s" % (output_.path, path):
+        js = file
+    else:
+        js = actions.declare_file(path)
+        actions.symlink(
+            target_file = file,
+            output = js,
+        )
+
+    cjs_info = cjs_root and create_cjs_info(
+        cjs_root = cjs_root,
+        deps = cjs_deps,
+        globals = cjs_globals,
+        label = label,
+    )
+
+    file_info = FileInfo(
+        path = ctx.attr.path,
+    )
+
+    js_info = create_js_info(
+        files = [js],
+        cjs_root = cjs_root,
+        deps = js_deps,
+    )
+
+    runfiles = ctx.runfiles()
+    runfiles = runfiles.merge_all([default_info.default_runfiles for default_info in default_deps])
+    default_info = DefaultInfo(files = depset([js]), runfiles = runfiles)
+
+    return [default_info, file_info, js_info] + ([cjs_info] if cjs_info else [])
+
+js_file = rule(
+    attrs = {
+        "data": attr.label_list(
+            allow_files = True,
+            doc = "Runfile files. These are added to normal runfiles tree, not CommonJS packages.",
+        ),
+        "deps": attr.label_list(
+            doc = "Dependencies.",
+            providers = [JsInfo],
+        ),
+        "global_deps": attr.label_list(
+            doc = "Global dependencies.",
+            providers = [CjsInfo, JsInfo],
+        ),
+        "path": attr.string(
+            doc = "Path",
+        ),
+        "prefix": attr.string(
+            doc = "Prefix to add.",
+        ),
+        "root": attr.label(
+            providers = [CjsInfo],
+        ),
+        "src": attr.label(
+            allow_single_file = True,
+            doc = "JavaScript files and data.",
+        ),
+        "strip_prefix": attr.string(
+            doc = "Package-relative prefix to remove.",
+        ),
+        "_system_lib": attr.label(
+            default = "//javascript:system_lib",
+            providers = [BuildSettingInfo],
+        ),
+    },
+    doc = "JavaScript file",
+    implementation = _js_file_impl,
+    provides = [FileInfo, JsInfo],
+)
 
 def _js_library_impl(ctx):
     actions = ctx.actions

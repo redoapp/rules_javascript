@@ -1,0 +1,76 @@
+load("@bazel_util//generate:rules.bzl", "generate")
+load("//commonjs:rules.bzl", "cjs_root")
+load("//javascript:rules.bzl", "js_file", "js_library")
+load("//nodejs:rules.bzl", "nodejs_simple_binary")
+load("//rollup:rules.bzl", "rollup_bundle")
+load("//tools/javascript:rules.bzl", "js_gen")
+load("//typescript:rules.bzl", "ts_library")
+
+rollup_bundle(
+    name = "bundle",
+    config = ":rollup_config",
+    dep = ":lib",
+)
+
+generate(
+    name = "gen",
+    srcs = glob(["dist/**/*.js"]),
+    data = [":gen_bundle"],
+    data_prefix = "dist",
+    data_strip_prefix = "bundle",
+    visibility = ["//:__subpackages__"],
+)
+
+js_gen(
+    name = "gen_bundle",
+    src = ":bundle",
+)
+
+cjs_root(
+    name = "root",
+    package_name = "@rules-javascript/pnp-compiler",
+    descriptors = ["package.json"],
+)
+
+js_file(
+    name = "rollup_config",
+    src = "rollup.config.js",
+    root = ":root",
+    deps = [
+        "@npm//@rollup/plugin-commonjs:lib",
+        "@npm//@rollup/plugin-node-resolve:lib",
+    ],
+)
+
+js_library(
+    name = "tsconfig",
+    srcs = ["tsconfig.json"],
+    root = ":root",
+    deps = ["//tools/typescript:tsconfig"],
+)
+
+ts_library(
+    name = "lib",
+    srcs = glob(["src/**/*.ts"]),
+    compiler = "//tools/typescript:tsc",
+    config = "tsconfig.json",
+    config_dep = ":tsconfig",
+    declaration_prefix = "lib",
+    js_prefix = "lib",
+    root = ":root",
+    strip_prefix = "src",
+    deps = [
+        "//commonjs/package:lib",
+        "//nodejs/worker:lib",
+        "@npm//@types/node:lib",
+        "@npm//@yarnpkg/fslib:lib",
+        "@npm//@yarnpkg/pnp:lib",
+    ],
+)
+
+nodejs_simple_binary(
+    name = "bin",
+    src = "dist/bundle.js",
+    node = "//tools/nodejs",
+    visibility = ["//visibility:public"],
+)

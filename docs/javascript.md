@@ -15,7 +15,9 @@ resolution, see [Module Resolution](module.md).
   - [JsInfo](#jsinfo)
   - [create_js_info](#create_js_info)
 - [//javascript:rules.bzl](#javascriptrulesbzl)
+  - [js_dep_file](#js_dep_file)
   - [js_export](#js_export)
+  - [js_file](#js_file)
   - [js_library](#js_library)
   - [js_module_import](#js_module_import)
 
@@ -129,6 +131,24 @@ create_js_info(<a href="#create_js_info-cjs_root">cjs_root</a>, <a href="#create
 
 <!-- Generated with Stardoc: http://skydoc.bazel.build -->
 
+<a id="js_dep_file"></a>
+
+## js_dep_file
+
+<pre>
+load("@rules_javascript//javascript:rules.bzl", "js_dep_file")
+
+js_dep_file(<a href="#js_dep_file-name">name</a>, <a href="#js_dep_file-dep">dep</a>, <a href="#js_dep_file-path">path</a>)
+</pre>
+
+**ATTRIBUTES**
+
+| Name                              | Description                    | Type                                                                | Mandatory | Default |
+| :-------------------------------- | :----------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="js_dep_file-name"></a>name | A unique name for this target. | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="js_dep_file-dep"></a>dep   | -                              | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| <a id="js_dep_file-path"></a>path | -                              | String                                                              | required  |         |
+
 <a id="js_export"></a>
 
 ## js_export
@@ -151,6 +171,32 @@ Add dependencies, or use alias.
 | <a id="js_export-extra_deps"></a>extra_deps     | Extra dependencies to add.                | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
 | <a id="js_export-global_deps"></a>global_deps   | Global dependencies to add.               | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
 | <a id="js_export-package_name"></a>package_name | Dependency name. Defaults to root's name. | String                                                              | optional  | `""`    |
+
+<a id="js_file"></a>
+
+## js_file
+
+<pre>
+load("@rules_javascript//javascript:rules.bzl", "js_file")
+
+js_file(<a href="#js_file-name">name</a>, <a href="#js_file-deps">deps</a>, <a href="#js_file-src">src</a>, <a href="#js_file-data">data</a>, <a href="#js_file-global_deps">global_deps</a>, <a href="#js_file-path">path</a>, <a href="#js_file-prefix">prefix</a>, <a href="#js_file-root">root</a>, <a href="#js_file-strip_prefix">strip_prefix</a>)
+</pre>
+
+JavaScript file
+
+**ATTRIBUTES**
+
+| Name                                          | Description                                                                    | Type                                                                | Mandatory | Default |
+| :-------------------------------------------- | :----------------------------------------------------------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="js_file-name"></a>name                 | A unique name for this target.                                                 | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="js_file-deps"></a>deps                 | Dependencies.                                                                  | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
+| <a id="js_file-src"></a>src                   | JavaScript files and data.                                                     | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `None`  |
+| <a id="js_file-data"></a>data                 | Runfile files. These are added to normal runfiles tree, not CommonJS packages. | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
+| <a id="js_file-global_deps"></a>global_deps   | Global dependencies.                                                           | <a href="https://bazel.build/concepts/labels">List of labels</a>    | optional  | `[]`    |
+| <a id="js_file-path"></a>path                 | Path                                                                           | String                                                              | optional  | `""`    |
+| <a id="js_file-prefix"></a>prefix             | Prefix to add.                                                                 | String                                                              | optional  | `""`    |
+| <a id="js_file-root"></a>root                 | -                                                                              | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `None`  |
+| <a id="js_file-strip_prefix"></a>strip_prefix | Package-relative prefix to remove.                                             | String                                                              | optional  | `""`    |
 
 <a id="js_library"></a>
 

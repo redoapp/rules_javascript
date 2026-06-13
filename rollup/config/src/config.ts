@@ -1,4 +1,4 @@
-import * as path from "node:path";
+import { resolve } from "node:path";
 import type { OutputOptions, RollupOptions } from "rollup";
 
 const compilationMode = process.env.COMPILATION_MODE!;
@@ -8,7 +8,7 @@ const inputRoot = process.env.ROLLUP_INPUT_ROOT!;
 const outputRoot = process.env.ROLLUP_OUTPUT_ROOT!;
 
 export async function configure(config: RollupOptions): Promise<RollupOptions> {
-  config = { ...config };
+  config = { ...config, preserveSymlinks: true };
 
   if (Array.isArray(config.output)) {
     config.output = config.output.map(output);
@@ -30,13 +30,13 @@ export async function configure(config: RollupOptions): Promise<RollupOptions> {
 }
 
 function input(input: string) {
-  return path.resolve(inputRoot, input);
+  return resolve(inputRoot, input);
 }
 
 function output(output: OutputOptions) {
   output = { ...output };
   if (output.file !== undefined) {
-    output.file = path.resolve(outputRoot!, output.file);
+    output.file = resolve(outputRoot!, output.file);
   }
   if (output.compact === undefined) {
     output.compact = compilationMode === "opt";

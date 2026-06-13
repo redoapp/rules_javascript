@@ -1,0 +1,7 @@
+load("//rollup:rules.bzl", "rollup")
+
+rollup(
+    name = "rollup",
+    dep = "@npm//rollup:lib",
+    visibility = ["//:__subpackages__"],
+)

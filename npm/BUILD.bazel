@@ -24,6 +24,7 @@ bzl_library(
         "//javascript:bzl",
         "//third-party:repo_bzl",
         "//util:bzl",
+        "@bazel_lib//lib:paths",
         "@bazel_skylib//lib:shell",
         "@rules_pkg//pkg:bzl_srcs",
     ],

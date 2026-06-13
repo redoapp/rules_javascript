@@ -1,0 +1,10 @@
+load("//tools/doc:rules.bzl", "doc")
+
+doc(
+    "doc",
+    "//file:bzl",
+    [
+        "//file:file.bzl",
+    ],
+    visibility = ["//:__subpackages__"],
+)

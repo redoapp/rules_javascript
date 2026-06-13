@@ -11,11 +11,20 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//commonjs:bzl",
+        "//file:bzl",
         "//javascript:bzl",
         "//nodejs:bzl",
+        "//pnp:bzl",
+        "@bazel_lib//lib:paths",
         "@bazel_skylib//rules:common_settings",
         "@rules_proto//proto:defs",
     ],
+)
+
+alias(
+    name = "rollup",
+    actual = "//rollup/default:rollup",
+    visibility = ["//visibility:public"],
 )
 
 test_suite(

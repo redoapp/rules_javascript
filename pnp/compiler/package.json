@@ -1,0 +1,16 @@
+{
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/*.js"
+  },
+  "typesVersions": {
+    "*": {
+      "*": [
+        "src/*"
+      ],
+      "src/*": [
+        "src/*"
+      ]
+    }
+  }
+}

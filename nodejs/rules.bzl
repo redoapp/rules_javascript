@@ -1,13 +1,14 @@
-load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
+load("@bazel_lib//lib:paths.bzl", "relative_file", "to_rlocation_path")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//lib:shell.bzl", "shell")
 load("@bazel_util//file:rules.bzl", "untar")
 load("@rules_pkg//pkg:providers.bzl", "PackageFilegroupInfo", "PackageFilesInfo", "PackageSymlinkInfo")
 load("@rules_pkg//pkg:tar.bzl", "pkg_tar")
 load("//bin:bin.bzl", "BinInfo")
-load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "create_links", "create_package", "gen_manifest", "package_path")
+load("//commonjs:providers.bzl", "CjsInfo", "CjsPath", "create_globals", "create_links", "create_package", "package_path")
 load("//javascript:providers.bzl", "JsInfo")
 load("//pkg:rules.bzl", "pkg_install")
+load("//pnp:providers.bzl", "pnp_gen")
 load("//util:path.bzl", "nearest", "relativize")
 load(":nodejs.bzl", "NodejsInfo", "NodejsRuntimeInfo", "nodejs_runtime_rule")
 
@@ -180,19 +181,15 @@ nodejs_simple_binary = rule(
 def _nodejs_binary_impl(ctx):
     actions = ctx.actions
     env = ctx.attr.env
-    manifest = ctx.attr._manifest[DefaultInfo]
+    compiler = ctx.attr._compiler[DefaultInfo]
     js_dep = ctx.attr.dep[0][JsInfo]
     cjs_dep = ctx.attr.dep[0][CjsInfo] if CjsInfo in ctx.attr.dep[0] else None
     main = ctx.attr.main
-    module_linker_cjs = ctx.attr._module_linker[CjsInfo]
-    module_linker_js = ctx.attr._module_linker[JsInfo]
     preload_cjs = [target[CjsInfo] for target in ctx.attr.preload]
     preload_js = [target[JsInfo] for target in ctx.attr.preload]
     name = ctx.attr.name
     node = ctx.attr.node[NodejsInfo]
     node_options = ctx.attr.node_options + node.options
-    esm_linker_cjs = ctx.attr._esm_linker[CjsInfo]
-    esm_linker_js = ctx.attr._esm_linker[JsInfo]
     runner = ctx.file._runner
     runtime_cjs = ctx.attr._runtime[CjsInfo]
     runtime_js = ctx.attr._runtime[JsInfo]
@@ -215,18 +212,29 @@ def _nodejs_binary_impl(ctx):
             [cjs_info.transitive_links for cjs_info in preload_cjs],
     )
 
-    def package_path(package):
-        return to_rlocation_path(struct(workspace_name = workspace_name), package)
+    if cjs_dep:
+        pnp_cjs = actions.declare_file("%s.pnp.cjs" % name)
+        pnp_loader = actions.declare_file("%s.pnp.loader.mjs" % name)
 
-    package_manifest = actions.declare_file("%s.packages.json" % name)
-    gen_manifest(
-        actions = actions,
-        manifest_bin = manifest,
-        manifest = package_manifest,
-        packages = transitive_packages,
-        deps = transitive_links,
-        package_path = package_path,
-    )
+        def package_path(package):
+            # relative_file assumes file, and so always appends the basename.
+            # Use a fake file for package, and then undo it.
+            return paths.dirname(relative_file(package.short_path + "/_", pnp_cjs.short_path))
+
+        pnp_gen(
+            actions = actions,
+            manifest_bin = compiler,
+            cjs = pnp_cjs,
+            loader = pnp_loader,
+            packages = transitive_packages,
+            deps = transitive_links,
+            package_path = package_path,
+            roots = ([cjs_dep.package] if cjs_dep else []) +
+                    [cjs_info.package for cjs_info in preload_cjs],
+        )
+    else:
+        pnp_cjs = None
+        pnp_loader = None
 
     main_module = "%s/%s" % (to_rlocation_path(ctx, cjs_dep.package), main) if cjs_dep else main
 
@@ -236,25 +244,26 @@ def _nodejs_binary_impl(ctx):
         output = bin,
         substitutions = {
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
-            "%{esm_loader}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, esm_linker_cjs.package)),
             "%{main_module}": shell.quote(main_module),
             "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(to_rlocation_path(ctx, node.bin)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
             ),
-            "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
-            "%{module_linker}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, module_linker_cjs.package)),
+            "%{pnp_cjs}": shell.quote(to_rlocation_path(ctx, pnp_cjs)) if pnp_cjs else "",
+            "%{pnp_loader}": shell.quote(to_rlocation_path(ctx, pnp_loader)) if pnp_loader else "",
             "%{runtime}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, runtime_cjs.package)),
         },
         is_executable = True,
     )
 
     runfiles = ctx.runfiles(
-        files = [package_manifest] + ([] if type(node.bin) == "string" else [node.bin]) + ctx.files.data,
+        files = ([pnp_cjs] if pnp_cjs else []) +
+                ([pnp_loader] if pnp_loader else []) +
+                ([] if type(node.bin) == "string" else [node.bin]) + ctx.files.data,
         transitive_files = depset(
             transitive = [js_dep.transitive_files] +
-                         [esm_linker_js.transitive_files, module_linker_js.transitive_files, runtime_js.transitive_files] +
+                         [runtime_js.transitive_files] +
                          [js_dep.transitive_files for js_dep in preload_js],
         ),
     )
@@ -311,18 +320,10 @@ nodejs_binary = rule(
         "_allowlist_function_transition": attr.label(
             default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
         ),
-        "_esm_linker": attr.label(
-            default = "//nodejs/esm-linker:dist_lib",
-            providers = [CjsInfo, JsInfo],
-        ),
-        "_module_linker": attr.label(
-            default = "//nodejs/module-linker:dist_lib",
-            providers = [CjsInfo, JsInfo],
-        ),
-        "_manifest": attr.label(
+        "_compiler": attr.label(
             cfg = "exec",
             executable = True,
-            default = "//commonjs/manifest:bin",
+            default = "//pnp/compiler:bin",
         ),
         "_runner": attr.label(
             allow_single_file = True,
@@ -500,19 +501,15 @@ nodejs_modules_package = rule(
 def _nodejs_repl_impl(ctx):
     actions = ctx.actions
     env = ctx.attr.env
-    manifest = ctx.attr._manifest[DefaultInfo]
+    compiler = ctx.attr._compiler[DefaultInfo]
     js_deps = [dep[JsInfo] for dep in ctx.attr.deps]
     cjs_deps = [dep[CjsInfo] for dep in ctx.attr.deps if CjsInfo in dep]
     label = ctx.label
-    module_linker_cjs = ctx.attr._module_linker[CjsInfo]
-    module_linker_js = ctx.attr._module_linker[JsInfo]
     preload_cjs = [target[CjsInfo] for target in ctx.attr.preload]
     preload_js = [target[JsInfo] for target in ctx.attr.preload]
     name = ctx.attr.name
     node = ctx.attr.node[NodejsInfo]
     node_options = ctx.attr.node_options + node.options
-    esm_linker_cjs = ctx.attr._esm_linker[CjsInfo]
-    esm_linker_js = ctx.attr._esm_linker[JsInfo]
     runner = ctx.file._runner
     runtime_cjs = ctx.attr._runtime[CjsInfo]
     runtime_js = ctx.attr._runtime[JsInfo]
@@ -525,7 +522,10 @@ def _nodejs_repl_impl(ctx):
     package = create_package(
         name = "_repl",
         path = "",
-        short_path = "../_repl",
+        # The REPL's cwd is the main repo's runfiles root (e.g. RUNFILES_DIR/_main),
+        # one level above the .pnp.cjs package dir. Locate _repl there so the
+        # `[eval]`/REPL issuer resolves to it. (short_path "" => that root.)
+        short_path = "",
         label = str(label),
     )
     links = create_links(package = package, label = str(label), cjs_infos = cjs_deps)
@@ -542,19 +542,23 @@ def _nodejs_repl_impl(ctx):
             [cjs_info.transitive_links for cjs_info in cjs_deps + preload_cjs],
     )
 
-    rlocation_ctx = struct(workspace_name = ctx.workspace_name)
+    pnp_cjs = actions.declare_file("%s.pnp.cjs" % name)
+    pnp_loader = actions.declare_file("%s.pnp.loader.mjs" % name)
 
     def package_path(package):
-        return to_rlocation_path(rlocation_ctx, package)
+        # relative_file assumes file, and so always appends the basename.
+        # Use a fake file for package, and then undo it.
+        return paths.dirname(relative_file(package.short_path + "/_", pnp_cjs.short_path))
 
-    package_manifest = actions.declare_file("%s.packages.json" % name)
-    gen_manifest(
+    pnp_gen(
         actions = actions,
-        manifest_bin = manifest,
-        manifest = package_manifest,
+        manifest_bin = compiler,
+        cjs = pnp_cjs,
+        loader = pnp_loader,
         packages = transitive_packages,
         deps = transitive_links,
         package_path = package_path,
+        roots = [package] + [cjs_info.package for cjs_info in preload_cjs],
     )
 
     bin = actions.declare_file(name)
@@ -563,23 +567,22 @@ def _nodejs_repl_impl(ctx):
         output = bin,
         substitutions = {
             "%{env}": " ".join(["%s=%s" % (name, shell.quote(value)) for name, value in env.items()]),
-            "%{esm_loader}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, esm_linker_cjs.package)),
             "%{node}": shell.quote(node.bin) if type(node.bin) == "string" else '"$RUNFILES_DIR"/%s' % shell.quote(to_rlocation_path(ctx, node.bin)),
             "%{node_options}": " ".join(
                 [shell.quote(option) for option in node_options] +
                 [option for module in preload_modules for option in ["-r", '"$(abspath "$RUNFILES_DIR"/%s)"' % module]],
             ),
-            "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
-            "%{module_linker}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, module_linker_cjs.package)),
+            "%{pnp_cjs}": shell.quote(to_rlocation_path(ctx, pnp_cjs)),
+            "%{pnp_loader}": shell.quote(to_rlocation_path(ctx, pnp_loader)),
             "%{runtime}": shell.quote("%s/dist/bundle.js" % to_rlocation_path(ctx, runtime_cjs.package)),
         },
         is_executable = True,
     )
 
     runfiles = ctx.runfiles(
-        files = [package_manifest] + ([] if type(node.bin) == "string" else [node.bin]) + ctx.files.data,
+        files = [pnp_cjs, pnp_loader] + ([] if type(node.bin) == "string" else [node.bin]) + ctx.files.data,
         transitive_files = depset(
-            transitive = [esm_linker_js.transitive_files, module_linker_js.transitive_files, runtime_js.transitive_files] +
+            transitive = [runtime_js.transitive_files] +
                          [js_dep.transitive_files for js_dep in js_deps + preload_js],
         ),
     )
@@ -623,18 +626,10 @@ nodejs_repl = rule(
         "_allowlist_function_transition": attr.label(
             default = "@bazel_tools//tools/allowlists/function_transition_allowlist",
         ),
-        "_esm_linker": attr.label(
-            default = "//nodejs/esm-linker:dist_lib",
-            providers = [CjsInfo, JsInfo],
-        ),
-        "_module_linker": attr.label(
-            default = "//nodejs/module-linker:dist_lib",
-            providers = [CjsInfo, JsInfo],
-        ),
-        "_manifest": attr.label(
+        "_compiler": attr.label(
             cfg = "exec",
             executable = True,
-            default = "//commonjs/manifest:bin",
+            default = "//pnp/compiler:bin",
         ),
         "_runner": attr.label(
             allow_single_file = True,
@@ -775,11 +770,6 @@ nodejs_binary_package = rule(
         "_package_runner": attr.label(
             allow_single_file = True,
             default = "package-runner.sh.tpl",
-        ),
-        "_manifest": attr.label(
-            cfg = "exec",
-            executable = True,
-            default = "//commonjs/manifest:bin",
         ),
     },
     doc = "Create executable tar",

@@ -1,12 +1,12 @@
 load("//commonjs:rules.bzl", "cjs_root")
-load("//javascript:rules.bzl", "js_library")
-load("//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
+load("//javascript:rules.bzl", "js_dep_file", "js_library")
+load("//rollup:rules.bzl", "rollup_bundle")
 load("//typescript:rules.bzl", "ts_library")
 
 rollup_bundle(
     name = "bundle",
+    config = ":rollup_config",
     dep = ":lib",
-    rollup = ":rollup",
     visibility = ["//visibility:public"],
 )
 
@@ -30,11 +30,10 @@ ts_library(
     ],
 )
 
-configure_rollup(
-    name = "rollup",
-    config = "rollup/rollup.config.js",
-    config_dep = ":rollup_config",
-    dep = "@npm//rollup:lib",
+js_dep_file(
+    name = "rollup_config",
+    dep = ":rollup_config_lib",
+    path = "rollup/rollup.config.js",
 )
 
 cjs_root(
@@ -45,7 +44,7 @@ cjs_root(
 )
 
 ts_library(
-    name = "rollup_config",
+    name = "rollup_config_lib",
     srcs = glob(["rollup/**/*.ts"]),
     compile_deps = [
         "@npm//rollup:lib",

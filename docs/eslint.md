@@ -20,7 +20,7 @@
 <pre>
 load("@rules_javascript//eslint:rules.bzl", "eslint")
 
-eslint(<a href="#eslint-name">name</a>, <a href="#eslint-bin">bin</a>, <a href="#eslint-config">config</a>, <a href="#eslint-config_dep">config_dep</a>)
+eslint(<a href="#eslint-name">name</a>, <a href="#eslint-bin">bin</a>, <a href="#eslint-config">config</a>, <a href="#eslint-config_dep">config_dep</a>, <a href="#eslint-options">options</a>)
 </pre>
 
 **ATTRIBUTES**
@@ -31,6 +31,7 @@ eslint(<a href="#eslint-name">name</a>, <a href="#eslint-bin">bin</a>, <a href="
 | <a id="eslint-bin"></a>bin               | eslint                         | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
 | <a id="eslint-config"></a>config         | -                              | String                                                              | required  |         |
 | <a id="eslint-config_dep"></a>config_dep | Configuration file             | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| <a id="eslint-options"></a>options       | ESLint options                 | List of strings                                                     | optional  | `[]`    |
 
 <a id="configure_eslint"></a>
 
@@ -39,7 +40,7 @@ eslint(<a href="#eslint-name">name</a>, <a href="#eslint-bin">bin</a>, <a href="
 <pre>
 load("@rules_javascript//eslint:rules.bzl", "configure_eslint")
 
-configure_eslint(<a href="#configure_eslint-name">name</a>, <a href="#configure_eslint-config">config</a>, <a href="#configure_eslint-config_dep">config_dep</a>, <a href="#configure_eslint-dep">dep</a>, <a href="#configure_eslint-plugins">plugins</a>, <a href="#configure_eslint-visibility">visibility</a>)
+configure_eslint(<a href="#configure_eslint-name">name</a>, <a href="#configure_eslint-config">config</a>, <a href="#configure_eslint-config_dep">config_dep</a>, <a href="#configure_eslint-dep">dep</a>, <a href="#configure_eslint-options">options</a>, <a href="#configure_eslint-visibility">visibility</a>)
 </pre>
 
 **PARAMETERS**
@@ -50,5 +51,5 @@ configure_eslint(<a href="#configure_eslint-name">name</a>, <a href="#configure_
 | <a id="configure_eslint-config"></a>config         | <p align="center"> - </p> | none                                     |
 | <a id="configure_eslint-config_dep"></a>config_dep | <p align="center"> - </p> | none                                     |
 | <a id="configure_eslint-dep"></a>dep               | <p align="center"> - </p> | `"@rules_javascript//eslint:eslint_lib"` |
-| <a id="configure_eslint-plugins"></a>plugins       | <p align="center"> - </p> | `[]`                                     |
+| <a id="configure_eslint-options"></a>options       | <p align="center"> - </p> | `None`                                   |
 | <a id="configure_eslint-visibility"></a>visibility | <p align="center"> - </p> | `None`                                   |

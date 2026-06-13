@@ -4,7 +4,6 @@ doc(
     "doc",
     "//rollup:bzl",
     [
-        "//rollup:providers.bzl",
         "//rollup:rules.bzl",
     ],
     header = "doc.md",

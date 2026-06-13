@@ -12,7 +12,9 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//commonjs:bzl",
+        "//file:bzl",
         "//util:bzl",
+        "@bazel_lib//lib:paths",
         "@bazel_skylib//rules:common_settings",
     ],
 )

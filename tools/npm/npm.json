@@ -1959,7 +1959,7 @@
       "name": "@rollup/plugin-commonjs",
       "url": "https://registry.npmjs.org/@rollup/plugin-commonjs/-/plugin-commonjs-29.0.0.tgz"
     },
-    "@rollup/plugin-node-resolve@15.3.1-dc3fc578": {
+    "@rollup/plugin-node-resolve@16.0.3-dc3fc578": {
       "deps": [
         {
           "id": "@rollup/pluginutils@5.3.0-1b456630"
@@ -1980,9 +1980,9 @@
           "id": "rollup@2.79.2"
         }
       ],
-      "integrity": "sha512-tgg6b91pAybXHJQMAAwW9VuWBO6Thi+q7BCNARLwSqlmsHz0XYURtGvh/AuwSADXSI4h/2uHbs7s4FzlZDGSGA==",
+      "integrity": "sha512-lUYM3UBGuM93CnMPG1YocWu7X802BrNF3jW2zny5gQyLQgRFJhV1Sq0Zi74+dh/6NBx1DxFC4b4GXg9wUCG5Qg==",
       "name": "@rollup/plugin-node-resolve",
-      "url": "https://registry.npmjs.org/@rollup/plugin-node-resolve/-/plugin-node-resolve-15.3.1.tgz"
+      "url": "https://registry.npmjs.org/@rollup/plugin-node-resolve/-/plugin-node-resolve-16.0.3.tgz"
     },
     "@rollup/pluginutils@5.3.0-1b456630": {
       "deps": [
@@ -3894,6 +3894,16 @@
       "integrity": "sha512-Yyguw5RM+xI1Bv0RFbs1ZF5HwU+9/He4YT7yeT722yAlLfkz9IzZHO6a5yStEshxiliPn9Fdj4H54a785xpK/g==",
       "name": "@yarnpkg/fslib",
       "url": "https://registry.npmjs.org/@yarnpkg/fslib/-/fslib-3.1.4.tgz"
+    },
+    "@yarnpkg/fslib@3.1.5": {
+      "deps": [
+        {
+          "id": "tslib@2.8.1"
+        }
+      ],
+      "integrity": "sha512-hXaPIWl5GZA+rXcx+yaKWUuePJruZuD+3A5A2X6paEBfFsyCD7oEp88lSMj1ym1ehBWUmhNH/YGOp+SrbmSBPg==",
+      "name": "@yarnpkg/fslib",
+      "url": "https://registry.npmjs.org/@yarnpkg/fslib/-/fslib-3.1.5.tgz"
     },
     "@yarnpkg/libui@3.0.2": {
       "deps": [
@@ -8570,6 +8580,19 @@
       "integrity": "sha512-PsRujup+6DpgXexQe0Wh4h+syQhdruhounJjqbBMXV3meOzqr7k0Nj9+jwQ4t16EZJrhVxH7vRvjZ+VitH5aWQ==",
       "name": "@yarnpkg/pnp",
       "url": "https://registry.npmjs.org/@yarnpkg/pnp/-/pnp-4.1.3.tgz"
+    },
+    "@yarnpkg/pnp@4.1.6": {
+      "deps": [
+        {
+          "id": "@types/node@18.19.130"
+        },
+        {
+          "id": "@yarnpkg/fslib@3.1.5"
+        }
+      ],
+      "integrity": "sha512-Q4vEB6OxJbY+XbJvX+6DL6qEx5OwJ8KPf2ByeHuow7lfgLQkvzjoG/bC235dpUWko/MjdLMy9frIWccMSlyIOw==",
+      "name": "@yarnpkg/pnp",
+      "url": "https://registry.npmjs.org/@yarnpkg/pnp/-/pnp-4.1.6.tgz"
     },
     "@yarnpkg/shell@4.1.3": {
       "bins": {
@@ -18923,7 +18946,7 @@
       "name": "@rollup/plugin-commonjs"
     },
     {
-      "id": "@rollup/plugin-node-resolve@15.3.1-dc3fc578",
+      "id": "@rollup/plugin-node-resolve@16.0.3-dc3fc578",
       "name": "@rollup/plugin-node-resolve"
     },
     {
@@ -18969,6 +18992,10 @@
     {
       "id": "@yarnpkg/plugin-patch@4.0.3-dc3fc578",
       "name": "@yarnpkg/plugin-patch"
+    },
+    {
+      "id": "@yarnpkg/pnp@4.1.6",
+      "name": "@yarnpkg/pnp"
     },
     {
       "id": "argparse@2.0.1",

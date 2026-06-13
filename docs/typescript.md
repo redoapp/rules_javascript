@@ -38,22 +38,24 @@ TypeScript helpers
 <pre>
 load("@rules_javascript//typescript:providers.bzl", "TsCompileInfo")
 
-TsCompileInfo(<a href="#TsCompileInfo-compiler">compiler</a>, <a href="#TsCompileInfo-config_path">config_path</a>, <a href="#TsCompileInfo-configs">configs</a>, <a href="#TsCompileInfo-declarations">declarations</a>, <a href="#TsCompileInfo-manifest">manifest</a>, <a href="#TsCompileInfo-srcs">srcs</a>, <a href="#TsCompileInfo-runtime_js">runtime_js</a>)
+TsCompileInfo(<a href="#TsCompileInfo-compiler">compiler</a>, <a href="#TsCompileInfo-config_path">config_path</a>, <a href="#TsCompileInfo-configs">configs</a>, <a href="#TsCompileInfo-declarations">declarations</a>, <a href="#TsCompileInfo-lint_config_path">lint_config_path</a>, <a href="#TsCompileInfo-manifest">manifest</a>, <a href="#TsCompileInfo-srcs">srcs</a>,
+              <a href="#TsCompileInfo-runtime_js">runtime_js</a>)
 </pre>
 
 TypeScript compilation info
 
 **FIELDS**
 
-| Name                                                | Description                     |
-| :-------------------------------------------------- | :------------------------------ |
-| <a id="TsCompileInfo-compiler"></a>compiler         | Compiler                        |
-| <a id="TsCompileInfo-config_path"></a>config_path   | Configuration path              |
-| <a id="TsCompileInfo-configs"></a>configs           | Depset of config files          |
-| <a id="TsCompileInfo-declarations"></a>declarations | Depset of upstream declarations |
-| <a id="TsCompileInfo-manifest"></a>manifest         | Manifest file                   |
-| <a id="TsCompileInfo-srcs"></a>srcs                 | Depset of sources               |
-| <a id="TsCompileInfo-runtime_js"></a>runtime_js     | Runtime files                   |
+| Name                                                        | Description                                                                                                                                                                                                                                                                              |
+| :---------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <a id="TsCompileInfo-compiler"></a>compiler                 | Compiler                                                                                                                                                                                                                                                                                 |
+| <a id="TsCompileInfo-config_path"></a>config_path           | Configuration path                                                                                                                                                                                                                                                                       |
+| <a id="TsCompileInfo-configs"></a>configs                   | Depset of config files                                                                                                                                                                                                                                                                   |
+| <a id="TsCompileInfo-declarations"></a>declarations         | Depset of upstream declarations                                                                                                                                                                                                                                                          |
+| <a id="TsCompileInfo-lint_config_path"></a>lint_config_path | Lint-only configuration path. Set in native (--package-manifest) mode to a tsconfig variant without preserveSymlinks=true so typescript-eslint, running inside the fs-linker per-package VFS, does not OOM walking nested-symlink resolver chains. Falls back to config_path when unset. |
+| <a id="TsCompileInfo-manifest"></a>manifest                 | Manifest file                                                                                                                                                                                                                                                                            |
+| <a id="TsCompileInfo-srcs"></a>srcs                         | Depset of sources                                                                                                                                                                                                                                                                        |
+| <a id="TsCompileInfo-runtime_js"></a>runtime_js             | Runtime files                                                                                                                                                                                                                                                                            |
 
 <a id="TsCompilerInfo"></a>
 
@@ -62,19 +64,20 @@ TypeScript compilation info
 <pre>
 load("@rules_javascript//typescript:providers.bzl", "TsCompilerInfo")
 
-TsCompilerInfo(<a href="#TsCompilerInfo-bin">bin</a>, <a href="#TsCompilerInfo-transpile_bin">transpile_bin</a>, <a href="#TsCompilerInfo-runtime_cjs">runtime_cjs</a>, <a href="#TsCompilerInfo-runtime_js">runtime_js</a>)
+TsCompilerInfo(<a href="#TsCompilerInfo-bin">bin</a>, <a href="#TsCompilerInfo-native">native</a>, <a href="#TsCompilerInfo-transpile_bin">transpile_bin</a>, <a href="#TsCompilerInfo-runtime_cjs">runtime_cjs</a>, <a href="#TsCompilerInfo-runtime_js">runtime_js</a>)
 </pre>
 
 TypeScript compiler
 
 **FIELDS**
 
-| Name                                                   | Description              |
-| :----------------------------------------------------- | :----------------------- |
-| <a id="TsCompilerInfo-bin"></a>bin                     | Compile executable.      |
-| <a id="TsCompilerInfo-transpile_bin"></a>transpile_bin | JS transpile executable. |
-| <a id="TsCompilerInfo-runtime_cjs"></a>runtime_cjs     | List of runtime CjsInfo. |
-| <a id="TsCompilerInfo-runtime_js"></a>runtime_js       | Runtime files.           |
+| Name                                                   | Description                                                                                                                                                                                                                                              |
+| :----------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| <a id="TsCompilerInfo-bin"></a>bin                     | Compile executable.                                                                                                                                                                                                                                      |
+| <a id="TsCompilerInfo-native"></a>native               | True if bin is a native binary (e.g. tsgo). When true, the compile action wraps bin in a shell script that first stages node_modules via node+stager, then execs bin. When false, bin is a node-based tsc that takes the stager via NODE_OPTIONS_APPEND. |
+| <a id="TsCompilerInfo-transpile_bin"></a>transpile_bin | JS transpile executable.                                                                                                                                                                                                                                 |
+| <a id="TsCompilerInfo-runtime_cjs"></a>runtime_cjs     | List of runtime CjsInfo.                                                                                                                                                                                                                                 |
+| <a id="TsCompilerInfo-runtime_js"></a>runtime_js       | Runtime files.                                                                                                                                                                                                                                           |
 
 <a id="TsInfo"></a>
 
@@ -83,16 +86,18 @@ TypeScript compiler
 <pre>
 load("@rules_javascript//typescript:providers.bzl", "TsInfo")
 
-TsInfo(<a href="#TsInfo-transitive_files">transitive_files</a>)
+TsInfo(<a href="#TsInfo-modules_file">modules_file</a>, <a href="#TsInfo-transitive_files">transitive_files</a>, <a href="#TsInfo-type_modules_file">type_modules_file</a>)
 </pre>
 
 TypeScript
 
 **FIELDS**
 
-| Name                                                 | Description                                 |
-| :--------------------------------------------------- | :------------------------------------------ |
-| <a id="TsInfo-transitive_files"></a>transitive_files | Depset of files (descriptors, declarations) |
+| Name                                                   | Description                                 |
+| :----------------------------------------------------- | :------------------------------------------ |
+| <a id="TsInfo-modules_file"></a>modules_file           | File with list of required modules          |
+| <a id="TsInfo-transitive_files"></a>transitive_files   | Depset of files (descriptors, declarations) |
+| <a id="TsInfo-type_modules_file"></a>type_modules_file | File with list of required type modules     |
 
 <a id="create_ts_info"></a>
 
@@ -257,17 +262,18 @@ Use TS as JS.
 <pre>
 load("@rules_javascript//typescript:rules.bzl", "ts_compiler")
 
-ts_compiler(<a href="#ts_compiler-name">name</a>, <a href="#ts_compiler-bin">bin</a>, <a href="#ts_compiler-runtime">runtime</a>, <a href="#ts_compiler-transpile_bin">transpile_bin</a>)
+ts_compiler(<a href="#ts_compiler-name">name</a>, <a href="#ts_compiler-bin">bin</a>, <a href="#ts_compiler-native">native</a>, <a href="#ts_compiler-runtime">runtime</a>, <a href="#ts_compiler-transpile_bin">transpile_bin</a>)
 </pre>
 
 **ATTRIBUTES**
 
-| Name                                                | Description                      | Type                                                                | Mandatory | Default |
-| :-------------------------------------------------- | :------------------------------- | :------------------------------------------------------------------ | :-------- | :------ |
-| <a id="ts_compiler-name"></a>name                   | A unique name for this target.   | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
-| <a id="ts_compiler-bin"></a>bin                     | Declaration compiler executable. | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
-| <a id="ts_compiler-runtime"></a>runtime             | Runtime library.                 | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `None`  |
-| <a id="ts_compiler-transpile_bin"></a>transpile_bin | JS compiler executable.          | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| Name                                                | Description                                                                                             | Type                                                                | Mandatory | Default |
+| :-------------------------------------------------- | :------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------ | :-------- | :------ |
+| <a id="ts_compiler-name"></a>name                   | A unique name for this target.                                                                          | <a href="https://bazel.build/concepts/labels#target-names">Name</a> | required  |         |
+| <a id="ts_compiler-bin"></a>bin                     | Declaration compiler executable.                                                                        | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
+| <a id="ts_compiler-native"></a>native               | True if bin is a native binary (tsgo) rather than a node-based tsc wrapper. Changes how staging is run. | Boolean                                                             | optional  | `False` |
+| <a id="ts_compiler-runtime"></a>runtime             | Runtime library.                                                                                        | <a href="https://bazel.build/concepts/labels">Label</a>             | optional  | `None`  |
+| <a id="ts_compiler-transpile_bin"></a>transpile_bin | JS compiler executable.                                                                                 | <a href="https://bazel.build/concepts/labels">Label</a>             | required  |         |
 
 <a id="ts_export"></a>
 
