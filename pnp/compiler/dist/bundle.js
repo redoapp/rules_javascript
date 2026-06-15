@@ -10,6 +10,7 @@ var require$$6 = require('assert');
 var require$$7 = require('fs');
 var require$$8 = require('crypto');
 var require$$9 = require('os');
+var node_path = require('node:path');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -414,75 +415,58 @@ workerMain(async () => {
     };
 });
 
-function getPackages(packageArgs) {
-    const packages = new Map();
-    const packageIdByPath = new Map();
-    for (const packageArg of packageArgs) {
-        const existingPackage = packages.get(packageArg.id);
-        if (existingPackage) {
-            throw new Error(`Multiple instances of package ID ${packageArg.id} from ${existingPackage.label} and ${packageArg.label}`);
+function packageTree(packageArgs, depArgs) {
+    const byId = new Map();
+    const byPath = new Map();
+    for (const arg of packageArgs) {
+        const dupId = byId.get(arg.id);
+        if (dupId) {
+            throw new Error(`Multiple instances of package ID ${arg.id} from ${dupId.label} and ${arg.label}`);
         }
-        packages.set(packageArg.id, {
-            label: packageArg.label,
-            name: packageArg.name,
+        const dupPath = byPath.get(arg.path);
+        if (dupPath) {
+            throw new Error(`Multiple instances of package path ${arg.path} from ${dupPath.label} and ${arg.label}`);
+        }
+        const pkg = {
+            label: arg.label,
+            name: arg.name,
+            path: arg.path,
             deps: new Map(),
-            path: packageArg.path,
-        });
-        const existingId = packageIdByPath.get(packageArg.path);
-        if (existingId) {
-            const existingPackage = packages.get(existingId);
-            throw new Error(`Multiple instances of package path ${packageArg.id} from ${existingPackage.label} and ${packageArg.label}`);
-        }
+        };
+        byId.set(arg.id, pkg);
+        byPath.set(arg.path, pkg);
     }
-    return packages;
-}
-function addDeps(depArgs, packages, globals) {
-    for (const depArg of depArgs) {
-        if (depArg.id == null) {
-            const depPackage = packages.get(depArg.dep);
-            if (!depPackage) {
-                throw new Error(`Package ${depArg.dep} does not exist, but is referenced globally (${depArg.label})`);
+    const globals = new Map();
+    for (const arg of depArgs) {
+        const dep = byId.get(arg.dep);
+        if (!dep) {
+            const via = arg.id == null ? "globally" : `by ${arg.id}`;
+            throw new Error(`Package ${arg.dep} does not exist, but is referenced ${via} (${arg.label})`);
+        }
+        let deps;
+        if (arg.id == null) {
+            deps = globals;
+        }
+        else {
+            const pkg = byId.get(arg.id);
+            if (!pkg) {
+                throw new Error(`Package ${arg.id} does not exist, but is referenced (${arg.label})`);
             }
-            const existingDep = globals.get(depArg.name);
-            if (!existingDep) {
-                globals.set(depArg.name, {
-                    label: depArg.label,
-                    path: depPackage.path,
-                });
-            }
-            else if (existingDep.path !== depArg.dep) {
-                throw new Error(`Multiple globals for ${depArg.name}: ${existingDep.path} (via ${existingDep.label}) and ${depArg.dep} (via ${depArg.label})`);
-            }
-            continue;
+            deps = pkg.deps;
         }
-        const package_ = packages.get(depArg.id);
-        if (!package_) {
-            throw new Error(`Package ${depArg.id} does not exist, but is referenced (${depArg.label})`);
+        const existing = deps.get(arg.name);
+        if (existing && existing.path !== dep.path) {
+            const subject = arg.id == null ? "globals" : `dependencies for ${arg.id}`;
+            throw new Error(`Multiple ${subject} named ${arg.name}: ${existing.path} (via ${existing.label}) and ${dep.path} (via ${arg.label})`);
         }
-        const depPackage = packages.get(depArg.dep);
-        if (!depPackage) {
-            throw new Error(`Package ${depArg.dep} does not exist, but is referenced by ${depArg.id} (${depArg.label})`);
-        }
-        const existingDep = depPackage.deps.get(depArg.name);
-        if (existingDep && existingDep.path !== depPackage.path) {
-            throw new Error(`Package ${depArg.id} has multiple dependencies for ${depArg.name}: ${existingDep.path} (via ${existingDep.label}) and ${depPackage.path} (via ${depArg.label})`);
-        }
-        package_.deps.set(depArg.name, {
-            label: depArg.label,
-            path: depPackage.path,
-        });
+        deps.set(arg.name, { label: arg.label, path: dep.path });
     }
-}
-function getPackageTree(packages, globals) {
-    const resultGlobals = new Map([...globals.entries()].map(([name, dep]) => [name, dep.path]));
-    const resultPackages = new Map([...packages.values()].map((package_) => [
-        package_.path,
-        {
-            name: package_.name,
-            deps: new Map([...package_.deps.entries()].map(([name, dep]) => [name, dep.path])),
-        },
+    const paths = (deps) => new Map(Array.from(deps, ([name, dep]) => [name, dep.path]));
+    const packages = new Map(Array.from(byId.values(), (pkg) => [
+        pkg.path,
+        { name: pkg.name, deps: paths(pkg.deps) },
     ]));
-    return { globals: resultGlobals, packages: resultPackages };
+    return { globals: paths(globals), packages };
 }
 
 var lib = {};
@@ -4064,7 +4048,7 @@ var libExports = requireLib();
 const ROOT_LOCATION = "./";
 /** Normalize a package path into a PnP package location (relative directory). */
 function location(path) {
-    const normalized = require$$2.posix.normalize(path).replace(/\/+$/, "");
+    const normalized = node_path.posix.normalize(path).replace(/\/+$/, "");
     if (normalized === ".") {
         return ROOT_LOCATION;
     }
@@ -4075,14 +4059,10 @@ function location(path) {
     return `${relative}/`;
 }
 /**
- * Generate a Yarn Plug'n'Play file from a CommonJS package tree.
+ * Generate a Yarn Plug'n'Play file (`.pnp.cjs`) from a CommonJS package tree.
  *
- * Each package becomes a PnP package keyed by its path; dependencies become
- * package dependencies. The given roots become the dependency tree roots; the
- * first root is the top-level package. (Yarn emits the top-level (`null`)
- * locator for the dependency tree root located at the `.pnp.cjs` directory,
- * i.e. `./`.) The resulting data structure is interpolated into the Yarn PnP
- * template by {@link generateInlinedScript}.
+ * Each package becomes a PnP package keyed by its path; its deps become package
+ * dependencies. The roots become the dependency tree roots.
  */
 function pnpScript(tree, roots) {
     if (!roots.length) {
@@ -4107,46 +4087,62 @@ function pnpScript(tree, roots) {
         }
         return depName === name ? path : [depName, path];
     };
+    const deps = (entries) => [...entries].map(([name, dep]) => [
+        name,
+        target(name, dep),
+    ]);
+    // Packages are grouped under their name in the registry.
     const packageRegistry = new Map();
-    for (const [path, package_] of tree.packages) {
-        const packageDependencies = new Map();
-        for (const [name, dep] of package_.deps) {
-            packageDependencies.set(name, target(name, dep));
-        }
-        const information = {
-            packageLocation: location(path),
-            packageDependencies,
-            packagePeers: new Set(),
-            linkType: libExports.LinkType.HARD,
-            discardFromLookup: false,
-        };
-        let store = packageRegistry.get(package_.name);
+    const store = (name) => {
+        let store = packageRegistry.get(name);
         if (store === undefined) {
-            packageRegistry.set(package_.name, (store = new Map()));
+            packageRegistry.set(name, (store = []));
         }
-        store.set(path, information);
-    }
-    const fallbackPool = new Map();
-    for (const [name, dep] of tree.globals) {
-        fallbackPool.set(name, target(name, dep));
-    }
-    const settings = {
-        dependencyTreeRoots,
-        enableTopLevelFallback: false,
-        fallbackExclusionList: [],
-        fallbackPool,
-        ignorePattern: null,
-        packageRegistry,
-        pnpZipBackend: "js",
-        shebang: "#!/usr/bin/env node",
+        return store;
     };
-    return preserveSymlinks(libExports.generateInlinedScript(settings));
+    for (const [path, package_] of tree.packages) {
+        store(package_.name).push([
+            path,
+            {
+                linkType: libExports.LinkType.HARD,
+                packageLocation: location(path),
+                // The leading self-reference lets the package require itself by name.
+                packageDependencies: [
+                    [package_.name, path],
+                    ...deps(package_.deps),
+                ],
+            },
+        ]);
+    }
+    // Use the top level for global dependencies. (Note: the top level is not a
+    // real package, so it is discarded from location lookup.)
+    store(null).push([
+        null,
+        {
+            discardFromLookup: true,
+            linkType: libExports.LinkType.HARD,
+            packageLocation: ROOT_LOCATION,
+            packageDependencies: deps(tree.globals),
+        },
+    ]);
+    // Ideally, would use generateInlinedScript, but need to have more control
+    // over the top-level package.
+    const data = {
+        __info: ["Generated by rules_javascript"],
+        dependencyTreeRoots,
+        enableTopLevelFallback: true,
+        fallbackExclusionList: [],
+        fallbackPool: [],
+        ignorePatternData: null,
+        packageRegistryData: [...packageRegistry],
+        pnpZipBackend: "js",
+    };
+    return preserveSymlinks(libExports.generateLoader(undefined, generateInlinedSetup(data)));
 }
-// PnP canonicalizes every resolved module with `realpathSync`, ignoring Node's
-// `--preserve-symlinks`. Under Bazel runfiles that resolves the runfiles
-// symlink to its output/source target, moving `__filename` outside
-// RUNFILES_DIR so `findPackageLocator` no longer matches it. Return the
-// resolved (symlinked) path as-is instead.
+// PnP canonicalizes resolved modules with `realpathSync`, ignoring Node's
+// `--preserve-symlinks`. Under Bazel runfiles that follows the runfiles symlink
+// out of RUNFILES_DIR, so `findPackageLocator` no longer matches `__filename`.
+// Skip the realpath and keep the symlinked path.
 const REALPATH = "return opts.fakeFs.realpathSync(unqualifiedPath);";
 const NO_REALPATH = "return unqualifiedPath;";
 function preserveSymlinks(script) {
@@ -4158,12 +4154,26 @@ function preserveSymlinks(script) {
 /**
  * Generate the Yarn Plug'n'Play ESM loader (`.pnp.loader.mjs`).
  *
- * The loader is static: at runtime it finds the active PnP API (set up when the
- * adjacent `.pnp.cjs` is preloaded with `node --require`) and resolves ESM
- * imports through it. It must therefore sit next to its `.pnp.cjs`.
+ * The loader is static: at runtime it finds the PnP API set up by the adjacent
+ * `.pnp.cjs` (preloaded via `node --require`), so it must sit next to it.
  */
 function pnpLoader() {
     return libExports.getESMLoaderTemplate();
+}
+function generateStringLiteral(value) {
+    return `'${value
+        .replaceAll("\\", `\\\\`)
+        .replaceAll("'", String.raw `\'`)
+        .replaceAll("\n", `\\\n`)}'`;
+}
+function generateInlinedSetup(data) {
+    return [
+        `const RAW_RUNTIME_STATE =\n`,
+        `${generateStringLiteral(libExports.generatePrettyJson(data))};\n\n`,
+        `function $$SETUP_STATE(hydrateRuntimeState, basePath) {\n`,
+        `  return hydrateRuntimeState(JSON.parse(RAW_RUNTIME_STATE), {basePath: basePath || __dirname});\n`,
+        `}\n`,
+    ].join(``);
 }
 
 function depArg(value) {
@@ -4210,10 +4220,7 @@ class ManifestWorker {
         if (!args.roots.length) {
             throw new ManifestWorkerError("At least one --root is required");
         }
-        const packages = getPackages(args.packages);
-        const globals = new Map();
-        addDeps(args.deps, packages, globals);
-        const tree = getPackageTree(packages, globals);
+        const tree = packageTree(args.packages, args.deps);
         await Promise.all([
             promises.writeFile(args.cjs, pnpScript(tree, args.roots)),
             args.loader ? promises.writeFile(args.loader, pnpLoader()) : Promise.resolve(),

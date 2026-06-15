@@ -14,6 +14,7 @@ multi_generate(
         "//nodejs/fs-linker:gen",
         "//nodejs/module-linker:gen",
         "//nodejs/runtime:gen",
+        "//pnp/compiler:gen",
         "//typescript/config:gen",
         "//typescript/js-compiler:gen",
     ],

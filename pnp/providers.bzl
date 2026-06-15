@@ -16,7 +16,7 @@ def _package_arg(package, package_path):
     )
     return json.encode(data)
 
-def pnp_gen(actions, manifest_bin, cjs, packages, deps, package_path, roots, loader = None):
+def pnp_gen(actions, manifest_bin, cjs, roots, package_path, loader = None):
     """Create Yarn Plug'n'Play files.
 
     Generates a `.pnp.cjs` loader and a `.pnp.loader.mjs` ESM loader from the
@@ -29,24 +29,21 @@ def pnp_gen(actions, manifest_bin, cjs, packages, deps, package_path, roots, loa
         manifest_bin: Manifest generation executable
         cjs: `.pnp.cjs` output
         loader: `.pnp.loader.mjs` output
-        packages: Depset of packages
-        deps: Depset of dependencies
+        roots: List of CjsInfo
         package_path: Function for package path, relative to the `.pnp.cjs` directory
-        roots: List of root packages, at least one. The first is the top-level
-            package.
     """
 
     if not roots:
         fail("At least one root is required")
 
-    def package_arg(package):
-        return _package_arg(package, package_path)
+    def package_arg(cjs_info):
+        return _package_arg(cjs_info, package_path)
 
     args = actions.args()
-    args.add_all(deps, before_each = "--dep", map_each = _dep_arg)
-    args.add_all(packages, before_each = "--package", map_each = package_arg, allow_closure = True)
+    args.add_all(depset([], transitive = [root.transitive_links for root in roots]), before_each = "--dep", map_each = _dep_arg)
+    args.add_all(depset([], transitive = [root.transitive_packages for root in roots]), before_each = "--package", map_each = package_arg, allow_closure = True)
     for root in roots:
-        args.add("--root", package_path(root))
+        args.add("--root", package_path(root.package))
     if loader:
         args.add("--loader", loader)
     args.add("--pnp", cjs)

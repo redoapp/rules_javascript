@@ -1,12 +1,5 @@
 import { writeFile } from "node:fs/promises";
-import {
-  DepArg,
-  DetailedDeps,
-  PackageArg,
-  addDeps,
-  getPackageTree,
-  getPackages,
-} from "./manifest";
+import { DepArg, PackageArg, packageTree } from "./manifest";
 import { pnpLoader, pnpScript } from "./pnp";
 
 interface Args {
@@ -65,12 +58,7 @@ export class ManifestWorker {
       throw new ManifestWorkerError("At least one --root is required");
     }
 
-    const packages = getPackages(args.packages);
-    const globals: DetailedDeps = new Map();
-
-    addDeps(args.deps, packages, globals);
-
-    const tree = getPackageTree(packages, globals);
+    const tree = packageTree(args.packages, args.deps);
 
     await Promise.all([
       writeFile(args.cjs, pnpScript(tree, args.roots)),

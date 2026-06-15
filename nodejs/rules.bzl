@@ -185,7 +185,7 @@ def _nodejs_binary_impl(ctx):
     js_dep = ctx.attr.dep[0][JsInfo]
     cjs_dep = ctx.attr.dep[0][CjsInfo] if CjsInfo in ctx.attr.dep[0] else None
     main = ctx.attr.main
-    preload_cjs = [target[CjsInfo] for target in ctx.attr.preload]
+    preload_cjs = [target[CjsInfo] for target in ctx.attr.preload if CjsInfo in target]
     preload_js = [target[JsInfo] for target in ctx.attr.preload]
     name = ctx.attr.name
     node = ctx.attr.node[NodejsInfo]
@@ -193,26 +193,13 @@ def _nodejs_binary_impl(ctx):
     runner = ctx.file._runner
     runtime_cjs = ctx.attr._runtime[CjsInfo]
     runtime_js = ctx.attr._runtime[JsInfo]
-    workspace_name = ctx.workspace_name
 
     preload_modules = [
         "%s/%s" % (to_rlocation_path(ctx, target[CjsInfo].package), target[CjsPath].path)
         for target in ctx.attr.preload
     ]
 
-    transitive_packages = depset(
-        transitive =
-            ([cjs_dep.transitive_packages] if cjs_dep else []) +
-            [cjs_info.transitive_packages for cjs_info in preload_cjs],
-    )
-
-    transitive_links = depset(
-        transitive =
-            ([cjs_dep.transitive_links] if cjs_dep else []) +
-            [cjs_info.transitive_links for cjs_info in preload_cjs],
-    )
-
-    if cjs_dep:
+    if cjs_dep or preload_cjs:
         pnp_cjs = actions.declare_file("%s.pnp.cjs" % name)
         pnp_loader = actions.declare_file("%s.pnp.loader.mjs" % name)
 
@@ -226,11 +213,8 @@ def _nodejs_binary_impl(ctx):
             manifest_bin = compiler,
             cjs = pnp_cjs,
             loader = pnp_loader,
-            packages = transitive_packages,
-            deps = transitive_links,
             package_path = package_path,
-            roots = ([cjs_dep.package] if cjs_dep else []) +
-                    [cjs_info.package for cjs_info in preload_cjs],
+            roots = ([cjs_dep] if cjs_dep else []) + preload_cjs,
         )
     else:
         pnp_cjs = None
@@ -530,16 +514,19 @@ def _nodejs_repl_impl(ctx):
     )
     links = create_links(package = package, label = str(label), cjs_infos = cjs_deps)
 
-    transitive_packages = depset(
-        [package],
-        transitive =
-            [cjs_info.transitive_packages for cjs_info in cjs_deps + preload_cjs],
-    )
-
-    transitive_links = depset(
-        links,
-        transitive =
-            [cjs_info.transitive_links for cjs_info in cjs_deps + preload_cjs],
+    cjs_info = CjsInfo(
+        package = package,
+        transitive_files = depset(),
+        transitive_packages = depset(
+            [package],
+            transitive =
+                [cjs_info.transitive_packages for cjs_info in cjs_deps],
+        ),
+        transitive_links = depset(
+            links,
+            transitive =
+                [cjs_info.transitive_links for cjs_info in cjs_deps],
+        ),
     )
 
     pnp_cjs = actions.declare_file("%s.pnp.cjs" % name)
@@ -555,10 +542,8 @@ def _nodejs_repl_impl(ctx):
         manifest_bin = compiler,
         cjs = pnp_cjs,
         loader = pnp_loader,
-        packages = transitive_packages,
-        deps = transitive_links,
         package_path = package_path,
-        roots = [package] + [cjs_info.package for cjs_info in preload_cjs],
+        roots = [cjs_info] + preload_cjs,
     )
 
     bin = actions.declare_file(name)

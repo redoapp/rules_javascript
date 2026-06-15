@@ -1,11 +1,4 @@
-import { PackageTree } from "@rules-javascript/commonjs-package";
-
-export interface DepArg {
-  dep: string;
-  label: string;
-  name: string;
-  id: string | null;
-}
+import { Package, PackageTree } from "@rules-javascript/commonjs-package";
 
 export interface PackageArg {
   id: string;
@@ -14,121 +7,98 @@ export interface PackageArg {
   path: string;
 }
 
-export type DetailedDeps = Map<string, { label: string; path: string }>;
-
-export interface DetailedPackage {
-  deps: DetailedDeps;
+export interface DepArg {
+  dep: string;
+  id: string | null;
   label: string;
-  path: string;
   name: string;
 }
 
-export function getPackages(
+interface Dep {
+  label: string;
+  path: string;
+}
+
+interface Pkg {
+  label: string;
+  name: string;
+  path: string;
+  deps: Map<string, Dep>;
+}
+
+export function packageTree(
   packageArgs: PackageArg[],
-): Map<string, DetailedPackage> {
-  const packages = new Map<string, DetailedPackage>();
-  const packageIdByPath = new Map<string, string>();
-
-  for (const packageArg of packageArgs) {
-    const existingPackage = packages.get(packageArg.id);
-
-    if (existingPackage) {
-      throw new Error(
-        `Multiple instances of package ID ${packageArg.id} from ${existingPackage.label} and ${packageArg.label}`,
-      );
-    }
-    packages.set(packageArg.id, {
-      label: packageArg.label,
-      name: packageArg.name,
-      deps: new Map(),
-      path: packageArg.path,
-    });
-
-    const existingId = packageIdByPath.get(packageArg.path);
-    if (existingId) {
-      const existingPackage = packages.get(existingId)!;
-      throw new Error(
-        `Multiple instances of package path ${packageArg.id} from ${existingPackage.label} and ${packageArg.label}`,
-      );
-    }
-  }
-
-  return packages;
-}
-
-export function addDeps(
   depArgs: DepArg[],
-  packages: Map<string, DetailedPackage>,
-  globals: DetailedDeps,
-) {
-  for (const depArg of depArgs) {
-    if (depArg.id == null) {
-      const depPackage = packages.get(depArg.dep);
-      if (!depPackage) {
-        throw new Error(
-          `Package ${depArg.dep} does not exist, but is referenced globally (${depArg.label})`,
-        );
-      }
-      const existingDep = globals.get(depArg.name);
-      if (!existingDep) {
-        globals.set(depArg.name, {
-          label: depArg.label,
-          path: depPackage.path,
-        });
-      } else if (existingDep.path !== depArg.dep) {
-        throw new Error(
-          `Multiple globals for ${depArg.name}: ${existingDep.path} (via ${existingDep.label}) and ${depArg.dep} (via ${depArg.label})`,
-        );
-      }
-      continue;
-    }
-
-    const package_ = packages.get(depArg.id);
-    if (!package_) {
-      throw new Error(
-        `Package ${depArg.id} does not exist, but is referenced (${depArg.label})`,
-      );
-    }
-
-    const depPackage = packages.get(depArg.dep);
-    if (!depPackage) {
-      throw new Error(
-        `Package ${depArg.dep} does not exist, but is referenced by ${depArg.id} (${depArg.label})`,
-      );
-    }
-
-    const existingDep = depPackage.deps.get(depArg.name);
-    if (existingDep && existingDep.path !== depPackage.path) {
-      throw new Error(
-        `Package ${depArg.id} has multiple dependencies for ${depArg.name}: ${existingDep.path} (via ${existingDep.label}) and ${depPackage.path} (via ${depArg.label})`,
-      );
-    }
-
-    package_.deps.set(depArg.name, {
-      label: depArg.label,
-      path: depPackage.path,
-    });
-  }
-}
-
-export function getPackageTree(
-  packages: Map<string, DetailedPackage>,
-  globals: DetailedDeps,
 ): PackageTree {
-  const resultGlobals = new Map(
-    [...globals.entries()].map(([name, dep]) => [name, dep.path]),
-  );
-  const resultPackages = new Map(
-    [...packages.values()].map((package_) => [
-      package_.path,
-      {
-        name: package_.name,
-        deps: new Map(
-          [...package_.deps.entries()].map(([name, dep]) => [name, dep.path]),
-        ),
-      },
+  const byId = new Map<string, Pkg>();
+  const byPath = new Map<string, Pkg>();
+
+  for (const arg of packageArgs) {
+    const dupId = byId.get(arg.id);
+    if (dupId) {
+      throw new Error(
+        `Multiple instances of package ID ${arg.id} from ${dupId.label} and ${arg.label}`,
+      );
+    }
+    const dupPath = byPath.get(arg.path);
+    if (dupPath) {
+      throw new Error(
+        `Multiple instances of package path ${arg.path} from ${dupPath.label} and ${arg.label}`,
+      );
+    }
+    const pkg: Pkg = {
+      label: arg.label,
+      name: arg.name,
+      path: arg.path,
+      deps: new Map(),
+    };
+    byId.set(arg.id, pkg);
+    byPath.set(arg.path, pkg);
+  }
+
+  const globals = new Map<string, Dep>();
+
+  for (const arg of depArgs) {
+    const dep = byId.get(arg.dep);
+    if (!dep) {
+      const via = arg.id == null ? "globally" : `by ${arg.id}`;
+      throw new Error(
+        `Package ${arg.dep} does not exist, but is referenced ${via} (${arg.label})`,
+      );
+    }
+
+    let deps: Map<string, Dep>;
+    if (arg.id == null) {
+      deps = globals;
+    } else {
+      const pkg = byId.get(arg.id);
+      if (!pkg) {
+        throw new Error(
+          `Package ${arg.id} does not exist, but is referenced (${arg.label})`,
+        );
+      }
+      deps = pkg.deps;
+    }
+
+    const existing = deps.get(arg.name);
+    if (existing && existing.path !== dep.path) {
+      const subject = arg.id == null ? "globals" : `dependencies for ${arg.id}`;
+      throw new Error(
+        `Multiple ${subject} named ${arg.name}: ${existing.path} (via ${existing.label}) and ${dep.path} (via ${arg.label})`,
+      );
+    }
+    deps.set(arg.name, { label: arg.label, path: dep.path });
+  }
+
+  const paths = (deps: Map<string, Dep>): Map<string, string> =>
+    new Map(Array.from(deps, ([name, dep]) => [name, dep.path]));
+
+  const packages = new Map<string, Package>(
+    Array.from(byId.values(), (pkg) => [
+      pkg.path,
+      { name: pkg.name, deps: paths(pkg.deps) },
     ]),
   );
 
-  return { globals: resultGlobals, packages: resultPackages };
+  return { globals: paths(globals), packages };
 }

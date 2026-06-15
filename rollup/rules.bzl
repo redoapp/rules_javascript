@@ -80,25 +80,14 @@ def _rollup_bundle_impl(ctx):
     pnp_gen(
         actions = actions,
         cjs = pnp_cjs,
-        deps = depset(
-            transitive = [
-                config_cjs.transitive_links,
-                config_wrapper_cjs.transitive_links,
-                dep_cjs.transitive_links,
-                rollup_cjs.transitive_links,
-            ],
-        ),
         loader = node_loader,
         manifest_bin = pnp_compiler,
         package_path = node_package_path,
-        packages = depset(transitive = [
-            config_cjs.transitive_packages,
-            config_wrapper_cjs.transitive_packages,
-            dep_cjs.transitive_packages,
-            rollup_cjs.transitive_packages,
-        ]),
-        roots = [rollup_cjs.package, config_wrapper_cjs.package] +
-                ([config_cjs.package] if config_cjs else []),
+        roots = [
+            config_wrapper_cjs,
+            dep_cjs,
+            rollup_cjs,
+        ] + ([config_cjs] if config_cjs else []),
     )
 
     args = actions.args()
