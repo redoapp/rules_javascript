@@ -137,7 +137,8 @@ def _ts_library_impl(ctx):
     actions = ctx.actions
     config = ctx.attr._config[DefaultInfo]
     compiler = ctx.attr.compiler[TsCompilerInfo]
-    cjs_deps = compiler.runtime_cjs + [target[CjsInfo] for target in ctx.attr.compile_deps + ctx.attr.deps if CjsInfo in target]
+    compile_cjs = compiler.runtime_cjs + [target[CjsInfo] for target in ctx.attr.compile_deps + ctx.attr.deps if CjsInfo in target]
+    cjs_deps = compiler.runtime_cjs + [target[CjsInfo] for target in ctx.attr.deps if CjsInfo in target]
     cjs_globals = [dep[CjsInfo] for dep in ctx.attr.global_deps]
     cjs_root = ctx.attr.root and ctx.attr.root[CjsInfo]
     declaration_prefix = ctx.attr.declaration_prefix
@@ -313,7 +314,7 @@ def _ts_library_impl(ctx):
     package_manifest = actions.declare_file("%s.package-manifest.json" % ctx.attr.name)
     compile_cjs_info = cjs_root and create_cjs_info(
         cjs_root = cjs_root,
-        deps = ([tsconfig_dep] if tsconfig_dep else []) + compiler.runtime_cjs + cjs_deps,
+        deps = ([tsconfig_dep] if tsconfig_dep else []) + compiler.runtime_cjs + compile_cjs,
         globals = cjs_globals,
         label = label,
     )
