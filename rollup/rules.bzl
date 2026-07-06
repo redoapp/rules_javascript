@@ -5,7 +5,7 @@ load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("//commonjs:providers.bzl", "CjsInfo", "gen_manifest", "package_path")
 load("//file:file.bzl", "FileInfo")
 load("//javascript:providers.bzl", "JsInfo")
-load("//javascript:rules.bzl", "js_export")
+load("//javascript:rules.bzl", "js_dep_file")
 load("//nodejs:nodejs.bzl", "NodejsInfo")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//pnp:providers.bzl", "pnp_gen")
@@ -128,7 +128,7 @@ def _rollup_bundle_impl(ctx):
 
     return [default_info]
 
-rollup_bundle = rule(
+_rollup_bundle = rule(
     attrs = {
         "config": attr.label(
             cfg = _rollup_config_transition,
@@ -178,3 +178,56 @@ rollup_bundle = rule(
     doc = "Rollup bundle",
     implementation = _rollup_bundle_impl,
 )
+
+def configure_rollup(name, dep, config, config_dep, visibility = None):
+    """Set up a Rollup tool target with a bundled config.
+
+    This macro preserves the older API where rollup_bundle accepted a configured
+    rollup target instead of a separate config attribute.
+    """
+
+    js_dep_file(
+        name = "%s.config" % name,
+        dep = config_dep,
+        path = config,
+        visibility = ["//visibility:private"],
+    )
+
+    rollup(
+        name = name,
+        dep = dep,
+        visibility = visibility,
+    )
+
+def rollup_bundle(name, dep, config = None, rollup = None, output = "", **kwargs):
+    """Bundle JavaScript with Rollup.
+
+    Prefer passing config directly. If config is omitted, rollup must point to a
+    target created by configure_rollup.
+    """
+
+    if config == None:
+        if rollup == None:
+            fail("rollup_bundle requires config unless rollup points to a target created by configure_rollup")
+        config = _configured_rollup_config_label(rollup)
+
+    attrs = {
+        "name": name,
+        "config": config,
+        "dep": dep,
+        "output": output,
+    }
+    if rollup != None:
+        attrs["rollup"] = rollup
+    attrs.update(kwargs)
+    _rollup_bundle(**attrs)
+
+def _configured_rollup_config_label(rollup):
+    rollup = str(rollup)
+    if ":" in rollup:
+        return "%s.config" % rollup
+    if rollup.startswith("//") or rollup.startswith("@"):
+        package = rollup.split("//", 1)[1]
+        name = package.rpartition("/")[2]
+        return "%s:%s.config" % (rollup, name)
+    return "%s.config" % rollup
