@@ -630,10 +630,11 @@ nodejs_repl = rule(
     implementation = _nodejs_repl_impl,
 )
 
-def nodejs_install(name, src, path = None, **kwargs):
+def nodejs_install(name, src, path = None, package_manager_state_file = ".yarn-state.yml", **kwargs):
     pkg_install(
         name = name,
         pkg = src,
+        package_manager_state_file = package_manager_state_file,
         path = "%s/node_modules" % path if path else "node_modules",
         **kwargs
     )

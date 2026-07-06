@@ -111,6 +111,13 @@ Then run:
 bazel run :nodejs_install
 ```
 
+`nodejs_install` writes `node_modules/.install-manifest.json` and, by default,
+`node_modules/.yarn-state.yml`. The Yarn state file contains a digest of the
+generated install manifest so tools such as Vite, which key dependency caches
+from package-manager install state, invalidate caches when the Bazel-generated
+`node_modules` layout changes. Set `package_manager_state_file = ""` to disable
+this marker.
+
 # //nodejs:nodejs.bzl
 
 <!-- Generated with Stardoc: http://skydoc.bazel.build -->
@@ -400,17 +407,18 @@ nodejs_toolchain(<a href="#nodejs_toolchain-name">name</a>, <a href="#nodejs_too
 <pre>
 load("@rules_javascript//nodejs:rules.bzl", "nodejs_install")
 
-nodejs_install(<a href="#nodejs_install-name">name</a>, <a href="#nodejs_install-src">src</a>, <a href="#nodejs_install-path">path</a>, <a href="#nodejs_install-kwargs">**kwargs</a>)
+nodejs_install(<a href="#nodejs_install-name">name</a>, <a href="#nodejs_install-src">src</a>, <a href="#nodejs_install-path">path</a>, <a href="#nodejs_install-package_manager_state_file">package_manager_state_file</a>, <a href="#nodejs_install-kwargs">**kwargs</a>)
 </pre>
 
 **PARAMETERS**
 
-| Name                                     | Description               | Default Value |
-| :--------------------------------------- | :------------------------ | :------------ |
-| <a id="nodejs_install-name"></a>name     | <p align="center"> - </p> | none          |
-| <a id="nodejs_install-src"></a>src       | <p align="center"> - </p> | none          |
-| <a id="nodejs_install-path"></a>path     | <p align="center"> - </p> | `None`        |
-| <a id="nodejs_install-kwargs"></a>kwargs | <p align="center"> - </p> | none          |
+| Name                                                                             | Description                                                                                                                                                                                                               | Default Value       |
+| :------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :------------------ |
+| <a id="nodejs_install-name"></a>name                                             | <p align="center"> - </p>                                                                                                                                                                                                 | none                |
+| <a id="nodejs_install-src"></a>src                                               | <p align="center"> - </p>                                                                                                                                                                                                 | none                |
+| <a id="nodejs_install-path"></a>path                                             | <p align="center"> - </p>                                                                                                                                                                                                 | `None`              |
+| <a id="nodejs_install-package_manager_state_file"></a>package_manager_state_file | Package manager install-state file to write under `node_modules`. The default `.yarn-state.yml` lets tools such as Vite invalidate dependency caches when the generated install manifest changes. Set to `""` to disable. | `".yarn-state.yml"` |
+| <a id="nodejs_install-kwargs"></a>kwargs                                         | <p align="center"> - </p>                                                                                                                                                                                                 | none                |
 
 <a id="nodejs_modules"></a>
 

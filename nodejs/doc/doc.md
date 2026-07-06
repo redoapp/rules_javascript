@@ -84,3 +84,10 @@ Then run:
 ```sh
 bazel run :nodejs_install
 ```
+
+`nodejs_install` writes `node_modules/.install-manifest.json` and, by default,
+`node_modules/.yarn-state.yml`. The Yarn state file contains a digest of the
+generated install manifest so tools such as Vite, which key dependency caches
+from package-manager install state, invalidate caches when the Bazel-generated
+`node_modules` layout changes. Set `package_manager_state_file = ""` to disable
+this marker.
