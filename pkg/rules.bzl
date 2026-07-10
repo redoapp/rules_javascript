@@ -124,6 +124,9 @@ def _pkg_install_impl(ctx):
         substitutions = {
             "%{install}": shell.quote(to_rlocation_path(ctx, install)),
             "%{manifest}": shell.quote(to_rlocation_path(ctx, manifest)),
+            "%{package_manager_state_args}": (
+                "--package-manager-state-file %s" % shell.quote(ctx.attr.package_manager_state_file) if ctx.attr.package_manager_state_file else ""
+            ),
             "%{path}": shell.quote(path),
         },
         is_executable = True,
@@ -141,6 +144,9 @@ def _pkg_install_impl(ctx):
 pkg_install = rule(
     attrs = {
         "path": attr.string(mandatory = True),
+        "package_manager_state_file": attr.string(
+            doc = "Optional package manager install-state file to write under path, for tools that key caches from package manager state.",
+        ),
         "pkg": attr.label(
             mandatory = True,
             providers = [PackageFilegroupInfo],

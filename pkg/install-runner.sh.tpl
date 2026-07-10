@@ -8,4 +8,4 @@ if [ -z "${RUNFILES_DIR-}" ]; then
   fi
 fi
 
-exec "$RUNFILES_DIR"/%{install} "$RUNFILES_DIR"/%{manifest} "${BUILD_WORKSPACE_DIRECTORY-.}"/%{path}
+exec "$RUNFILES_DIR"/%{install} %{package_manager_state_args} "$RUNFILES_DIR"/%{manifest} "${BUILD_WORKSPACE_DIRECTORY-.}"/%{path}

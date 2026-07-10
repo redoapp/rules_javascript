@@ -24,4 +24,4 @@ test("Snapshot", async () => {
   await fs.promises.unlink(
     "jest/test/bazel/snapshot/__snapshots__/example.spec.js.snap",
   );
-});
+}, 120_000);

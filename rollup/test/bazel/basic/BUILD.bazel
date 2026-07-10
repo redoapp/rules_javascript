@@ -1,6 +1,6 @@
 load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
 load("@rules_javascript//javascript:rules.bzl", "js_file", "js_library")
-load("@rules_javascript//rollup:rules.bzl", "rollup_bundle")
+load("@rules_javascript//rollup:rules.bzl", "configure_rollup", "rollup_bundle")
 
 cjs_root(
     name = "root",
@@ -31,4 +31,17 @@ rollup_bundle(
     name = "bundle",
     config = ":rollup_config",
     dep = ":lib",
+)
+
+configure_rollup(
+    name = "legacy_rollup",
+    config = "rollup.config.js",
+    config_dep = ":rollup_config",
+    dep = "@npm//rollup:lib",
+)
+
+rollup_bundle(
+    name = "legacy_bundle",
+    dep = ":lib",
+    rollup = ":legacy_rollup",
 )

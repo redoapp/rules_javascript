@@ -1,5 +1,10 @@
 #!/usr/bin/env sh
 set -e
-cat > user.bazelrc <<EOF
+cat > .bazelrc.user <<EOF
 build --config=ci
+build --noworker_sandboxing
+build --noexperimental_use_hermetic_linux_sandbox
+build --noexperimental_worker_multiplex_sandboxing
+build --noexperimental_worker_sandbox_hardening
+build:linux --noexperimental_worker_sandbox_hardening
 EOF
