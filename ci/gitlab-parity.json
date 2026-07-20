@@ -5,8 +5,10 @@
   "runnerContract": {
     "image": "864981714355.dkr.ecr.us-east-1.amazonaws.com/ci-gitlab-runner@sha256:64ce59ed5744d806b971f26f5f5ac74bcfbe9242461f3124999f52b1c6fc019d",
     "tag": "redo-build-size-2",
-    "trustBoundary": "untrusted",
-    "containerRuntime": "podman-rootless",
+    "requestedTrustBoundary": "untrusted",
+    "runtimeIfHardened": "podman-rootless",
+    "proofMode": "current-spot-non-secret-only",
+    "hardenedRunnerRequiredForSecrets": true,
     "retryFailures": ["runner_system_failure", "stuck_or_timeout_failure"],
     "secretVariables": []
   },

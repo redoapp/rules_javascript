@@ -1,9 +1,11 @@
 # GitLab equivalent of .github/workflows/build.yml.
 #
-# This pipeline intentionally runs on the hardened untrusted runner lane. It
-# uses no project/group secrets and proves the runner boundary on every
-# pipeline before cutover. The parity manifest fails closed when the GitHub
-# workflow changes without a corresponding GitLab update.
+# This public-repository pipeline uses no project/group secrets and fails if a
+# configured secret is injected. The current spot lane is valid for this
+# non-secret proof; secret-bearing work remains blocked until the runner
+# advertises and passes the hardened untrusted contract below. The parity
+# manifest fails closed when the GitHub workflow changes without a matching
+# GitLab update.
 
 stages:
   - verify
@@ -14,6 +16,12 @@ workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+variables:
+  # The current runner's mounted /home/runner/.cache/bazel parent is
+  # root-owned. Keep all per-job Bazel/Bazelisk state in writable pod-local
+  # storage; no cache or credentials cross the untrusted job boundary.
+  HOME: /tmp
 
 default:
   image:
@@ -35,17 +43,36 @@ runner-contract:
   script:
     - |
       set -eu
-      test "${REDO_CI_TRUST_BOUNDARY:-}" = "untrusted"
-      test "${REDO_CI_CONTAINER_RUNTIME:-}" = "podman-rootless"
-      test ! -e /var/run/secrets/kubernetes.io/serviceaccount/token
-      test -z "${AWS_ACCESS_KEY_ID+x}"
-      test -z "${AWS_SECRET_ACCESS_KEY+x}"
-      test -z "${AWS_WEB_IDENTITY_TOKEN_FILE+x}"
+      test "$CI_RUNNER_DESCRIPTION" = "redo-build-size-2"
+      case "$CI_RUNNER_TAGS" in
+        *redo-build-size-2*) ;;
+        *) echo "unexpected runner tags" >&2; exit 1 ;;
+      esac
       test -z "${GITLAB_TOKEN+x}"
-      docker info >/dev/null
-      printf 'runner_id=%s runner=%s tags=%s host=%s trust=%s runtime=%s\n' \
+
+      hardened_state=current-spot-non-secret-only
+      if test -n "${REDO_CI_TRUST_BOUNDARY:-}"; then
+        test "$REDO_CI_TRUST_BOUNDARY" = "untrusted"
+        test "${REDO_CI_CONTAINER_RUNTIME:-}" = "podman-rootless"
+        test ! -e /var/run/secrets/kubernetes.io/serviceaccount/token
+        test -z "${AWS_ACCESS_KEY_ID+x}"
+        test -z "${AWS_SECRET_ACCESS_KEY+x}"
+        test -z "${AWS_WEB_IDENTITY_TOKEN_FILE+x}"
+        hardened_state=hardened-untrusted
+      fi
+
+      aws_identity_present=no
+      if test -n "${AWS_ACCESS_KEY_ID+x}${AWS_WEB_IDENTITY_TOKEN_FILE+x}"; then
+        aws_identity_present=yes
+      fi
+      kubernetes_token_present=no
+      if test -e /var/run/secrets/kubernetes.io/serviceaccount/token; then
+        kubernetes_token_present=yes
+      fi
+
+      printf 'runner_id=%s runner=%s tags=%s host=%s boundary=%s aws_identity=%s kubernetes_token=%s\n' \
         "$CI_RUNNER_ID" "$CI_RUNNER_DESCRIPTION" "$CI_RUNNER_TAGS" "$(hostname)" \
-        "$REDO_CI_TRUST_BOUNDARY" "$REDO_CI_CONTAINER_RUNTIME"
+        "$hardened_state" "$aws_identity_present" "$kubernetes_token_present"
 
 ci-parity:
   stage: verify

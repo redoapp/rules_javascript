@@ -106,12 +106,28 @@ assert.deepEqual(
   "untrusted merge-request jobs cannot require secrets",
 );
 assert(
-  gitlab.includes('test "${REDO_CI_TRUST_BOUNDARY:-}" = "untrusted"'),
-  "runner trust boundary is not asserted",
+  runnerContract.hardenedRunnerRequiredForSecrets,
+  "secret-bearing jobs must remain blocked until the hardened runner is live",
+);
+assert(
+  gitlab.includes("hardened_state=current-spot-non-secret-only"),
+  "current spot proof boundary is not explicit",
+);
+assert(
+  gitlab.includes('test "$REDO_CI_TRUST_BOUNDARY" = "untrusted"'),
+  "advertised runner trust boundary is not validated",
 );
 assert(
   gitlab.includes('test "${REDO_CI_CONTAINER_RUNTIME:-}" = "podman-rootless"'),
-  "rootless container runtime is not asserted",
+  "advertised rootless container runtime is not validated",
+);
+assert(
+  gitlab.includes('test -z "${GITLAB_TOKEN+x}"'),
+  "non-secret proof must fail if the configured GitLab token is injected",
+);
+assert(
+  gitlab.includes("  HOME: /tmp"),
+  "Bazel state must use writable pod-local storage",
 );
 assert(
   gitlab.includes("on_new_commit: interruptible"),
@@ -128,5 +144,5 @@ assert(
 assert(!gitlab.includes("allow_failure"), "required jobs cannot allow failure");
 
 console.log(
-  `GitLab parity verified: ${manifest.jobs.length} GitHub jobs, ${manifest.requiredGitLabJobs.length} required GitLab jobs, immutable untrusted runner.`,
+  `GitLab parity verified: ${manifest.jobs.length} GitHub jobs, ${manifest.requiredGitLabJobs.length} required GitLab jobs, immutable non-secret spot proof.`,
 );
