@@ -43,12 +43,13 @@ default:
     # bind-mount setup is unavailable in this runner pod.
     - |
       printf '%s\n' \
+        'build --config=ci' \
         'common:linux --disk_cache=/tmp/bazel-disk' \
         'build --@bazel_util//generate:format_filter=@bazel_util//file:all_filter' \
-        'build:linux --noexperimental_use_hermetic_linux_sandbox' \
-        'build:linux --noworker_sandboxing' \
-        'build:linux --noexperimental_worker_sandbox_hardening' \
-        'build:linux --noexperimental_worker_multiplex_sandboxing' \
+        'build --noexperimental_use_hermetic_linux_sandbox' \
+        'build --noworker_sandboxing' \
+        'build --noexperimental_worker_sandbox_hardening' \
+        'build --noexperimental_worker_multiplex_sandboxing' \
         > .bazelrc.user
 
 runner-contract:

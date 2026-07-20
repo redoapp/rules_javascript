@@ -149,11 +149,15 @@ assert(
   "GitLab lint must not depend on a detached-ref changed-file filter",
 );
 assert(
-  gitlab.includes("build:linux --noworker_sandboxing"),
+  gitlab.includes("'build --config=ci'"),
+  "GitLab Bazel commands must retain the repository CI configuration",
+);
+assert(
+  gitlab.includes("build --noworker_sandboxing"),
   "persistent workers must not nest a mount sandbox inside the runner pod",
 );
 assert(
-  gitlab.includes("build:linux --noexperimental_use_hermetic_linux_sandbox"),
+  gitlab.includes("build --noexperimental_use_hermetic_linux_sandbox"),
   "the runner pod cannot provide Bazel's nested hermetic mount namespace",
 );
 assert(
