@@ -77,6 +77,15 @@ for (const mapping of manifest.jobs) {
   }
 }
 
+const lintMapping = manifest.jobs.find(
+  (mapping) => mapping.github.id === "lint",
+);
+assert.equal(
+  lintMapping?.gitlab.scope,
+  "all-files",
+  "GitLab lint must cover all files",
+);
+
 for (const jobId of manifest.requiredGitLabJobs) {
   jobBlock(gitlab, jobId, 0);
 }
@@ -134,12 +143,18 @@ assert(
   "Bazel disk cache must override the root-owned runner mount",
 );
 assert(
-  gitlab.includes('GIT_BASE_REF: "$CI_MERGE_REQUEST_DIFF_BASE_SHA"'),
-  "lint must compare against the merge-request base SHA",
+  gitlab.includes(
+    "build --@bazel_util//generate:format_filter=@bazel_util//file:all_filter",
+  ),
+  "GitLab lint must not depend on a detached-ref changed-file filter",
 );
 assert(
   gitlab.includes("build:linux --noworker_sandboxing"),
   "persistent workers must not nest a mount sandbox inside the runner pod",
+);
+assert(
+  gitlab.includes("build:linux --noexperimental_use_hermetic_linux_sandbox"),
+  "the runner pod cannot provide Bazel's nested hermetic mount namespace",
 );
 assert(
   gitlab.includes("on_new_commit: interruptible"),

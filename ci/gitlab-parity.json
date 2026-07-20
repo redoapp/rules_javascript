@@ -26,6 +26,7 @@
       },
       "gitlab": {
         "id": "lint",
+        "scope": "all-files",
         "commands": [
           "bazel test tools/lint:format_test tools/lint:lint_test",
           "bazel run @files//packages:bazelrc.diff",

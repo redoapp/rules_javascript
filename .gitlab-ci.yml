@@ -22,12 +22,6 @@ variables:
   # root-owned. Keep all per-job Bazel/Bazelisk state in writable pod-local
   # storage; no cache or credentials cross the untrusted job boundary.
   HOME: /tmp
-  # Lint must compare against the actual MR base rather than the detached MR
-  # ref. Full history keeps that SHA available to bazel_util's git repository
-  # rule; this public repository is small and needs no clone credential beyond
-  # GitLab's ephemeral job token.
-  GIT_DEPTH: "0"
-  GIT_BASE_REF: "$CI_MERGE_REQUEST_DIFF_BASE_SHA"
 
 default:
   image:
@@ -50,6 +44,8 @@ default:
     - |
       printf '%s\n' \
         'common:linux --disk_cache=/tmp/bazel-disk' \
+        'build --@bazel_util//generate:format_filter=@bazel_util//file:all_filter' \
+        'build:linux --noexperimental_use_hermetic_linux_sandbox' \
         'build:linux --noworker_sandboxing' \
         'build:linux --noexperimental_worker_sandbox_hardening' \
         'build:linux --noexperimental_worker_multiplex_sandboxing' \
