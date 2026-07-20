@@ -130,6 +130,10 @@ assert(
   "Bazel state must use writable pod-local storage",
 );
 assert(
+  gitlab.includes("common:linux --disk_cache=/tmp/bazel-disk"),
+  "Bazel disk cache must override the root-owned runner mount",
+);
+assert(
   gitlab.includes("on_new_commit: interruptible"),
   "new merge-request commits must auto-cancel interruptible work",
 );
