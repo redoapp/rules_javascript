@@ -333,7 +333,7 @@ npm = repository_rule(
         "patches_output": attr.label(mandatory = True),
         "plugins": attr.label_list(
             default = DEFAULT_PLUGINS,
-            doc = "Plugins."
+            doc = "Plugins.",
         ),
     },
 )

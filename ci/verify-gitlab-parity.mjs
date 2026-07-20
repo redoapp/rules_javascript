@@ -127,8 +127,8 @@ assert(
   "advertised runner trust boundary is not validated",
 );
 assert(
-  gitlab.includes('test "${REDO_CI_CONTAINER_RUNTIME:-}" = "podman-rootless"'),
-  "advertised rootless container runtime is not validated",
+  gitlab.includes('test "${REDO_CI_CONTAINER_RUNTIME:-}" = "none"'),
+  "advertised no-container-runtime boundary is not validated",
 );
 assert(
   gitlab.includes('test -z "${GITLAB_TOKEN+x}"'),

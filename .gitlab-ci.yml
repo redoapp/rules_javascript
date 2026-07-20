@@ -68,7 +68,7 @@ runner-contract:
       hardened_state=current-spot-non-secret-only
       if test -n "${REDO_CI_TRUST_BOUNDARY:-}"; then
         test "$REDO_CI_TRUST_BOUNDARY" = "untrusted"
-        test "${REDO_CI_CONTAINER_RUNTIME:-}" = "podman-rootless"
+        test "${REDO_CI_CONTAINER_RUNTIME:-}" = "none"
         test ! -e /var/run/secrets/kubernetes.io/serviceaccount/token
         test -z "${AWS_ACCESS_KEY_ID+x}"
         test -z "${AWS_SECRET_ACCESS_KEY+x}"
