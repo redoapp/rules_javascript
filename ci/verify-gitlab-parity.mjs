@@ -134,6 +134,14 @@ assert(
   "Bazel disk cache must override the root-owned runner mount",
 );
 assert(
+  gitlab.includes('GIT_BASE_REF: "$CI_MERGE_REQUEST_DIFF_BASE_SHA"'),
+  "lint must compare against the merge-request base SHA",
+);
+assert(
+  gitlab.includes("build:linux --noworker_sandboxing"),
+  "persistent workers must not nest a mount sandbox inside the runner pod",
+);
+assert(
   gitlab.includes("on_new_commit: interruptible"),
   "new merge-request commits must auto-cancel interruptible work",
 );
