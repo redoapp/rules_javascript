@@ -103,14 +103,10 @@ def _npm_package_impl(ctx):
 
     ctx.download_and_extract(
         integrity = integrity,
-        output = "tmp",
+        output = "src",
+        strip_components = 1,
         url = url,
     )
-    # strip top-level directory
-    # TODO: Use download_and_extract(strip_components = 1) once supported
-    result = ctx.execute(["sh", "-c", "mv tmp/* src"])
-    if result.return_code:
-        fail("Failed to move package:\n%s" % result.stderr)
 
     # patch
     if patch:
