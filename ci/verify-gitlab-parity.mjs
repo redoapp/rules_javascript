@@ -146,8 +146,8 @@ assert(
 assert(
   runnerBoundary.includes(
     "/var/run/secrets/kubernetes.io/serviceaccount/token",
-  ),
-  "the Kubernetes service-account token must be rejected",
+  ) && runnerBoundary.includes("/var/run/docker.sock"),
+  "Kubernetes and container-runtime access must be rejected",
 );
 assert(
   runnerBoundary.includes("169.254.169.254/latest/meta-data") &&
@@ -211,8 +211,32 @@ const cleanEnvironment = {
   REDO_CI_CONTAINER_RUNTIME: "none",
 };
 
+// GitHub's hosted lint runner intentionally exposes facilities that the
+// hardened GitLab runner must not expose (notably /var/run/docker.sock). Keep
+// the checked-in policy strict, but isolate its variable/profile regression
+// tests from whichever host happens to execute this verifier.
+const runnerBoundaryForRegressionTests = runnerBoundary
+  .replaceAll(
+    "/var/run/secrets/kubernetes.io/serviceaccount/token",
+    "/tmp/rules-javascript-no-kubernetes-token",
+  )
+  .replaceAll(
+    "/var/run/docker.sock",
+    "/tmp/rules-javascript-no-container-runtime",
+  )
+  .replaceAll("http://169.254.169.254/", "http://127.0.0.1:9/")
+  .replace(
+    "if AWS_EC2_METADATA_DISABLED=true aws sts get-caller-identity >/dev/null 2>&1; then",
+    "if false; then",
+  );
+assert.notEqual(
+  runnerBoundaryForRegressionTests,
+  runnerBoundary,
+  "host-dependent runner checks were not isolated for regression tests",
+);
+
 function runnerBoundaryStatus(extraEnvironment = {}) {
-  return spawnSync("bash", [runnerBoundaryPath], {
+  return spawnSync("bash", ["-c", runnerBoundaryForRegressionTests], {
     env: { ...cleanEnvironment, ...extraEnvironment },
     stdio: "ignore",
   }).status;
