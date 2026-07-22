@@ -1,10 +1,13 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
 const manifestPath = "ci/gitlab-parity.json";
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const github = readFileSync(manifest.sourceWorkflow, "utf8");
 const gitlab = readFileSync(manifest.targetWorkflow, "utf8");
+const runnerBoundaryPath = "ci/assert-secretless-runner.sh";
+const runnerBoundary = readFileSync(runnerBoundaryPath, "utf8");
 
 function jobBlock(workflow, jobId, indentation) {
   const escapedId = jobId.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -119,16 +122,43 @@ assert(
   "secret-bearing jobs must remain blocked until the hardened runner is live",
 );
 assert(
-  gitlab.includes("hardened_state=current-spot-non-secret-only"),
-  "current spot proof boundary is not explicit",
+  runnerContract.hardenedRunnerRequiredForAllJobs,
+  "ordinary jobs must remain blocked until the hardened runner is live",
 );
 assert(
-  gitlab.includes('test "$REDO_CI_TRUST_BOUNDARY" = "untrusted"'),
-  "advertised runner trust boundary is not validated",
+  runnerContract.proofMode === "blocked-pending-hardened-untrusted-runner",
+  "the GitLab candidate must remain blocked pending runner hardening",
 );
 assert(
-  gitlab.includes('test "${REDO_CI_CONTAINER_RUNTIME:-}" = "none"'),
-  "advertised no-container-runtime boundary is not validated",
+  gitlab.includes(". ci/assert-secretless-runner.sh"),
+  "every GitLab job must run the secretless boundary assertion first",
+);
+assert(
+  gitlab.indexOf(". ci/assert-secretless-runner.sh") <
+    gitlab.indexOf(".github/configure-bazel"),
+  "the trust assertion must run before repository setup",
+);
+assert(
+  runnerBoundary.includes("AWS_WEB_IDENTITY_TOKEN_FILE") &&
+    runnerBoundary.includes("AWS_ACCESS_KEY_ID"),
+  "ambient AWS credential variables must be rejected",
+);
+assert(
+  runnerBoundary.includes(
+    "/var/run/secrets/kubernetes.io/serviceaccount/token",
+  ),
+  "the Kubernetes service-account token must be rejected",
+);
+assert(
+  runnerBoundary.includes("169.254.169.254/latest/meta-data") &&
+    runnerBoundary.includes("169.254.169.254/latest/api/token") &&
+    runnerBoundary.includes("aws sts get-caller-identity"),
+  "ambient metadata and AWS identity access must be rejected",
+);
+assert(
+  runnerBoundary.includes("REDO_CI_TRUST_BOUNDARY") &&
+    runnerBoundary.includes("REDO_CI_CONTAINER_RUNTIME"),
+  "the hardened untrusted no-runtime profile must be required",
 );
 assert(
   gitlab.includes('test -z "${GITLAB_TOKEN+x}"'),
@@ -174,6 +204,46 @@ assert(
 );
 assert(!gitlab.includes("allow_failure"), "required jobs cannot allow failure");
 
+const cleanEnvironment = {
+  PATH: process.env.PATH,
+  HOME: "/tmp/rules-javascript-secretless-test",
+  REDO_CI_TRUST_BOUNDARY: "untrusted",
+  REDO_CI_CONTAINER_RUNTIME: "none",
+};
+
+function runnerBoundaryStatus(extraEnvironment = {}) {
+  return spawnSync("bash", [runnerBoundaryPath], {
+    env: { ...cleanEnvironment, ...extraEnvironment },
+    stdio: "ignore",
+  }).status;
+}
+
+assert.equal(
+  runnerBoundaryStatus(),
+  0,
+  "a clean hardened-untrusted environment must pass",
+);
+assert.notEqual(
+  runnerBoundaryStatus({ AWS_ACCESS_KEY_ID: "ambient-access-key" }),
+  0,
+  "an ambient AWS access key must be denied",
+);
+assert.notEqual(
+  runnerBoundaryStatus({ AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-token" }),
+  0,
+  "an ambient AWS web identity must be denied",
+);
+assert.notEqual(
+  runnerBoundaryStatus({ GITLAB_TOKEN: "configured-admin-token" }),
+  0,
+  "a configured GitLab token must be denied",
+);
+assert.notEqual(
+  runnerBoundaryStatus({ REDO_CI_TRUST_BOUNDARY: "trusted" }),
+  0,
+  "a trusted/credentialed runner profile must be denied",
+);
+
 console.log(
-  `GitLab parity verified: ${manifest.jobs.length} GitHub jobs, ${manifest.requiredGitLabJobs.length} required GitLab jobs, immutable non-secret spot proof.`,
+  `GitLab parity verified: ${manifest.jobs.length} GitHub jobs, ${manifest.requiredGitLabJobs.length} required GitLab jobs; cutover blocked pending hardened untrusted runner.`,
 );

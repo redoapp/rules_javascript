@@ -1,11 +1,11 @@
 # GitLab equivalent of .github/workflows/build.yml.
 #
 # This public-repository pipeline uses no project/group secrets and fails if a
-# configured secret is injected. The current spot lane is valid for this
-# non-secret proof; secret-bearing work remains blocked until the runner
-# advertises and passes the hardened untrusted contract below. The parity
-# manifest fails closed when the GitHub workflow changes without a matching
-# GitLab update.
+# configured secret or ambient infrastructure identity is injected. The
+# current spot lane exposes AWS/Kubernetes identity and is therefore blocked
+# until its untrusted profile satisfies the contract below. The parity manifest
+# fails closed when the GitHub workflow changes without a matching GitLab
+# update.
 
 stages:
   - verify
@@ -35,6 +35,7 @@ default:
       - runner_system_failure
       - stuck_or_timeout_failure
   before_script:
+    - . ci/assert-secretless-runner.sh
     - .github/configure-bazel
     # The repository preset expands ~ from the passwd entry rather than HOME.
     # Override its root-owned runner mount with a writable pod-local cache.
@@ -65,29 +66,10 @@ runner-contract:
       esac
       test -z "${GITLAB_TOKEN+x}"
 
-      hardened_state=current-spot-non-secret-only
-      if test -n "${REDO_CI_TRUST_BOUNDARY:-}"; then
-        test "$REDO_CI_TRUST_BOUNDARY" = "untrusted"
-        test "${REDO_CI_CONTAINER_RUNTIME:-}" = "none"
-        test ! -e /var/run/secrets/kubernetes.io/serviceaccount/token
-        test -z "${AWS_ACCESS_KEY_ID+x}"
-        test -z "${AWS_SECRET_ACCESS_KEY+x}"
-        test -z "${AWS_WEB_IDENTITY_TOKEN_FILE+x}"
-        hardened_state=hardened-untrusted
-      fi
-
-      aws_identity_present=no
-      if test -n "${AWS_ACCESS_KEY_ID+x}${AWS_WEB_IDENTITY_TOKEN_FILE+x}"; then
-        aws_identity_present=yes
-      fi
-      kubernetes_token_present=no
-      if test -e /var/run/secrets/kubernetes.io/serviceaccount/token; then
-        kubernetes_token_present=yes
-      fi
-
-      printf 'runner_id=%s runner=%s tags=%s host=%s boundary=%s aws_identity=%s kubernetes_token=%s\n' \
-        "$CI_RUNNER_ID" "$CI_RUNNER_DESCRIPTION" "$CI_RUNNER_TAGS" "$(hostname)" \
-        "$hardened_state" "$aws_identity_present" "$kubernetes_token_present"
+      test "$REDO_CI_TRUST_BOUNDARY" = "untrusted"
+      test "$REDO_CI_CONTAINER_RUNTIME" = "none"
+      printf 'runner_id=%s runner=%s tags=%s host=%s boundary=hardened-untrusted\n' \
+        "$CI_RUNNER_ID" "$CI_RUNNER_DESCRIPTION" "$CI_RUNNER_TAGS" "$(hostname)"
 
 ci-parity:
   stage: verify
