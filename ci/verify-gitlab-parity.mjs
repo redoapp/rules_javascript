@@ -215,55 +215,76 @@ const cleanEnvironment = {
 // hardened GitLab runner must not expose (notably /var/run/docker.sock). Keep
 // the checked-in policy strict, but isolate its variable/profile regression
 // tests from whichever host happens to execute this verifier.
-const runnerBoundaryForRegressionTests = runnerBoundary
-  .replaceAll(
-    "/var/run/secrets/kubernetes.io/serviceaccount/token",
-    "/tmp/rules-javascript-no-kubernetes-token",
-  )
-  .replaceAll(
-    "/var/run/docker.sock",
-    "/tmp/rules-javascript-no-container-runtime",
-  )
-  .replaceAll("http://169.254.169.254/", "http://127.0.0.1:9/")
-  .replace(
-    "if AWS_EC2_METADATA_DISABLED=true aws sts get-caller-identity >/dev/null 2>&1; then",
-    "if false; then",
+const hostDependentChecks = [
+  `[[ ! -e /var/run/secrets/kubernetes.io/serviceaccount/token ]] || {
+    echo "Kubernetes service-account token is reachable from the job" >&2
+    exit 1
+}`,
+  `[[ ! -S /var/run/docker.sock ]] || {
+    echo "Container runtime socket is reachable from the job" >&2
+    exit 1
+}`,
+  String.raw`if curl --fail --silent --max-time 2 \
+    http://169.254.169.254/latest/meta-data/iam/security-credentials/ \
+    >/dev/null 2>&1; then
+    echo "IMDSv1 is reachable from the job" >&2
+    exit 1
+fi`,
+  String.raw`imds_token=$(curl --fail --silent --max-time 2 --request PUT \
+    --header 'X-aws-ec2-metadata-token-ttl-seconds: 60' \
+    http://169.254.169.254/latest/api/token 2>/dev/null || true)
+[[ -z $imds_token ]] || {
+    echo "IMDSv2 is reachable from the job" >&2
+    exit 1
+}`,
+  `if AWS_EC2_METADATA_DISABLED=true aws sts get-caller-identity >/dev/null 2>&1; then
+    echo "Ambient AWS identity is available to the job" >&2
+    exit 1
+fi`,
+];
+let runnerBoundaryForRegressionTests = runnerBoundary;
+for (const check of hostDependentChecks) {
+  assert(
+    runnerBoundaryForRegressionTests.includes(check),
+    "a required host-dependent runner denial changed unexpectedly",
   );
-assert.notEqual(
-  runnerBoundaryForRegressionTests,
-  runnerBoundary,
-  "host-dependent runner checks were not isolated for regression tests",
-);
+  runnerBoundaryForRegressionTests = runnerBoundaryForRegressionTests.replace(
+    check,
+    ": # Host-dependent denial verified statically above.",
+  );
+}
 
 function runnerBoundaryStatus(extraEnvironment = {}) {
   return spawnSync("bash", ["-c", runnerBoundaryForRegressionTests], {
     env: { ...cleanEnvironment, ...extraEnvironment },
-    stdio: "ignore",
-  }).status;
+    encoding: "utf8",
+  });
 }
 
+const cleanBoundaryResult = runnerBoundaryStatus();
 assert.equal(
-  runnerBoundaryStatus(),
+  cleanBoundaryResult.status,
   0,
-  "a clean hardened-untrusted environment must pass",
+  `a clean hardened-untrusted environment must pass: ${cleanBoundaryResult.stderr}`,
 );
 assert.notEqual(
-  runnerBoundaryStatus({ AWS_ACCESS_KEY_ID: "ambient-access-key" }),
+  runnerBoundaryStatus({ AWS_ACCESS_KEY_ID: "ambient-access-key" }).status,
   0,
   "an ambient AWS access key must be denied",
 );
 assert.notEqual(
-  runnerBoundaryStatus({ AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-token" }),
+  runnerBoundaryStatus({ AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-token" })
+    .status,
   0,
   "an ambient AWS web identity must be denied",
 );
 assert.notEqual(
-  runnerBoundaryStatus({ GITLAB_TOKEN: "configured-admin-token" }),
+  runnerBoundaryStatus({ GITLAB_TOKEN: "configured-admin-token" }).status,
   0,
   "a configured GitLab token must be denied",
 );
 assert.notEqual(
-  runnerBoundaryStatus({ REDO_CI_TRUST_BOUNDARY: "trusted" }),
+  runnerBoundaryStatus({ REDO_CI_TRUST_BOUNDARY: "trusted" }).status,
   0,
   "a trusted/credentialed runner profile must be denied",
 );
