@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "sourceWorkflow": ".github/workflows/build.yml",
+  "targetWorkflow": ".gitlab-ci.yml",
+  "runnerContract": {
+    "image": "864981714355.dkr.ecr.us-east-1.amazonaws.com/ci-gitlab-runner@sha256:64ce59ed5744d806b971f26f5f5ac74bcfbe9242461f3124999f52b1c6fc019d",
+    "tag": "redo-build-size-2",
+    "requestedTrustBoundary": "untrusted",
+    "runtimeIfHardened": "none",
+    "proofMode": "blocked-pending-hardened-untrusted-runner",
+    "hardenedRunnerRequiredForAllJobs": true,
+    "hardenedRunnerRequiredForSecrets": true,
+    "retryFailures": ["runner_system_failure", "stuck_or_timeout_failure"],
+    "secretVariables": []
+  },
+  "requiredGitLabJobs": ["runner-contract", "ci-parity", "lint", "test"],
+  "jobs": [
+    {
+      "github": {
+        "id": "lint",
+        "name": "Lint",
+        "commands": [
+          "node ci/verify-gitlab-parity.mjs",
+          "bazel test tools/lint:format_test tools/lint:lint_test",
+          "bazel run @files//packages:bazelrc.diff",
+          "bazel run tools/test:bazelrc.diff"
+        ]
+      },
+      "gitlab": {
+        "id": "lint",
+        "scope": "all-files",
+        "commands": [
+          "node ci/verify-gitlab-parity.mjs",
+          "bazel test tools/lint:format_test tools/lint:lint_test",
+          "bazel run @files//packages:bazelrc.diff",
+          "bazel run tools/test:bazelrc.diff"
+        ]
+      }
+    },
+    {
+      "github": {
+        "id": "test",
+        "name": "Test",
+        "commands": ["bazel test :test"]
+      },
+      "gitlab": {
+        "id": "test",
+        "commands": ["bazel test :test"]
+      }
+    }
+  ]
+}

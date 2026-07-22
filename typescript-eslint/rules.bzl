@@ -114,6 +114,7 @@ def _ts_eslint_format_impl(ctx):
     args.add("--manifest", ts_compile.manifest)
     for file_def in file_defs.values():
         args.add("%s=%s" % (file_def.src.path, file_def.generated.path))
+
     # Prefer the lint-only tsconfig (no preserveSymlinks=true) when the
     # compile rule emitted one. Falls back to the compile tsconfig for
     # legacy (non-native) consumers that don't set lint_config_path.
