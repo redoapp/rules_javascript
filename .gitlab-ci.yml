@@ -81,6 +81,7 @@ lint:
   stage: verify
   timeout: 30 minutes
   script:
+    - node ci/verify-gitlab-parity.mjs
     - bazel test tools/lint:format_test tools/lint:lint_test
     - bazel run @files//packages:bazelrc.diff
     - bazel run tools/test:bazelrc.diff

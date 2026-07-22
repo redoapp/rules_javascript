@@ -20,6 +20,7 @@
         "id": "lint",
         "name": "Lint",
         "commands": [
+          "node ci/verify-gitlab-parity.mjs",
           "bazel test tools/lint:format_test tools/lint:lint_test",
           "bazel run @files//packages:bazelrc.diff",
           "bazel run tools/test:bazelrc.diff"
@@ -29,6 +30,7 @@
         "id": "lint",
         "scope": "all-files",
         "commands": [
+          "node ci/verify-gitlab-parity.mjs",
           "bazel test tools/lint:format_test tools/lint:lint_test",
           "bazel run @files//packages:bazelrc.diff",
           "bazel run tools/test:bazelrc.diff"
