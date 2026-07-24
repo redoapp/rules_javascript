@@ -137,6 +137,7 @@ def _ts_eslint_format_impl(ctx):
         args_bin = args_default,
         bash_runfiles = bash_runfiles_default.default_runfiles,
         bin = executable,
+        ctx = ctx,
         diff_bin = diff_default,
         dir_mode = "775",
         file_defs = file_defs,
@@ -146,7 +147,6 @@ def _ts_eslint_format_impl(ctx):
         run_bin = run_default,
         runfiles_fn = ctx.runfiles,
         runner_template = runner,
-        workspace_name = ctx.workspace_name,
     )
 
     return [default_info]
