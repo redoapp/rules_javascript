@@ -1,5 +1,5 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag", "int_flag")
 load("@bazel_util//bazelrc:rules.bzl", "bazelrc_group")
 load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
 load("@rules_javascript//nodejs:rules.bzl", "nodejs_binary")
@@ -8,6 +8,12 @@ load("//javascript:rules.bzl", "js_library")
 bazelrc_group(
     name = "bazelrc",
     srcs = ["typescript.bazelrc"],
+    visibility = ["//visibility:public"],
+)
+
+int_flag(
+    name = "checkers",
+    build_setting_default = 0,
     visibility = ["//visibility:public"],
 )
 

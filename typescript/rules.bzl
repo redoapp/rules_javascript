@@ -392,8 +392,15 @@ def _ts_library_impl(ctx):
             # path so existing consumers see no behavior change.
             stager = ctx.file._stage_nm
             node_bin = ctx.attr._node[NodejsInfo].bin
+            checkers = ctx.attr.checkers or ctx.attr._checkers[BuildSettingInfo].value
+            if checkers > 0:
+                checkers_args = ["--checkers", str(checkers)]
+            elif checkers < 0:
+                checkers_args = ["--singleThreaded"]
+            else:
+                checkers_args = []
             actions.run_shell(
-                arguments = ["-p", tsconfig.path] + trace_args,
+                arguments = ["-p", tsconfig.path] + checkers_args + trace_args,
                 command = '"{node}" "{stager}" && exec "{tsgo}" "$@"'.format(
                     node = node_bin.path,
                     stager = stager.path,
@@ -485,6 +492,10 @@ def _ts_library_impl(ctx):
 ts_library = rule(
     implementation = _ts_library_impl,
     attrs = {
+        "checkers": attr.int(
+            default = 0,
+            doc = "Number of type-checker threads for the native compiler. 0 inherits //typescript:checkers; a negative value runs the compiler single-threaded.",
+        ),
         "compile_deps": attr.label_list(
             doc = "Compile-only dependencies.",
             providers = [TsInfo],
@@ -540,6 +551,10 @@ ts_library = rule(
         ),
         "target": attr.string(
             doc = "Target language. By default, uses //javascript:language.",
+        ),
+        "_checkers": attr.label(
+            default = "//typescript:checkers",
+            providers = [BuildSettingInfo],
         ),
         "_config": attr.label(
             cfg = "exec",
