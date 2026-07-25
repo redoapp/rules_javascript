@@ -15,6 +15,7 @@ TsCompilerInfo = provider(
     doc = "TypeScript compiler",
     fields = {
         "bin": "Compile executable.",
+        "explicit_types_wildcard": "True if the generated native compile tsconfig should set the types wildcard. TS 7 defaults compilerOptions.types to empty instead of auto-including every @types package under typeRoots; the wildcard restores that enumeration. Only tsgo understands it, so it must never reach a tsconfig read by TypeScript 5.9 (lint, transpile).",
         "native": "True if bin is a native binary (e.g. tsgo). When true, the compile action wraps bin in a shell script that first stages node_modules via node+stager, then execs bin. When false, bin is a node-based tsc that takes the stager via NODE_OPTIONS_APPEND.",
         "transpile_bin": "JS transpile executable.",
         "runtime_cjs": "List of runtime CjsInfo.",

@@ -99,6 +99,7 @@ def _ts_compiler_impl(ctx):
 
     ts_compiler_info = TsCompilerInfo(
         bin = bin,
+        explicit_types_wildcard = ctx.attr.explicit_types_wildcard,
         native = ctx.attr.native,
         runtime_cjs = [cjs_runtime] if cjs_runtime else [],
         runtime_js = [js_runtime] if js_runtime else [],
@@ -115,6 +116,10 @@ ts_compiler = rule(
             doc = "Declaration compiler executable.",
             executable = True,
             mandatory = True,
+        ),
+        "explicit_types_wildcard": attr.bool(
+            default = False,
+            doc = "Emit the types wildcard in the native compile tsconfig, restoring the @types auto-inclusion that TS 7 dropped. Native compilers only: TypeScript 5.9 does not understand the wildcard.",
         ),
         "native": attr.bool(
             default = False,
@@ -331,6 +336,8 @@ def _ts_library_impl(ctx):
     tsconfig_inputs = [file for file in inputs if file.is_directory]
     if compiler.native:
         args.add("--package-manifest", package_manifest.path)
+        if compiler.explicit_types_wildcard:
+            args.add("--types-wildcard")
         tsconfig_inputs = [package_manifest] + tsconfig_inputs
     args.add(tsconfig)
     actions.run(

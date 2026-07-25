@@ -35,6 +35,11 @@ parser.add_argument("--no-preserve-symlinks", {
   default: false,
   dest: "noPreserveSymlinks",
 });
+parser.add_argument("--types-wildcard", {
+  action: "store_true",
+  default: false,
+  dest: "typesWildcard",
+});
 parser.add_argument("output");
 
 interface Args {
@@ -51,6 +56,7 @@ interface Args {
   typeRoots: string[];
   packageManifest?: string;
   noPreserveSymlinks: boolean;
+  typesWildcard: boolean;
   output: string;
 }
 
@@ -79,6 +85,11 @@ interface Args {
   };
   if (args.typeRoots.length > 0) {
     tsconfig.compilerOptions.typeRoots = args.typeRoots.map(relativePath);
+  }
+  // TS 7 defaults types to []; "*" restores auto-inclusion of every @types
+  // package under typeRoots. Only tsgo understands it — native configs only.
+  if (args.typesWildcard) {
+    tsconfig.compilerOptions.types = ["*"];
   }
   // preserveSymlinks is critical for the native (tsgo) compile path
   // (--package-manifest): the runtime stager creates real node_modules/
