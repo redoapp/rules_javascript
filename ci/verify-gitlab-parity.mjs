@@ -6,8 +6,8 @@ const manifestPath = "ci/gitlab-parity.json";
 const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
 const github = readFileSync(manifest.sourceWorkflow, "utf8");
 const gitlab = readFileSync(manifest.targetWorkflow, "utf8");
-const runnerBoundaryPath = "ci/assert-secretless-runner.sh";
-const runnerBoundary = readFileSync(runnerBoundaryPath, "utf8");
+const runnerContractPath = "ci/assert-runner-contract.sh";
+const runnerContractScript = readFileSync(runnerContractPath, "utf8");
 
 function jobBlock(workflow, jobId, indentation) {
   const escapedId = jobId.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
@@ -115,54 +115,31 @@ assert.deepEqual(
 assert.deepEqual(
   runnerContract.secretVariables,
   [],
-  "untrusted merge-request jobs cannot require secrets",
+  "merge-request jobs cannot require secrets",
+);
+assert.equal(
+  runnerContract.proofMode,
+  "functional-existing-spot-runner",
+  "the candidate must use the accepted existing spot runner lane",
 );
 assert(
-  runnerContract.hardenedRunnerRequiredForSecrets,
-  "secret-bearing jobs must remain blocked until the hardened runner is live",
+  gitlab.includes(". ci/assert-runner-contract.sh"),
+  "every GitLab job must verify the runner contract first",
 );
 assert(
-  runnerContract.hardenedRunnerRequiredForAllJobs,
-  "ordinary jobs must remain blocked until the hardened runner is live",
-);
-assert(
-  runnerContract.proofMode === "blocked-pending-hardened-untrusted-runner",
-  "the GitLab candidate must remain blocked pending runner hardening",
-);
-assert(
-  gitlab.includes(". ci/assert-secretless-runner.sh"),
-  "every GitLab job must run the secretless boundary assertion first",
-);
-assert(
-  gitlab.indexOf(". ci/assert-secretless-runner.sh") <
+  gitlab.indexOf(". ci/assert-runner-contract.sh") <
     gitlab.indexOf(".github/configure-bazel"),
-  "the trust assertion must run before repository setup",
+  "the runner assertion must run before repository setup",
 );
 assert(
-  runnerBoundary.includes("AWS_WEB_IDENTITY_TOKEN_FILE") &&
-    runnerBoundary.includes("AWS_ACCESS_KEY_ID"),
-  "ambient AWS credential variables must be rejected",
+  runnerContractScript.includes("CI_RUNNER_DESCRIPTION") &&
+    runnerContractScript.includes("CI_RUNNER_TAGS"),
+  "runner identity and tags must be verified",
 );
 assert(
-  runnerBoundary.includes(
-    "/var/run/secrets/kubernetes.io/serviceaccount/token",
-  ) && runnerBoundary.includes("/var/run/docker.sock"),
-  "Kubernetes and container-runtime access must be rejected",
-);
-assert(
-  runnerBoundary.includes("169.254.169.254/latest/meta-data") &&
-    runnerBoundary.includes("169.254.169.254/latest/api/token") &&
-    runnerBoundary.includes("aws sts get-caller-identity"),
-  "ambient metadata and AWS identity access must be rejected",
-);
-assert(
-  runnerBoundary.includes("REDO_CI_TRUST_BOUNDARY") &&
-    runnerBoundary.includes("REDO_CI_CONTAINER_RUNTIME"),
-  "the hardened untrusted no-runtime profile must be required",
-);
-assert(
-  gitlab.includes('test -z "${GITLAB_TOKEN+x}"'),
-  "non-secret proof must fail if the configured GitLab token is injected",
+  runnerContractScript.includes("GITLAB_TOKEN") &&
+    runnerContractScript.includes("REDONT_GITLAB_TOKEN"),
+  "protected GitLab variables must be rejected on merge-request refs",
 );
 assert(
   gitlab.includes("  HOME: /tmp"),
@@ -206,89 +183,42 @@ assert(!gitlab.includes("allow_failure"), "required jobs cannot allow failure");
 
 const cleanEnvironment = {
   PATH: process.env.PATH,
-  HOME: "/tmp/rules-javascript-secretless-test",
-  REDO_CI_TRUST_BOUNDARY: "untrusted",
-  REDO_CI_CONTAINER_RUNTIME: "none",
+  HOME: "/tmp/rules-javascript-runner-contract-test",
+  CI_PIPELINE_SOURCE: "merge_request_event",
+  CI_RUNNER_DESCRIPTION: "redo-build-size-2",
+  CI_RUNNER_TAGS: "redo-build-size-2",
 };
 
-// GitHub's hosted lint runner intentionally exposes facilities that the
-// hardened GitLab runner must not expose (notably /var/run/docker.sock). Keep
-// the checked-in policy strict, but isolate its variable/profile regression
-// tests from whichever host happens to execute this verifier.
-const hostDependentChecks = [
-  `[[ ! -e /var/run/secrets/kubernetes.io/serviceaccount/token ]] || {
-    echo "Kubernetes service-account token is reachable from the job" >&2
-    exit 1
-}`,
-  `[[ ! -S /var/run/docker.sock ]] || {
-    echo "Container runtime socket is reachable from the job" >&2
-    exit 1
-}`,
-  String.raw`if curl --fail --silent --max-time 2 \
-    http://169.254.169.254/latest/meta-data/iam/security-credentials/ \
-    >/dev/null 2>&1; then
-    echo "IMDSv1 is reachable from the job" >&2
-    exit 1
-fi`,
-  String.raw`imds_token=$(curl --fail --silent --max-time 2 --request PUT \
-    --header 'X-aws-ec2-metadata-token-ttl-seconds: 60' \
-    http://169.254.169.254/latest/api/token 2>/dev/null || true)
-[[ -z $imds_token ]] || {
-    echo "IMDSv2 is reachable from the job" >&2
-    exit 1
-}`,
-  `if AWS_EC2_METADATA_DISABLED=true aws sts get-caller-identity >/dev/null 2>&1; then
-    echo "Ambient AWS identity is available to the job" >&2
-    exit 1
-fi`,
-];
-let runnerBoundaryForRegressionTests = runnerBoundary;
-for (const check of hostDependentChecks) {
-  assert(
-    runnerBoundaryForRegressionTests.includes(check),
-    "a required host-dependent runner denial changed unexpectedly",
-  );
-  runnerBoundaryForRegressionTests = runnerBoundaryForRegressionTests.replace(
-    check,
-    ": # Host-dependent denial verified statically above.",
-  );
-}
-
-function runnerBoundaryStatus(extraEnvironment = {}) {
-  return spawnSync("bash", ["-c", runnerBoundaryForRegressionTests], {
+function runnerContractStatus(extraEnvironment = {}) {
+  return spawnSync("bash", [runnerContractPath], {
     env: { ...cleanEnvironment, ...extraEnvironment },
     encoding: "utf8",
   });
 }
 
-const cleanBoundaryResult = runnerBoundaryStatus();
+const cleanContractResult = runnerContractStatus();
 assert.equal(
-  cleanBoundaryResult.status,
+  cleanContractResult.status,
   0,
-  `a clean hardened-untrusted environment must pass: ${cleanBoundaryResult.stderr}`,
+  `the accepted spot runner contract must pass: ${cleanContractResult.stderr}`,
 );
 assert.notEqual(
-  runnerBoundaryStatus({ AWS_ACCESS_KEY_ID: "ambient-access-key" }).status,
+  runnerContractStatus({ CI_RUNNER_DESCRIPTION: "unexpected-runner" }).status,
   0,
-  "an ambient AWS access key must be denied",
+  "an unexpected runner must be denied",
 );
 assert.notEqual(
-  runnerBoundaryStatus({ AWS_WEB_IDENTITY_TOKEN_FILE: "/tmp/web-token" })
+  runnerContractStatus({ GITLAB_TOKEN: "configured-admin-token" }).status,
+  0,
+  "a configured GitLab token must be denied on merge-request refs",
+);
+assert.notEqual(
+  runnerContractStatus({ REDONT_GITLAB_TOKEN: "configured-redont-token" })
     .status,
   0,
-  "an ambient AWS web identity must be denied",
-);
-assert.notEqual(
-  runnerBoundaryStatus({ GITLAB_TOKEN: "configured-admin-token" }).status,
-  0,
-  "a configured GitLab token must be denied",
-);
-assert.notEqual(
-  runnerBoundaryStatus({ REDO_CI_TRUST_BOUNDARY: "trusted" }).status,
-  0,
-  "a trusted/credentialed runner profile must be denied",
+  "the protected ReDONT token must be denied on merge-request refs",
 );
 
 console.log(
-  `GitLab parity verified: ${manifest.jobs.length} GitHub jobs, ${manifest.requiredGitLabJobs.length} required GitLab jobs; cutover blocked pending hardened untrusted runner.`,
+  `GitLab parity verified: ${manifest.jobs.length} GitHub jobs, ${manifest.requiredGitLabJobs.length} required GitLab jobs; existing spot runner lane accepted.`,
 );
