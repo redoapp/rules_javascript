@@ -38,5 +38,9 @@ expose the Strada surface; declaration nodes resolve lazily and are exposed as
 proxied tsgo nodes. `getAwaitedType` and `getContextualTypeForArgumentAtIndex`
 have no tsgo equivalent and are emulated.
 
-The API is unstable and unversioned: pin an exact `typescript` nightly and
+The API is unstable and unversioned. The bridge pins no TypeScript itself (the
+consumer's `@npm` does, like the native `ts_compiler` binary); it records the
+nightly it was verified against in `TESTED_NATIVE_VERSION` and
+`createTsgoParser` fails at startup with a descriptive error when the handed-in
+modules lack an export or checker method it relies on. Pin an exact nightly and
 re-run the consumer's parity checks when bumping it.

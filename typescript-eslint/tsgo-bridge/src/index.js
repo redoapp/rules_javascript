@@ -1,10 +1,21 @@
 /** ESLint parser: ESTree from @typescript-eslint/parser, type information from tsgo's `typescript/unstable/sync` API. */
 import path from "node:path";
 import { createTsgoProjectClass } from "./bridge.js";
+import { assertCompatible, TESTED_NATIVE_VERSION } from "./compat.js";
 import { createEnumRemaps } from "./enums.js";
 
+export { TESTED_NATIVE_VERSION };
+
 /** Options: `ts` (Strada module the rules import), `tsParser`, `tsgoSync`, `tsgoAst`, optional default `tsconfig`, `collectTiming`. */
-export function createTsgoParser({ ts, tsParser, tsgoSync, tsgoAst, tsconfig, collectTiming = false }) {
+export function createTsgoParser({
+  ts,
+  tsParser,
+  tsgoSync,
+  tsgoAst,
+  tsconfig,
+  collectTiming = false,
+}) {
+  assertCompatible({ ts, tsParser, tsgoSync, tsgoAst });
   const remaps = createEnumRemaps({ ts, tsgoSync, tsgoAst });
   const env = { ts, API: tsgoSync.API, remaps, collectTiming };
   const { TsgoProject, stats } = createTsgoProjectClass(env);
@@ -39,7 +50,15 @@ export function createTsgoParser({ ts, tsParser, tsgoSync, tsgoAst, tsconfig, co
 
   function parseForESLint(code, options) {
     const tsconfigPath = resolveTsconfig(options);
-    const { project: _project, projectService: _ps, tsgoProject: _tp, programs: _programs, ...rest } = options ?? {};
+    const rest = { ...options };
+    for (const key of [
+      "project",
+      "projectService",
+      "tsgoProject",
+      "programs",
+    ]) {
+      Reflect.deleteProperty(rest, key);
+    }
     const result = tsParser.parseForESLint(code, { ...rest, project: false });
     const tsgo = getProject(tsconfigPath);
     const services = result.services;
@@ -52,11 +71,15 @@ export function createTsgoParser({ ts, tsParser, tsgoSync, tsgoAst, tsconfig, co
       experimentalDecorators: compilerOptions.experimentalDecorators ?? false,
       isolatedDeclarations: compilerOptions.isolatedDeclarations ?? false,
       getContextualType: (node) => checker.getContextualType(maps.get(node)),
-      getResolvedSignature: (node) => checker.getResolvedSignature(maps.get(node)),
-      getSymbolAtLocation: (node) => checker.getSymbolAtLocation(maps.get(node)),
+      getResolvedSignature: (node) =>
+        checker.getResolvedSignature(maps.get(node)),
+      getSymbolAtLocation: (node) =>
+        checker.getSymbolAtLocation(maps.get(node)),
       getTypeAtLocation: (node) => checker.getTypeAtLocation(maps.get(node)),
-      getTypeFromTypeNode: (node) => checker.getTypeFromTypeNode(maps.get(node)),
-      getTypeOfSymbolAtLocation: (symbol, node) => checker.getTypeOfSymbolAtLocation(symbol, maps.get(node)),
+      getTypeFromTypeNode: (node) =>
+        checker.getTypeFromTypeNode(maps.get(node)),
+      getTypeOfSymbolAtLocation: (symbol, node) =>
+        checker.getTypeOfSymbolAtLocation(symbol, maps.get(node)),
     });
     return result;
   }
