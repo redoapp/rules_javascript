@@ -1,4 +1,5 @@
 /** tsgo-backed stand-ins for `ts.Program` / `ts.TypeChecker` that typescript-eslint rules can consume. */
+import fs from "node:fs";
 import path from "node:path";
 
 /** Builds the shim classes over `env` = { ts, API, remaps, collectTiming } so nothing here imports a TypeScript package. */
@@ -54,13 +55,15 @@ export function createTsgoProjectClass(env) {
           return remapNodeFlags(target.flags);
         }
         if (prop === "modifierFlagsCache") {
-          return undefined;
+          return;
         }
         if (prop === "escapedText" && typeof target.text === "string") {
           return target.text.startsWith("__") ? `_${target.text}` : target.text;
         }
         const value =
-          prop in target ? target[prop] : target[PROPERTY_ALIASES[prop] ?? prop];
+          prop in target
+            ? target[prop]
+            : target[PROPERTY_ALIASES[prop] ?? prop];
         if (typeof value === "function") {
           return (...args) =>
             wrapValue(value.apply(target, args.map(unwrapArg)), project);
@@ -109,25 +112,102 @@ export function createTsgoProjectClass(env) {
     return value;
   }
 
+  /**
+   * TypeScript <= 6 auto-includes `@types/*` packages when `types` is unset;
+   * TypeScript 7 does not. Under rules_javascript the Strada lint saw exactly
+   * the current package's direct `@types/*` deps (its virtual node_modules), so
+   * read those from the package manifest when the native lint action provides
+   * it; otherwise scan `typeRoots` / ancestor `node_modules/@types` on disk.
+   */
+  function automaticTypes(configDir, typeRoots) {
+    const manifestPath = process.env.NODE_FS_PACKAGE_MANIFEST;
+    const currentPackage = process.env.STAGE_NM_CURRENT_PKG;
+    if (manifestPath && currentPackage) {
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+      const deps = manifest.packages?.[currentPackage]?.deps ?? {};
+      return Object.keys(deps)
+        .filter((name) => name.startsWith("@types/"))
+        .map((name) => name.slice("@types/".length))
+        .sort();
+    }
+    const roots = [];
+    if (typeRoots?.length) {
+      roots.push(...typeRoots.map((r) => path.resolve(configDir, r)));
+    } else {
+      for (let dir = configDir; ; dir = path.dirname(dir)) {
+        roots.push(path.join(dir, "node_modules", "@types"));
+        if (path.dirname(dir) === dir) {
+          break;
+        }
+      }
+    }
+    const names = new Set();
+    for (const root of roots) {
+      let entries;
+      try {
+        entries = fs.readdirSync(root, { withFileTypes: true });
+      } catch {
+        continue;
+      }
+      for (const entry of entries) {
+        if (
+          entry.name.startsWith(".") ||
+          (!entry.isDirectory() && !entry.isSymbolicLink())
+        ) {
+          continue;
+        }
+        const dir = path.join(root, entry.name);
+        if (
+          fs.existsSync(path.join(dir, "package.json")) ||
+          fs.existsSync(path.join(dir, "index.d.ts"))
+        ) {
+          names.add(entry.name);
+        }
+      }
+    }
+    return [...names].sort();
+  }
+
   class TsgoProject {
     /** @param {string} tsconfigPath absolute path */
     constructor(
       tsconfigPath,
-      { cwd = path.dirname(tsconfigPath), collectTiming = false } = {},
+      { cwd = process.cwd(), collectTiming = false } = {},
     ) {
       this.tsconfigPath = tsconfigPath;
-      this.api = new API({ cwd, collectTiming: collectTiming || env.collectTiming });
+      this.api = new API({
+        cwd,
+        collectTiming: collectTiming || env.collectTiming,
+      });
       this.requestStats = new Map();
-      if (collectTiming || env.collectTiming || process.env.TSGO_BRIDGE_TIMING === "1") {
+      if (
+        collectTiming ||
+        env.collectTiming ||
+        process.env.TSGO_BRIDGE_TIMING === "1"
+      ) {
         this.instrumentClient();
       }
-      this.snapshot = this.api.updateSnapshot({ openProjects: [tsconfigPath] });
-      this.project = this.snapshot.getProject(tsconfigPath);
-      if (!this.project) {
-        throw new Error(`tsgo: no project loaded for ${tsconfigPath}`);
+      const parsed = this.api.parseConfigFile(tsconfigPath);
+      const compilerOptions = { ...parsed.options };
+      if (compilerOptions.types === undefined) {
+        compilerOptions.types = automaticTypes(
+          path.dirname(tsconfigPath),
+          compilerOptions.typeRoots,
+        );
       }
+      if (process.env.NODE_FS_PACKAGE_MANIFEST) {
+        // Staged node_modules (see rules_javascript stage-nm): resolve through
+        // the staged symlinks like the native compile does, and drop typeRoots
+        // that only exist in the fs-linker virtual filesystem.
+        compilerOptions.preserveSymlinks = true;
+        delete compilerOptions.typeRoots;
+      }
+      this.program = this.api.createProgram(parsed.fileNames, {
+        compilerOptions,
+        projectReferences: parsed.projectReferences,
+      });
+      this.project = this.program.getProject();
       this.checker = this.project.checker;
-      this.program = this.project.program;
       this.fileIndex = new Map();
       this.nodeWrappers = new WeakMap();
       this.typeWrappers = new Map();
@@ -135,7 +215,7 @@ export function createTsgoProjectClass(env) {
       this.signatureWrappers = new Map();
       this.shimChecker = new CheckerShim(this);
       this.shimProgram = new ProgramShim(this);
-      this.compilerOptions = this.project.parsedCommandLine.options;
+      this.compilerOptions = compilerOptions;
     }
 
     close() {
@@ -305,7 +385,7 @@ export function createTsgoProjectClass(env) {
 
     resolveHandle(handle) {
       if (!handle) {
-        return undefined;
+        return;
       }
       stats.declarationResolves++;
       return this.wrapNode(handle.resolve(this.project));
@@ -561,7 +641,7 @@ export function createTsgoProjectClass(env) {
 
     symbolTable(map) {
       if (!map) {
-        return undefined;
+        return;
       }
       const out = new Map();
       for (const [k, v] of map) {
@@ -571,12 +651,10 @@ export function createTsgoProjectClass(env) {
     }
 
     getJsDocTags() {
-      return this.inner
-        .getJsDocTags(this.project.checker)
-        .map((tag) => ({
-          name: tag.name,
-          text: tag.text ? [{ kind: "text", text: tag.text }] : undefined,
-        }));
+      return this.inner.getJsDocTags(this.project.checker).map((tag) => ({
+        name: tag.name,
+        text: tag.text ? [{ kind: "text", text: tag.text }] : undefined,
+      }));
     }
 
     getDocumentationComment() {
@@ -655,7 +733,9 @@ export function createTsgoProjectClass(env) {
     }
 
     getSourceFile(fileName) {
-      return this.project.wrapNode(this.project.program.getSourceFile(fileName));
+      return this.project.wrapNode(
+        this.project.program.getSourceFile(fileName),
+      );
     }
 
     getRootFileNames() {
@@ -673,7 +753,9 @@ export function createTsgoProjectClass(env) {
     }
 
     isSourceFileFromExternalLibrary(sf) {
-      return this.project.program.isSourceFileFromExternalLibrary(unwrapArg(sf));
+      return this.project.program.isSourceFileFromExternalLibrary(
+        unwrapArg(sf),
+      );
     }
 
     isSourceFileDefaultLibrary(sf) {
@@ -717,7 +799,7 @@ export function createTsgoProjectClass(env) {
 
     getSymbolAtLocation(node) {
       if (!node) {
-        return undefined;
+        return;
       }
       return this.p.wrapSymbol(this.c.getSymbolAtLocation(this.node(node)));
     }
@@ -758,7 +840,9 @@ export function createTsgoProjectClass(env) {
     }
 
     getExportsOfModule(symbol) {
-      return this.p.wrapSymbols(this.c.getExportsOfModule(unwrapSymbol(symbol)));
+      return this.p.wrapSymbols(
+        this.c.getExportsOfModule(unwrapSymbol(symbol)),
+      );
     }
 
     getApparentType(type) {
@@ -806,26 +890,28 @@ export function createTsgoProjectClass(env) {
     }
 
     getPropertyOfType(type, name) {
-      return this.p.wrapSymbol(this.c.getPropertyOfType(unwrapType(type), name));
+      return this.p.wrapSymbol(
+        this.c.getPropertyOfType(unwrapType(type), name),
+      );
     }
 
     getIndexInfosOfType(type) {
-      return this.c
-        .getIndexInfosOfType(unwrapType(type))
-        .map((info) => ({
-          keyType: this.p.wrapType(info.keyType),
-          type: this.p.wrapType(info.valueType),
-          isReadonly: !!info.isReadonly,
-          declaration: info.declaration
-            ? this.p.resolveHandle(info.declaration)
-            : undefined,
-        }));
+      return this.c.getIndexInfosOfType(unwrapType(type)).map((info) => ({
+        keyType: this.p.wrapType(info.keyType),
+        type: this.p.wrapType(info.valueType),
+        isReadonly: !!info.isReadonly,
+        declaration: info.declaration
+          ? this.p.resolveHandle(info.declaration)
+          : undefined,
+      }));
     }
 
     getIndexInfoOfType(type, kind) {
       const infos = this.getIndexInfosOfType(type);
       const wanted =
-        kind === ts.IndexKind.String ? ts.TypeFlags.String : ts.TypeFlags.Number;
+        kind === ts.IndexKind.String
+          ? ts.TypeFlags.String
+          : ts.TypeFlags.Number;
       return infos.find((i) => i.keyType.flags & wanted);
     }
 
@@ -874,7 +960,7 @@ export function createTsgoProjectClass(env) {
 
     getContextualType(node) {
       if (!node) {
-        return undefined;
+        return;
       }
       return this.p.wrapType(this.c.getContextualType(this.node(node)));
     }
@@ -927,7 +1013,7 @@ export function createTsgoProjectClass(env) {
 
     getShorthandAssignmentValueSymbol(node) {
       if (!node) {
-        return undefined;
+        return;
       }
       return this.p.wrapSymbol(
         this.c.getShorthandAssignmentValueSymbol(this.node(node)),
@@ -936,7 +1022,7 @@ export function createTsgoProjectClass(env) {
 
     getExportSpecifierLocalTargetSymbol(node) {
       if (!node) {
-        return undefined;
+        return;
       }
       return this.p.wrapSymbol(
         this.c.getExportSpecifierLocalTargetSymbol(this.node(node)),
@@ -1011,7 +1097,7 @@ export function createTsgoProjectClass(env) {
       let current = unwrapType(type);
       for (let depth = 0; depth < 8; depth++) {
         if (seen.has(current.id)) {
-          return undefined;
+          return;
         }
         seen.add(current.id);
         const promised = this.promisedTypeOfPromise(current);
@@ -1020,7 +1106,7 @@ export function createTsgoProjectClass(env) {
         }
         current = promised;
       }
-      return undefined;
+      return;
     }
 
     getPromisedTypeOfPromise(type) {
@@ -1029,9 +1115,12 @@ export function createTsgoProjectClass(env) {
     }
 
     promisedTypeOfPromise(type) {
-      const then = this.c.getPropertyOfType(this.c.getApparentType(type), "then");
+      const then = this.c.getPropertyOfType(
+        this.c.getApparentType(type),
+        "then",
+      );
       if (!then) {
-        return undefined;
+        return;
       }
       const thenType = this.c.getTypeOfSymbol(then);
       const sigs = this.c.getSignaturesOfType(
@@ -1059,7 +1148,7 @@ export function createTsgoProjectClass(env) {
         }
       }
       if (candidates.size !== 1) {
-        return undefined;
+        return;
       }
       return candidates.values().next().value;
     }
