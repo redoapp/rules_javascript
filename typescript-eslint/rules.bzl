@@ -1,13 +1,32 @@
 load("@bazel_lib//lib:paths.bzl", "to_rlocation_path")
+load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_util//generate:runner.bzl", "create_runner")
 load("//commonjs:providers.bzl", "CjsInfo")
 load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_export")
+load("//nodejs:nodejs.bzl", "NodejsInfo")
 load("//nodejs:rules.bzl", "nodejs_binary")
 load("//typescript:providers.bzl", "TsCompileInfo")
 load(":providers.bzl", "TsEslintInfo")
 
-def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_lib"), node_options = [], options = None, visibility = None):
+def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_lib"), native = False, node_options = [], options = None, visibility = None):
+    """Configure typescript-eslint.
+
+    Args:
+        name: Target name.
+        config: ESLint config file path within config_dep's package.
+        config_dep: Library providing the config file.
+        dep: ESLint library.
+        native: Take type information from the native TypeScript compiler
+            (tsgo) instead of a Strada `ts.Program`. The lint action then
+            materializes `node_modules/` like the native compile action and
+            sets `TSGO_BRIDGE=1` and `TS_CONFIG` for the config, which is
+            expected to build its parser with
+            `@rules-javascript/typescript-eslint-tsgo-bridge`.
+        node_options: Extra Node.js options for the linter.
+        options: ESLint CLI options.
+        visibility: Visibility.
+    """
     js_export(
         name = "%s.main" % name,
         dep = Label("//typescript-eslint/linter:lib"),
@@ -30,6 +49,7 @@ def configure_ts_eslint(name, config, config_dep, dep = Label("//eslint:eslint_l
         config = config,
         config_dep = config_dep,
         bin = ":%s.bin" % name,
+        native = native,
         options = options,
         visibility = visibility,
     )
@@ -47,6 +67,7 @@ def _ts_eslint_impl(ctx):
     ts_eslint_info = TsEslintInfo(
         bin = bin_default.files_to_run,
         config_path = config,
+        native = ctx.attr.native,
         options = options,
     )
 
@@ -67,6 +88,10 @@ ts_eslint = rule(
             doc = "Configuration file",
             mandatory = True,
             providers = [CjsInfo, JsInfo],
+        ),
+        "native": attr.bool(
+            default = False,
+            doc = "Type information from the native TypeScript compiler (tsgo) via the tsgo-bridge parser",
         ),
         "options": attr.string_list(
             doc = "ESLint options",
@@ -118,19 +143,49 @@ def _ts_eslint_format_impl(ctx):
     # compile rule emitted one. Falls back to the compile tsconfig for
     # legacy (non-native) consumers that don't set lint_config_path.
     ts_config_path = ts_compile.lint_config_path if hasattr(ts_compile, "lint_config_path") and ts_compile.lint_config_path else ts_compile.config_path
-    actions.run(
-        arguments = [args],
-        env = {"TSESTREE_SINGLE_RUN": "true", "TS_CONFIG": ts_config_path},
-        executable = ts_eslint.bin.executable,
-        inputs = depset(
-            [ts_compile.manifest],
-            transitive = [srcs, ts_compile.declarations, ts_compile.configs, ts_compile.runtime_js, ts_compile.srcs],
-        ),
-        mnemonic = "TypeScriptCompile",
-        progress_message = "Linting TypeScript %{label}",
-        outputs = [file_def.generated for file_def in file_defs.values()],
-        tools = [ts_eslint.bin],
+    lint_inputs = depset(
+        [ts_compile.manifest],
+        transitive = [srcs, ts_compile.declarations, ts_compile.configs, ts_compile.runtime_js, ts_compile.srcs],
     )
+    outputs = [file_def.generated for file_def in file_defs.values()]
+    if ts_eslint.native:
+        # The tsgo child process reads the real filesystem, so materialize
+        # node_modules/ with the same stager the native compile action uses,
+        # against the compile tsconfig (preserveSymlinks keeps nominal type
+        # identities stable through the staged symlinks).
+        stager = ctx.file._stage_nm
+        node_bin = ctx.attr._node[NodejsInfo].bin
+        actions.run_shell(
+            arguments = [args],
+            command = '"{node}" "{stager}" && exec "{eslint}" "$@"'.format(
+                eslint = ts_eslint.bin.executable.path,
+                node = node_bin.path,
+                stager = stager.path,
+            ),
+            env = {
+                "NODE_FS_PACKAGE_MANIFEST": ts_compile.manifest.path,
+                "STAGE_NM_CURRENT_PKG": paths.dirname(ts_compile.config_path),
+                "TSESTREE_SINGLE_RUN": "true",
+                "TSGO_BRIDGE": "1",
+                "TS_CONFIG": ts_compile.config_path,
+            },
+            inputs = depset([stager, node_bin], transitive = [lint_inputs]),
+            mnemonic = "TypeScriptLintNative",
+            progress_message = "Linting TypeScript %{label} (tsgo)",
+            outputs = outputs,
+            tools = [ts_eslint.bin],
+        )
+    else:
+        actions.run(
+            arguments = [args],
+            env = {"TSESTREE_SINGLE_RUN": "true", "TS_CONFIG": ts_config_path},
+            executable = ts_eslint.bin.executable,
+            inputs = lint_inputs,
+            mnemonic = "TypeScriptCompile",
+            progress_message = "Linting TypeScript %{label}",
+            outputs = outputs,
+            tools = [ts_eslint.bin],
+        )
 
     default_info = create_runner(
         actions = actions,
@@ -182,6 +237,17 @@ ts_eslint_format = rule(
             cfg = "exec",
             default = "@bazel_util//generate/diff:bin",
             executable = True,
+        ),
+        "_node": attr.label(
+            cfg = "exec",
+            default = "//nodejs",
+            doc = "Node binary used to run the stage-nm script in native (tsgo) mode.",
+            providers = [NodejsInfo],
+        ),
+        "_stage_nm": attr.label(
+            allow_single_file = True,
+            default = "//typescript/stage-nm:stage-nm.js",
+            doc = "Script that materializes node_modules/ from the package manifest for the native (tsgo) type backend.",
         ),
         "_run": attr.label(
             default = "@bazel_util//generate/run:bin",

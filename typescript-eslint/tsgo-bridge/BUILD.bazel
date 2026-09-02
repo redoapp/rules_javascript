@@ -1,0 +1,19 @@
+load("//commonjs:rules.bzl", "cjs_root")
+load("//javascript:rules.bzl", "js_library")
+
+# Dependency-free: the consumer passes its `typescript`, native `typescript`
+# (7.1+ with `unstable/sync`), and `@typescript-eslint/parser` modules into
+# createTsgoParser(), so the bridge never pins a TypeScript version of its own.
+js_library(
+    name = "lib",
+    srcs = glob(["src/**/*.js"]),
+    root = ":root",
+    visibility = ["//visibility:public"],
+)
+
+cjs_root(
+    name = "root",
+    package_name = "@rules-javascript/typescript-eslint-tsgo-bridge",
+    descriptors = ["package.json"],
+    visibility = ["//visibility:public"],
+)
