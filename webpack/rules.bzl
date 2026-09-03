@@ -39,6 +39,7 @@ def _webpack_impl(ctx):
     config = ctx.attr.config
     config_dep = ctx.attr.config_dep[CjsInfo]
     server = ctx.attr.server[DefaultInfo]
+    server_cjs = ctx.attr.server[CjsInfo]
 
     webpack_info = WebpackInfo(
         bin = bin,
@@ -46,6 +47,7 @@ def _webpack_impl(ctx):
         client_js = client_js,
         config_path = "%s/%s" % (to_rlocation_path(ctx, config_dep.package), config),
         server = server,
+        server_cjs = server_cjs,
     )
 
     return [webpack_info]
@@ -76,6 +78,7 @@ webpack = rule(
             cfg = "exec",
             executable = True,
             mandatory = True,
+            providers = [CjsInfo],
         ),
         "client": attr.label_list(
             mandatory = True,
@@ -270,6 +273,7 @@ def _webpack_server_impl(ctx):
     source_map = ctx.attr._source_map[BuildSettingInfo].value
     webpack = ctx.split_attr.webpack["tool"][WebpackInfo]
     webpack_client = ctx.split_attr.webpack["browser"][WebpackInfo]
+    server_cjs = webpack.server_cjs
     dep_js = ctx.attr.dep[0][JsInfo]
     dep_cjs = ctx.attr.dep[0][CjsInfo]
     name = ctx.attr.name
@@ -299,6 +303,23 @@ def _webpack_server_impl(ctx):
         package_path = package_path,
     )
 
+    def node_package_path(package):
+        return to_rlocation_path(rlocation_ctx, package)
+
+    # The webpack tools resolve their own modules through PnP, but the dev
+    # server bundles files out of that tree -- webpack's hot client and the
+    # entries plugins inject -- and webpack resolves those from the filesystem.
+    # The shim links the tree back in from this manifest.
+    node_package_manifest = actions.declare_file("%s-node-packages.json" % name)
+    gen_manifest(
+        actions = actions,
+        manifest_bin = ctx.attr._manifest[DefaultInfo],
+        manifest = node_package_manifest,
+        packages = server_cjs.transitive_packages,
+        deps = server_cjs.transitive_links,
+        package_path = node_package_path,
+    )
+
     js_info = JsInfo(
         transitive_files = depset(transitive = [js_info.transitive_files for js_info in [dep_js] + webpack_client.client_js]),
     )
@@ -320,6 +341,7 @@ def _webpack_server_impl(ctx):
             "%{digest}": shell.quote(to_rlocation_path(ctx, src_digest)),
             "%{input_root}": shell.quote(package_path(dep_cjs.package)),
             "%{js_source_map}": shell.quote(json.encode(source_map)),
+            "%{node_package_manifest}": shell.quote(to_rlocation_path(ctx, node_package_manifest)),
             "%{package_manifest}": shell.quote(to_rlocation_path(ctx, package_manifest)),
             "%{runtime}": shell.quote(to_rlocation_path(ctx, runtime)),
             "%{shim}": shell.quote(to_rlocation_path(ctx, shim)),
@@ -339,6 +361,7 @@ def _webpack_server_impl(ctx):
 
     runfiles = ctx.runfiles(
         files = [
+            node_package_manifest,
             package_manifest,
             runtime,
             shim,

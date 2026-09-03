@@ -22,6 +22,7 @@ function abspath () {
 export COMPILATION_MODE=%{compilation_mode}
 export NODE_OPTIONS_APPEND="-r $(abspath "$RUNFILES_DIR"/%{runtime}/index.js) -r $(abspath "$RUNFILES_DIR"/%{shim}/index.js)"
 export JS_SOURCE_MAP=%{js_source_map}
+export NODE_PACKAGE_MANIFEST="$RUNFILES_DIR"/%{node_package_manifest}
 export WATCHPACK_POLLING=130929
 export WEBPACK_CONFIG="$RUNFILES_DIR"/%{config}
 export WEBPACK_DIGEST="$RUNFILES_DIR"/%{digest}
