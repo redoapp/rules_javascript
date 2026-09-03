@@ -260,7 +260,11 @@ def _nodejs_binary_impl(ctx):
         runfiles = runfiles,
     )
 
-    return [default_info]
+    # PnP resolves this binary's modules without materializing node_modules, so
+    # a filesystem view of the package tree no longer exists. Forward the
+    # CommonJS graph -- in the binary's own configuration -- for rules that
+    # still need one, such as webpack_server.
+    return [default_info] + ([cjs_dep] if cjs_dep else [])
 
 def _nodejs_transition_impl(settings, attrs):
     return {"//javascript:module": "node"}
