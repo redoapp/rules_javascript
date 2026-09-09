@@ -61,7 +61,18 @@ function stage(manifestPath, currentPkgPath) {
     if (!name) return;
     const link = path.join(nmRoot, name);
     if (fs.existsSync(link)) return;
-    ensureSymlink(path.resolve(pkgPath), link);
+    const target = path.resolve(pkgPath);
+    // Skip @types entries whose repo was never materialized (npm-metadata-
+    // only deps): types "*" silently ignores an absent entry, matching the
+    // old implicit-@types behavior, but errors on a non-package directory.
+    if (
+      name.startsWith("@types/") &&
+      !fs.existsSync(path.join(target, "package.json")) &&
+      !fs.existsSync(path.join(target, "index.d.ts"))
+    ) {
+      return;
+    }
+    ensureSymlink(target, link);
   };
 
   /** @type {Set<string>} */

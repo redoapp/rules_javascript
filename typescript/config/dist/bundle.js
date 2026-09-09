@@ -141,10 +141,17 @@ parser.add_argument("output");
     // compilerOptions.paths or explicit ambient files here — doing so
     // would give tsc a second way to reach the same dep file and produce
     // "type X is not assignable to type X" errors from duplicate nominal
-    // identities. The manifest path is intentionally unused by this tool;
+    // identities. The manifest path is otherwise unused by this tool;
     // it's declared as an input to the config action so the action cache
     // key depends on the dep graph.
-    void args.packageManifest;
+    //
+    // TypeScript 7 loads no @types implicitly; "*" opts back in, scoped
+    // to the staged tree. The lint tsconfig (--no-preserve-symlinks)
+    // keeps fs-linker VFS resolution instead.
+    if (args.packageManifest && !args.noPreserveSymlinks) {
+        tsconfig.compilerOptions.types = ["*"];
+        tsconfig.compilerOptions.typeRoots = [relativePath("node_modules/@types")];
+    }
     const content = JSON.stringify(tsconfig);
     await promises.writeFile(args.output, content, "utf8");
 })().catch((error) => {
