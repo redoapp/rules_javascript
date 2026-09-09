@@ -141,10 +141,46 @@ parser.add_argument("output");
     // compilerOptions.paths or explicit ambient files here — doing so
     // would give tsc a second way to reach the same dep file and produce
     // "type X is not assignable to type X" errors from duplicate nominal
-    // identities. The manifest path is intentionally unused by this tool;
-    // it's declared as an input to the config action so the action cache
-    // key depends on the dep graph.
-    void args.packageManifest;
+    // identities. TypeScript 7 (tsgo) loads no ambient @types implicitly,
+    // so the manifest's visible @types packages are listed explicitly,
+    // resolved from the staged tree. The lint tsconfig
+    // (--no-preserve-symlinks) keeps the fs-linker VFS resolution instead.
+    if (args.packageManifest && !args.noPreserveSymlinks) {
+        const manifest = JSON.parse(await promises.readFile(args.packageManifest, "utf8"));
+        const typeNames = new Set();
+        const collect = (name) => {
+            if (name.startsWith("@types/")) {
+                typeNames.add(name.slice("@types/".length));
+            }
+        };
+        // Mirror the stager's closure walk so every entry is staged.
+        const packages = manifest.packages ?? {};
+        const seen = new Set();
+        const queue = [outDir, ...Object.values(manifest.globals ?? {})];
+        for (const name of Object.keys(manifest.globals ?? {})) {
+            collect(name);
+        }
+        for (;;) {
+            const packagePath = queue.shift();
+            if (packagePath == null) {
+                break;
+            }
+            if (seen.has(packagePath)) {
+                continue;
+            }
+            seen.add(packagePath);
+            for (const [depName, depPath] of Object.entries(packages[packagePath]?.deps ?? {})) {
+                collect(depName);
+                queue.push(depPath);
+            }
+        }
+        if (typeNames.size) {
+            tsconfig.compilerOptions.types = [...typeNames].sort();
+            tsconfig.compilerOptions.typeRoots = [
+                relativePath("node_modules/@types"),
+            ];
+        }
+    }
     const content = JSON.stringify(tsconfig);
     await promises.writeFile(args.output, content, "utf8");
 })().catch((error) => {

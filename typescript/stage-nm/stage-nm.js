@@ -61,7 +61,24 @@ function stage(manifestPath, currentPkgPath) {
     if (!name) return;
     const link = path.join(nmRoot, name);
     if (fs.existsSync(link)) return;
-    ensureSymlink(path.resolve(pkgPath), link);
+    const target = path.resolve(pkgPath);
+    if (
+      name.startsWith("@types/") &&
+      !fs.existsSync(path.join(target, "package.json"))
+    ) {
+      // A manifest entry whose repo was never materialized (an npm-only
+      // dep no Bazel target uses). The tsconfig lists it in `types`, so
+      // give the explicit entry an empty stub to resolve to — same
+      // outcome as the old implicit-@types skip.
+      ensureDir(link);
+      fs.writeFileSync(path.join(link, "index.d.ts"), "");
+      fs.writeFileSync(
+        path.join(link, "package.json"),
+        JSON.stringify({ name, types: "index.d.ts" }),
+      );
+      return;
+    }
+    ensureSymlink(target, link);
   };
 
   /** @type {Set<string>} */
