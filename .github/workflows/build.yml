@@ -17,6 +17,8 @@ jobs:
           key: bazel
       - name: Configure bazel
         run: .github/configure-bazel
+      - name: Verify GitLab cutover policy
+        run: node ci/verify-gitlab-parity.mjs
       - name: Test
         run: |
           set -e

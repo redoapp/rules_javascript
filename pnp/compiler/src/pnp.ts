@@ -85,10 +85,7 @@ export function pnpScript(tree: PackageTree, roots: string[]): string {
         linkType: LinkType.HARD,
         packageLocation: location(path),
         // The leading self-reference lets the package require itself by name.
-        packageDependencies: [
-          [package_.name, path],
-          ...deps(package_.deps),
-        ],
+        packageDependencies: [[package_.name, path], ...deps(package_.deps)],
       },
     ]);
   }
