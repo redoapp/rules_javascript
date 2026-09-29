@@ -17,7 +17,7 @@ CjsPath = provider(
     },
 )
 
-def create_package(name, path, short_path, label):
+def create_package(name, path, short_path, label, types_path = None):
     """Create CommonJs package definition.
 
     Args:
@@ -25,12 +25,14 @@ def create_package(name, path, short_path, label):
         path: Path of root directory
         short_path: Short path of root directory
         label: Source label
+        types_path: Path of a directory holding only the package files TypeScript reads, used in place of path when compiling
     """
     return struct(
         name = name,
         label = label,
         path = path,
         short_path = short_path,
+        types_path = types_path,
     )
 
 def create_link(path, name, dep, label):
@@ -107,6 +109,9 @@ def _output_name(root, package_output, prefix):
 
 def package_path(package):
     return package.path
+
+def types_package_path(package):
+    return package.types_path or package.path
 
 def cjs_npm_label(repo):
     return "@%s//:root" % repo

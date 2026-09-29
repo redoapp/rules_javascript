@@ -1,3 +1,4 @@
+load("@bazel_lib//lib:copy_to_directory.bzl", "copy_to_directory")
 load("@bazel_skylib//lib:selects.bzl", "selects")
 load("//commonjs:providers.bzl", "cjs_npm_label")
 load("//javascript:npm.bzl", "js_npm_inner_label", "js_npm_label")
@@ -6,6 +7,10 @@ load("//javascript:providers.bzl", "JsInfo")
 load("//javascript:rules.bzl", "js_library")
 load("//npm:npm.bzl", "package_repo_name")
 load("//typescript:rules.bzl", "js_import_ts", "ts_export", "ts_import")
+
+# Files TypeScript can read from a package: declarations, TypeScript sources, and package.json for
+# module resolution and package scope. Everything else (JS, docs, maps) is dead weight in a compile.
+_TYPES_PATTERNS = ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts", "**/package.json"]
 
 def _ts_npm_bin(repo, package_id, bin):
     pass
@@ -58,9 +63,18 @@ def _ts_npm_spoke(repo, package):
         visibility = ["//visibility:public"],
     )
 
+    copy_to_directory(
+        name = "types",
+        srcs = [":files"],
+        include_external_repositories = ["*"],
+        include_srcs_patterns = _TYPES_PATTERNS,
+        replace_prefixes = {"files": ""},
+    )
+
     ts_import(
         name = "lib.inner1",
-        declarations = [":files"],
+        declarations = [":types"],
+        types = ":types",
         deps = deps,
         js = [":files"] if not package.name.startswith("@types/") else [],
         root = ":root",

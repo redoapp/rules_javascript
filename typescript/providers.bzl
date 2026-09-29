@@ -19,6 +19,7 @@ TsCompilerInfo = provider(
         "transpile_bin": "JS transpile executable.",
         "runtime_cjs": "List of runtime CjsInfo.",
         "runtime_js": "Runtime files.",
+        "runtime_ts": "List of runtime TsInfo.",
     },
 )
 

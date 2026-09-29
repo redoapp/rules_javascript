@@ -4,7 +4,7 @@ TypeScript rules
 
 load("@bazel_skylib//lib:paths.bzl", "paths")
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
-load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "package_path")
+load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "create_package", "gen_manifest", "package_path", "types_package_path")
 load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//javascript:rules.bzl", "js_export")
@@ -95,6 +95,7 @@ def _ts_compiler_impl(ctx):
     bin = ctx.attr.bin[DefaultInfo]
     cjs_runtime = ctx.attr.runtime and ctx.attr.runtime[CjsInfo]
     js_runtime = ctx.attr.runtime and ctx.attr.runtime[JsInfo]
+    ts_runtime = ctx.attr.runtime and TsInfo in ctx.attr.runtime and ctx.attr.runtime[TsInfo]
     transpile_bin = ctx.attr.transpile_bin[DefaultInfo]
 
     ts_compiler_info = TsCompilerInfo(
@@ -102,6 +103,7 @@ def _ts_compiler_impl(ctx):
         native = ctx.attr.native,
         runtime_cjs = [cjs_runtime] if cjs_runtime else [],
         runtime_js = [js_runtime] if js_runtime else [],
+        runtime_ts = [ts_runtime] if ts_runtime else [],
         transpile_bin = transpile_bin,
     )
 
@@ -323,7 +325,7 @@ def _ts_library_impl(ctx):
         deps = compile_cjs_info.transitive_links if compile_cjs_info else depset(),
         manifest = package_manifest,
         manifest_bin = ctx.attr._manifest[DefaultInfo],
-        package_path = package_path,
+        package_path = types_package_path,
         packages = compile_cjs_info.transitive_packages if compile_cjs_info else depset(),
     )
 
@@ -403,7 +405,7 @@ def _ts_library_impl(ctx):
                         ([cjs_root.transitive_files] if cjs_root else []) +
                         ([tsconfig_js.transitive_files] if tsconfig_js else []) +
                         [js_info.transitive_files for js_info in compiler.runtime_js] +
-                        [dep.transitive_files for dep in ts_deps],
+                        [dep.transitive_files for dep in ts_deps + compiler.runtime_ts],
                 ),
                 mnemonic = "TypeScriptCompileNative",
                 progress_message = "Compiling %{label} TypeScript declarations (native)",
@@ -425,7 +427,7 @@ def _ts_library_impl(ctx):
                         [fs_linker_js.transitive_files] +
                         ([tsconfig_js.transitive_files] if tsconfig_js else []) +
                         [js_info.transitive_files for js_info in compiler.runtime_js] +
-                        [dep.transitive_files for dep in ts_deps],
+                        [dep.transitive_files for dep in ts_deps + compiler.runtime_ts],
                 ),
                 mnemonic = "TypeScriptCompile",
                 progress_message = "Compiling %{label} TypeScript declarations",
@@ -460,7 +462,7 @@ def _ts_library_impl(ctx):
         compiler = compiler.bin,
         config_path = tsconfig.path,
         configs = depset(config_files, transitive = tsconfig_js and [tsconfig_js.transitive_files]),
-        declarations = depset(transitive = [dep.transitive_files for dep in ts_deps]),
+        declarations = depset(transitive = [dep.transitive_files for dep in ts_deps + compiler.runtime_ts]),
         lint_config_path = lint_tsconfig.path if lint_tsconfig else None,
         manifest = package_manifest,
         runtime_js = depset(transitive = [js_info.transitive_files for js_info in compiler.runtime_js]),
@@ -589,6 +591,19 @@ ts_library = rule(
 def _ts_import_impl(ctx):
     actions = ctx.actions
     cjs_root = ctx.attr.root and ctx.attr.root[CjsInfo]
+    if cjs_root and ctx.file.types:
+        package = cjs_root.package
+        cjs_root = CjsInfo(
+            name = cjs_root.name,
+            package = create_package(
+                name = package.name,
+                label = package.label,
+                path = package.path,
+                short_path = package.short_path,
+                types_path = ctx.file.types.path,
+            ),
+            transitive_files = cjs_root.transitive_files,
+        )
     cjs_deps = [dep[CjsInfo] for dep in ctx.attr.compile_deps + ctx.attr.deps if CjsInfo in dep]
     js_deps = [dep[JsInfo] for dep in ctx.attr.deps if JsInfo in dep and str(dep.label) not in ctx.attr._system_lib[BuildSettingInfo].value]
     label = ctx.label
@@ -631,7 +646,7 @@ def _ts_import_impl(ctx):
     )
 
     ts_info = create_ts_info(
-        cjs_root = cjs_root,
+        cjs_root = None if ctx.file.types else cjs_root,
         files = declarations,
         deps = ts_deps,
     )
@@ -663,6 +678,10 @@ ts_import = rule(
         "root": attr.label(
             doc = "CommonJS root",
             providers = [CjsInfo],
+        ),
+        "types": attr.label(
+            doc = "Directory with the subset of the root's files that TypeScript reads. Compiles resolve the package there instead of at the root, so it stands in for the root files in TsInfo.",
+            allow_single_file = True,
         ),
         "_system_lib": attr.label(
             default = "//javascript:system_lib",
