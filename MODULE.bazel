@@ -2,7 +2,7 @@ module(name = "rules_javascript")
 
 # Bazel
 
-bazel_dep(name = "bazel_lib", version = "3.2.1")
+bazel_dep(name = "bazel_lib", version = "3.5.0")
 bazel_dep(name = "bazel_util")
 
 BAZEL_UTIL_VERSION = "8f5f1a9b8cc4129da674d15b2a205a7dd1d1ed8c"

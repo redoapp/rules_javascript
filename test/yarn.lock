@@ -5271,7 +5271,7 @@ __metadata:
     prettier: "npm:^3"
     reflect-metadata: "npm:0.1.13"
     rollup: "npm:^2.78.0"
-    rxjs: "npm:~7.4.0"
+    rxjs: "npm:~7.8.0"
     tslib: "npm:~2.0.0"
     typescript: "npm:~5.0.0"
     webpack: "npm:^5"
@@ -5279,12 +5279,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"rxjs@npm:~7.4.0":
-  version: 7.4.0
-  resolution: "rxjs@npm:7.4.0"
+"rxjs@npm:~7.8.0":
+  version: 7.8.2
+  resolution: "rxjs@npm:7.8.2"
   dependencies:
-    tslib: "npm:~2.1.0"
-  checksum: 10c0/d0e6de2bc1b1f984fd1cd7001ffc3643e5281fac118c6ded6f21b5b9c54369d20e95485c2665278e467f723fffab7248a0dfad955bc0af4b3539b8cfafaa915d
+    tslib: "npm:^2.1.0"
+  checksum: 10c0/1fcd33d2066ada98ba8f21fcbbcaee9f0b271de1d38dc7f4e256bfbc6ffcdde68c8bfb69093de7eeb46f24b1fb820620bf0223706cff26b4ab99a7ff7b2e2c45
   languageName: node
   linkType: hard
 
@@ -5677,13 +5677,6 @@ __metadata:
   version: 2.0.3
   resolution: "tslib@npm:2.0.3"
   checksum: 10c0/57d9f8e71a768c37a70fcabbb76d686b31773329200db7135faff905818038c742191a0c3791e452ae738d057522c6151d34beddc8e4d0d897f28df84e55a0c0
-  languageName: node
-  linkType: hard
-
-"tslib@npm:~2.1.0":
-  version: 2.1.0
-  resolution: "tslib@npm:2.1.0"
-  checksum: 10c0/e95c8fb198d0209bba917db7b0f399d1aed3c4d6408bf1e4c30deebfeffb4076dc3786500100a3b5c55a535abaaeb5e6bd1da04d0cb49d4228e5a62362cee0b2
   languageName: node
   linkType: hard
 
