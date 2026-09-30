@@ -10,7 +10,7 @@ load("//typescript:rules.bzl", "js_import_ts", "ts_export", "ts_import")
 
 # Files TypeScript can read from a package: declarations, TypeScript sources, and JSON (package.json
 # for module resolution and package scope, other JSON for resolveJsonModule imports). Everything else
-# (JS, docs, maps) is dead weight in a compile, which is why declaration compiles pin allowJs off.
+# (JS, docs, maps) is dead weight in a declaration compile.
 _TYPES_PATTERNS = ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts", "**/*.json"]
 
 def _ts_npm_bin(repo, package_id, bin):
