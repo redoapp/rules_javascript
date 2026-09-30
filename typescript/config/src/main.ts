@@ -124,6 +124,10 @@ interface Args {
 
   if (args.declarationDir) {
     tsconfig.compilerOptions.declarationDir = relativePath(args.declarationDir);
+    // Declaration compiles see npm packages as types-only trees with no
+    // JavaScript, so allowJs would silently resolve less than it claims.
+    // Pinning it off makes JavaScript sources and checkJs compile errors.
+    tsconfig.compilerOptions.allowJs = false;
     if (!args.outDir) {
       tsconfig.compilerOptions.emitDeclarationOnly = true;
     }

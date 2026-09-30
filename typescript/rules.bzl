@@ -591,7 +591,9 @@ ts_library = rule(
 def _ts_import_impl(ctx):
     actions = ctx.actions
     cjs_root = ctx.attr.root and ctx.attr.root[CjsInfo]
-    if cjs_root and ctx.file.types:
+    if ctx.file.types and not cjs_root:
+        fail("types requires root: it stands in for the root package when compiling")
+    if ctx.file.types:
         package = cjs_root.package
         cjs_root = CjsInfo(
             name = cjs_root.name,

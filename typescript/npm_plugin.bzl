@@ -8,9 +8,10 @@ load("//javascript:rules.bzl", "js_library")
 load("//npm:npm.bzl", "package_repo_name")
 load("//typescript:rules.bzl", "js_import_ts", "ts_export", "ts_import")
 
-# Files TypeScript can read from a package: declarations, TypeScript sources, and package.json for
-# module resolution and package scope. Everything else (JS, docs, maps) is dead weight in a compile.
-_TYPES_PATTERNS = ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts", "**/package.json"]
+# Files TypeScript can read from a package: declarations, TypeScript sources, and JSON (package.json
+# for module resolution and package scope, other JSON for resolveJsonModule imports). Everything else
+# (JS, docs, maps) is dead weight in a compile, which is why declaration compiles pin allowJs off.
+_TYPES_PATTERNS = ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts", "**/*.json"]
 
 def _ts_npm_bin(repo, package_id, bin):
     pass
@@ -36,7 +37,10 @@ def _ts_npm_hub(repo, root):
         )
 
 def _ts_npm_spoke(repo, package):
-    if not native.glob(["src/**/*.d.ts"], allow_empty = True):
+    if not native.glob(
+        ["src/**/*.d.ts", "src/**/*.d.cts", "src/**/*.d.mts"],
+        allow_empty = True,
+    ):
         js_npm_plugin.spoke(repo, package)
         return
 
@@ -66,7 +70,6 @@ def _ts_npm_spoke(repo, package):
     copy_to_directory(
         name = "types",
         srcs = [":files"],
-        include_external_repositories = ["*"],
         include_srcs_patterns = _TYPES_PATTERNS,
         replace_prefixes = {"files": ""},
     )
