@@ -1,5 +1,5 @@
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
-load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "package_path")
+load("//commonjs:providers.bzl", "CjsInfo", "create_cjs_info", "gen_manifest", "package_path", "types_package_path")
 load("//commonjs:rules.bzl", "cjs_root")
 load("//javascript:providers.bzl", "JsInfo", "create_js_info")
 load("//javascript:rules.bzl", "js_export")
@@ -288,7 +288,7 @@ def _angular_library(ctx):
             deps = compile_cjs_info.transitive_links,
             manifest = package_manifest,
             manifest_bin = ctx.attr._manifest[DefaultInfo],
-            package_path = package_path,
+            package_path = types_package_path,
             packages = compile_cjs_info.transitive_packages,
         )
 

@@ -1,0 +1,26 @@
+load("@rules_javascript//commonjs:rules.bzl", "cjs_root")
+load("@rules_javascript//javascript:rules.bzl", "js_library")
+load("@rules_javascript//typescript:rules.bzl", "ts_library")
+
+cjs_root(
+    name = "root",
+    package_name = "example",
+    descriptors = ["package.json"],
+)
+
+ts_library(
+    name = "lib",
+    srcs = ["example.js"],
+    compiler = "//:ts",
+    config = "tsconfig.json",
+    config_dep = ":tsconfig",
+    declaration_prefix = "lib",
+    js_prefix = "lib",
+    root = ":root",
+)
+
+js_library(
+    name = "tsconfig",
+    srcs = ["tsconfig.json"],
+    root = ":root",
+)

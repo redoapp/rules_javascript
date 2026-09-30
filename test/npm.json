@@ -38,7 +38,7 @@
           "id": "parse5@7.3.0"
         },
         {
-          "id": "rxjs@7.4.0"
+          "id": "rxjs@7.8.2"
         },
         {
           "id": "tslib@2.8.1"
@@ -54,7 +54,7 @@
           "id": "@angular/core@16.2.12-dc3fc578"
         },
         {
-          "id": "rxjs@7.4.0"
+          "id": "rxjs@7.8.2"
         },
         {
           "id": "tslib@2.8.1"
@@ -122,7 +122,7 @@
     "@angular/core@16.2.12-dc3fc578": {
       "deps": [
         {
-          "id": "rxjs@7.4.0"
+          "id": "rxjs@7.8.2"
         },
         {
           "id": "tslib@2.8.1"
@@ -147,7 +147,7 @@
           "id": "@angular/platform-browser@16.2.12-dc3fc578"
         },
         {
-          "id": "rxjs@7.4.0"
+          "id": "rxjs@7.8.2"
         },
         {
           "id": "tslib@2.8.1"
@@ -319,7 +319,7 @@
           "id": "@material/typography@15.0.0-canary.bc9ae6c9c.0"
         },
         {
-          "id": "rxjs@7.4.0"
+          "id": "rxjs@7.8.2"
         },
         {
           "id": "tslib@2.8.1"
@@ -7891,15 +7891,15 @@
       "name": "rollup",
       "url": "https://registry.npmjs.org/rollup/-/rollup-2.79.2.tgz"
     },
-    "rxjs@7.4.0": {
+    "rxjs@7.8.2": {
       "deps": [
         {
-          "id": "tslib@2.1.0"
+          "id": "tslib@2.8.1"
         }
       ],
-      "integrity": "sha512-7SQDi7xeTMCJpqViXh8gL/lebcwlp3d831F05+9B44A4B0WfsEwUQHR64gsH1kvJ+Ep/J9K2+n1hVl1CsGN23w==",
+      "integrity": "sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==",
       "name": "rxjs",
-      "url": "https://registry.npmjs.org/rxjs/-/rxjs-7.4.0.tgz"
+      "url": "https://registry.npmjs.org/rxjs/-/rxjs-7.8.2.tgz"
     },
     "safe-buffer@5.2.1": {
       "integrity": "sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==",
@@ -8337,11 +8337,6 @@
       "integrity": "sha512-uZtkfKblCEQtZKBF6EBXVZeQNl82yqtDQdv+eck8u7tdPxjLu2/lp5/uPW+um2tpuxINHWy3GhiccY7QgEaVHQ==",
       "name": "tslib",
       "url": "https://registry.npmjs.org/tslib/-/tslib-2.0.3.tgz"
-    },
-    "tslib@2.1.0": {
-      "integrity": "sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==",
-      "name": "tslib",
-      "url": "https://registry.npmjs.org/tslib/-/tslib-2.1.0.tgz"
     },
     "tslib@2.8.1": {
       "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
@@ -8823,7 +8818,7 @@
       "name": "rollup"
     },
     {
-      "id": "rxjs@7.4.0",
+      "id": "rxjs@7.8.2",
       "name": "rxjs"
     },
     {
