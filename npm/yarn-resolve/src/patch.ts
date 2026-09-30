@@ -89,8 +89,8 @@ function patchName(patchPaths: readonly string[]): string {
     .map((patchPath) => {
       const afterFlags = patchPath.slice(patchPath.lastIndexOf("!") + 1);
       const builtin = afterFlags.match(BUILTIN_PATCH);
-      const name = builtin !== null ? builtin[1] : afterFlags;
-      return name.replace(/[/\\]/g, "-");
+      const name = builtin === null ? afterFlags : builtin[1];
+      return name.replaceAll(/[/\\]/g, "-");
     })
     .join("-");
 }

@@ -47,7 +47,7 @@ def _cjs_npm_spoke(repo, package):
     if not compatible:
         native.alias(
             name = "compatible",
-            actual = Label("//bazel:always_true")
+            actual = Label("//bazel:always_true"),
         )
     elif len(compatible) == 1:
         native.alias(
